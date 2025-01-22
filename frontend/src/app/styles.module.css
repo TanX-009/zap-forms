@@ -1,0 +1,6 @@
+.page {
+  font-size: var(--h5);
+  margin: var(--sp-s);
+  border: 2px solid #000;
+  border-radius: var(--radius);
+}

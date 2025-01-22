@@ -1,0 +1,97 @@
+/* colors */
+:root {
+  --primary: #ffffff;
+  --onPrimary: #141414;
+  --primaryContainer: #1e1e1e;
+
+  --secondary: #eeeeee;
+  --onSecondary: #1e1e1e;
+  --secondaryContainer: #292929;
+
+  --surface: #191919;
+  --surfaceContainer: #f0f0f0;
+  --onSurface: #ebebeb;
+
+  --shadow: #00000028;
+
+  --max-width: 1440px;
+  --max-width: 90em;
+
+  --max-view-width: 1920px;
+  --max-view-width: 120em;
+
+  --radius: var(--sp-2xs-xs);
+  --border: calc(var(--sp-6xs) / 2);
+}
+
+/* Dark theme */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --primary: #ffffff;
+    --onPrimary: #141414;
+    --primaryContainer: #1e1e1e;
+
+    --secondary: #eeeeee;
+    --onSecondary: #1e1e1e;
+    --secondaryContainer: #292929;
+
+    --surface: #191919;
+    --surfaceContainer: #f0f0f0;
+    --onSurface: #ebebeb;
+
+    --shadow: #00000028;
+  }
+}
+
+/* Light theme */
+@media (prefers-color-scheme: light) {
+  :root {
+    --primary: #141414;
+    --onPrimary: #ffffff;
+    --primaryContainer: #e6e6e6;
+
+    --secondary: #1e1e1e;
+    --onSecondary: #eeeeee;
+    --secondaryContainer: #ebebeb;
+
+    --surface: #f0f0f0;
+    --surfaceContainer: #0a0a0a;
+    --onSurface: #0f0f0f;
+
+    --shadow: #00000028;
+  }
+}
+
+/* Dark theme */
+[data-theme="dark"] {
+  --primary: #ffffff;
+  --onPrimary: #141414;
+  --primaryContainer: #1e1e1e;
+
+  --secondary: #eeeeee;
+  --onSecondary: #1e1e1e;
+  --secondaryContainer: #292929;
+
+  --surface: #191919;
+  --surfaceContainer: #f0f0f0;
+  --onSurface: #ebebeb;
+
+  --shadow: #00000028;
+}
+
+/* Light theme */
+[data-theme="light"] {
+  --primary: #141414;
+  --onPrimary: #ffffff;
+  --primaryContainer: #e6e6e6;
+
+  --secondary: #1e1e1e;
+  --onSecondary: #eeeeee;
+  --secondaryContainer: #ebebeb;
+
+  --surface: #f0f0f0;
+  --surfaceContainer: #0a0a0a;
+  --onSurface: #0f0f0f;
+
+  --shadow: #00000028;
+}
