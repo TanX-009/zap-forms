@@ -1,0 +1,22 @@
+.login {
+  height: 100%;
+  width: 100%;
+  max-width: calc(var(--max-width) / 4);
+
+  padding: var(--sp-2xs);
+  margin: auto;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2xs);
+
+  font-size: var(--sm);
+}
+
+.title {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}

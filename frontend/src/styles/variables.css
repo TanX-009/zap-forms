@@ -20,7 +20,7 @@
   --max-view-width: 1920px;
   --max-view-width: 120em;
 
-  --radius: var(--sp-2xs-xs);
+  --radius: var(--sp-3xs-2xs);
   --border: calc(var(--sp-6xs) / 2);
 }
 
