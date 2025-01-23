@@ -1,0 +1,17 @@
+.navbar {
+  padding: var(--sp-5xs) var(--sp-2xs);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-xs);
+
+  font-weight: bold;
+}
+
+.logo {
+  font-size: var(--p);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}

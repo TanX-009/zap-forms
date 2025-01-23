@@ -21,7 +21,6 @@ type TApiResponse<T> = TApiSuccess<T> | TApiFailure;
 const instance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_SERVER_API_URL as string,
   timeout: 300000,
-  withCredentials: true,
   headers: {
     Accept: "application/json",
     "content-type": "application/json",
@@ -31,7 +30,6 @@ const instance = axios.create({
 const formDataInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_SERVER_API_URL as string,
   timeout: 100000,
-  withCredentials: true,
   headers: {
     Accept: "application/json",
     "content-type": "multipart/form-data",
@@ -59,9 +57,13 @@ function requestFailureCallback<TResponse>(
 async function get<TRequest, TResponse>(
   url: string,
   params?: TRequest,
+  withCredentials: boolean = false,
 ): Promise<TApiResponse<TResponse>> {
   try {
-    const response = await instance.get<TResponse>(url, { params });
+    const response = await instance.get<TResponse>(url, {
+      params,
+      withCredentials,
+    });
     return { success: true, data: response.data };
   } catch (error) {
     return requestFailureCallback(error);
@@ -75,9 +77,12 @@ async function get<TRequest, TResponse>(
 async function put<TRequest, TResponse>(
   url: string,
   data: TRequest,
+  withCredentials: boolean = false,
 ): Promise<TApiResponse<TResponse>> {
   try {
-    const response = await instance.put<TResponse>(url, data);
+    const response = await instance.put<TResponse>(url, data, {
+      withCredentials,
+    });
     return { success: true, data: response.data };
   } catch (error) {
     return requestFailureCallback(error);
@@ -91,9 +96,12 @@ async function put<TRequest, TResponse>(
 async function post<TRequest, TResponse>(
   url: string,
   data: TRequest,
+  withCredentials: boolean = false,
 ): Promise<TApiResponse<TResponse>> {
   try {
-    const response = await instance.post<TResponse>(url, data);
+    const response = await instance.post<TResponse>(url, data, {
+      withCredentials,
+    });
     return { success: true, data: response.data };
   } catch (error) {
     return requestFailureCallback(error);
@@ -107,9 +115,13 @@ async function post<TRequest, TResponse>(
 async function delete_<TRequest, TResponse>(
   url: string,
   params?: TRequest,
+  withCredentials: boolean = false,
 ): Promise<TApiResponse<TResponse>> {
   try {
-    const response = await instance.delete<TResponse>(url, { params });
+    const response = await instance.delete<TResponse>(url, {
+      params,
+      withCredentials,
+    });
     return { success: true, data: response.data };
   } catch (error) {
     return requestFailureCallback(error);
@@ -123,9 +135,12 @@ async function delete_<TRequest, TResponse>(
 async function formDataPut<TResponse>(
   url: string,
   data?: FormData,
+  withCredentials: boolean = false,
 ): Promise<TApiResponse<TResponse>> {
   try {
-    const response = await formDataInstance.put<TResponse>(url, data);
+    const response = await formDataInstance.put<TResponse>(url, data, {
+      withCredentials,
+    });
     return { success: true, data: response.data };
   } catch (error) {
     return requestFailureCallback(error);
@@ -139,9 +154,12 @@ async function formDataPut<TResponse>(
 async function formDataPost<TResponse>(
   url: string,
   data?: FormData,
+  withCredentials: boolean = false,
 ): Promise<TApiResponse<TResponse>> {
   try {
-    const response = await formDataInstance.post<TResponse>(url, data);
+    const response = await formDataInstance.post<TResponse>(url, data, {
+      withCredentials,
+    });
     return { success: true, data: response.data };
   } catch (error) {
     return requestFailureCallback(error);

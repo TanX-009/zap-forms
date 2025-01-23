@@ -18,21 +18,21 @@ interface TMessageResponse {
 async function login(
   data: TLoginRequest,
 ): Promise<TApiResponse<TLoginResponse>> {
-  return post(Services.login, data);
+  return post(Services.login, data, false);
 }
 
 async function logout(): Promise<TApiResponse<TMessageResponse>> {
-  return post(Services.logout, {});
+  return post(Services.logout, {}, false);
 }
 
 async function register<T>(
   data: Record<string, unknown>,
 ): Promise<TApiResponse<T>> {
-  return post(Services.register, data);
+  return post(Services.register, data, false);
 }
 
 async function refresh(): Promise<TApiResponse<TMessageResponse>> {
-  return post(Services.refresh, {});
+  return post(Services.refresh, {}, false);
 }
 
 const AuthService = {

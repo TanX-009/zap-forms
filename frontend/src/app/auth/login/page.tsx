@@ -1,18 +1,29 @@
 "use client";
 
 import Input from "@/components/Input";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./styles.module.css";
 import Button from "@/components/Button/components";
 import Image from "next/image";
 import AuthService from "@/services/auth";
 import Message from "@/components/Message";
 import { deleteLogin, getLogin, setLogin } from "@/app/actions/cookies";
+import { useRouter } from "next/navigation";
+
+interface TMessage {
+  value: string;
+  status: "error" | "success" | "neutral";
+}
 
 export default function Login() {
-  const [message, setMessage] = React.useState("");
+  const router = useRouter();
+  const [message, setMessage] = useState<TMessage>({
+    value: "",
+    status: "success",
+  });
 
   const onLogin = async (event: React.FormEvent<HTMLFormElement>) => {
+    setMessage({ value: "Logging in...", status: "neutral" });
     event.preventDefault();
     const email = event.currentTarget.email.value;
     const password = event.currentTarget.password.value;
@@ -24,35 +35,26 @@ export default function Login() {
 
     if (response.success) {
       await setLogin(response.data.user);
+      setMessage({ value: "Successfully logged in!", status: "success" });
+    } else if (response.status === 401) {
+      console.warn("401", response);
+      setMessage({ value: "Invalid email or password!", status: "error" });
     } else {
-      console.log(response);
-      setMessage(response.error.detail);
+      console.warn("Unknown error!", response);
+      setMessage({
+        value: "Server error! Please try again later.",
+        status: "error",
+      });
     }
   };
 
-  const onRefresh = async () => {
-    const response = await AuthService.refresh();
-    console.log(response);
-  };
-  const onLogout = async () => {
-    const response = await AuthService.logout();
-    console.log(response);
-    if (!response.success && response.status === 401) {
-      const refreshResponse = await AuthService.refresh();
-      console.log(refreshResponse);
-
-      const logoutResponse = await AuthService.logout();
-      console.log(logoutResponse);
-    }
-    deleteLogin();
-  };
-
+  // redirect if already logged in
   useEffect(() => {
-    async function getData() {
-      console.log(await getLogin());
-    }
-    getData();
-  }, []);
+    (async function () {
+      const login = await getLogin();
+      if (login) router.push("/");
+    })();
+  }, [router, message]);
 
   return (
     <form className={styles.login} onSubmit={onLogin}>
@@ -63,21 +65,9 @@ export default function Login() {
       <Input name="email" type="email" label="Email" required />
       <Input name="password" type="password" label="Password" required />
 
-      <Message>{message}</Message>
+      <Message status={message.status}>{message.value}</Message>
 
       <Button name="Login" type="submit" variant="hiClick" />
-      <Button
-        name="Refresh"
-        type="button"
-        variant="loClick"
-        onClick={onRefresh}
-      />
-      <Button
-        name="Logout"
-        type="button"
-        variant="loClick"
-        onClick={onLogout}
-      />
     </form>
   );
 }

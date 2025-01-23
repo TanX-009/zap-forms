@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "@tanx-009/stxle-css";
 import "../styles/variables.css";
 import "../styles/globals.css";
+import LoginRedirect from "./systems/LoginRedirect";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,6 +29,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         {children}
+
+        {/* systems */}
+        <LoginRedirect />
       </body>
     </html>
   );

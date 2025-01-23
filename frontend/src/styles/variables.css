@@ -12,6 +12,9 @@
   --surfaceContainer: #f0f0f0;
   --onSurface: #ebebeb;
 
+  --success: #9effab;
+  --error: #ffc7c7;
+
   --shadow: #00000028;
 
   --max-width: 1440px;
