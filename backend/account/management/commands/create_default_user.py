@@ -8,11 +8,32 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         # Retrieve environment variables or use default values
-        email = os.getenv("DEFAULT_USER_EMAIL", "admin@email.com")
-        password = os.getenv("DEFAULT_USER_PASSWORD", "admin")
+        django_admin_email = os.getenv(
+            "DEFAULT_DJANGO_ADMIN_USER_EMAIL", "admin@email.com"
+        )
+        django_admin_password = os.getenv("DEFAULT_DJANGO_ADMIN_USER_PASSWORD", "admin")
 
-        if not CustomUser.objects.filter(email=email).exists():
-            CustomUser.objects.create_superuser(email=email, password=password)
-            self.stdout.write(f"Default user created: {email}")
+        if not CustomUser.objects.filter(email=django_admin_email).exists():
+            CustomUser.objects.create_superuser(
+                email=django_admin_email, password=django_admin_password, role="admin"
+            )
+            self.stdout.write(f"Default admin user created: {django_admin_email}")
         else:
-            self.stdout.write(f"Default user already exists: {email}")
+            self.stdout.write(
+                f"Default admin user already exists: {django_admin_email}"
+            )
+
+        admin_email = os.getenv("DEFAULT_ADMIN_USER_EMAIL", "user@email.com")
+        admin_username = os.getenv("DEFAULT_ADMIN_USER_USERNAME", "username")
+        admin_password = os.getenv("DEFAULT_ADMIN_USER_PASSWORD", "user")
+
+        if not CustomUser.objects.filter(email=admin_email).exists():
+            CustomUser.objects.create_user(
+                email=admin_email,
+                password=admin_password,
+                username=admin_username,
+                role="admin",
+            )
+            self.stdout.write(f"Default user created: {admin_email}")
+        else:
+            self.stdout.write(f"Default user already exists: {admin_email}")
