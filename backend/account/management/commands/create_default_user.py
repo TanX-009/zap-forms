@@ -11,11 +11,17 @@ class Command(BaseCommand):
         django_admin_email = os.getenv(
             "DEFAULT_DJANGO_ADMIN_USER_EMAIL", "admin@email.com"
         )
+        django_admin_username = os.getenv(
+            "DEFAULT_DJANGO_ADMIN_USER_USERNAME", "username"
+        )
         django_admin_password = os.getenv("DEFAULT_DJANGO_ADMIN_USER_PASSWORD", "admin")
 
         if not CustomUser.objects.filter(email=django_admin_email).exists():
             CustomUser.objects.create_superuser(
-                email=django_admin_email, password=django_admin_password, role="admin"
+                email=django_admin_email,
+                password=django_admin_password,
+                role="admin",
+                username=django_admin_username,
             )
             self.stdout.write(f"Default admin user created: {django_admin_email}")
         else:

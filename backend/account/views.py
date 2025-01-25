@@ -1,4 +1,4 @@
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import CreateAPIView, ListAPIView
 
 from .models import CustomUser
 from .serializers import (
@@ -10,8 +10,15 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.views import TokenRefreshView
 from rest_framework_simplejwt.exceptions import InvalidToken
+
+
+class UsersView(ListAPIView):
+    queryset = CustomUser.objects.all()
+    serializer_class = CustomUserSerializer
+    permission_classes = [IsAuthenticated]
 
 
 class UserRegistrationView(CreateAPIView):

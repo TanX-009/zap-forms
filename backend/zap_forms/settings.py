@@ -141,11 +141,14 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "account.authentication.CookieJWTAuthentication",
     ],
+    # "DEFAULT_PERMISSION_CLASSES": [
+    #     "rest_framework.permissions.IsAuthenticated",
+    # ],
 }
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=0.2),
-    "REFRESH_TOKEN_LIFETIME": timedelta(minutes=10),
+    "REFRESH_TOKEN_LIFETIME": timedelta(minutes=1),
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
 }
