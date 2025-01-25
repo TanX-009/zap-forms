@@ -1,7 +1,8 @@
 import React from "react";
 import Navbar from "./components/Navbar";
+import LoginRedirect from "@/systems/LoginRedirect";
 
-export default function UserLayout({
+export default function DashboardLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -10,6 +11,9 @@ export default function UserLayout({
     <>
       <Navbar />
       {children}
+
+      {/* systems */}
+      <LoginRedirect />
     </>
   );
 }

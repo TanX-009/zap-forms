@@ -2,6 +2,7 @@
 
 import { TUser } from "@/types/user";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 export async function setLogin(user: TUser) {
   const cookieStore = await cookies();
@@ -26,7 +27,11 @@ export async function getLogin(): Promise<TUser | null> {
   }
 }
 
-export async function deleteLogin() {
+export async function deleteLogin(redirectToLogin = true) {
   const cookieStore = await cookies();
-  cookieStore.delete("login");
+  await cookieStore.delete("login");
+  cookieStore.delete("access_token");
+  cookieStore.delete("refresh_token");
+
+  if (redirectToLogin) redirect("/auth/login");
 }

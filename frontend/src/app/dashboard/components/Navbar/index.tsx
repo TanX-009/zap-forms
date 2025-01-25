@@ -15,13 +15,9 @@ export default function Navbar() {
 
   const onLogout = async () => {
     const response = await AuthService.logout();
-    if (!response.success && response.status === 401) {
-      await AuthService.refresh();
-      await AuthService.logout();
-    }
     console.log(response);
-    deleteLogin();
     setLogin(null);
+    await deleteLogin();
     router.push("/auth/login");
   };
 

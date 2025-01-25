@@ -28,6 +28,8 @@ export default function Login() {
     const email = event.currentTarget.email.value;
     const password = event.currentTarget.password.value;
 
+    // clear old tokens
+    await deleteLogin(false);
     const response = await AuthService.login({
       email: email,
       password: password,
@@ -52,7 +54,7 @@ export default function Login() {
   useEffect(() => {
     (async function () {
       const login = await getLogin();
-      if (login) router.push("/");
+      if (login) router.push("/dashboard");
     })();
   }, [router, message]);
 

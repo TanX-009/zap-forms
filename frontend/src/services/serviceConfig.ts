@@ -1,4 +1,6 @@
-import axios from "axios";
+import axios, { AxiosRequestConfig } from "axios";
+import Services from "./serviceUrls";
+import { deleteLogin } from "@/app/actions/cookies";
 
 interface TErrorResponse {
   detail: string;
@@ -27,30 +29,101 @@ const instance = axios.create({
   },
 });
 
-const formDataInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_SERVER_API_URL as string,
-  timeout: 100000,
-  headers: {
-    Accept: "application/json",
-    "content-type": "multipart/form-data",
-  },
-});
+//function requestFailureCallback<TResponse>(
+//  error: unknown,
+//): TApiResponse<TResponse> {
+//  if (axios.isAxiosError(error) && error.response) {
+//    return {
+//      success: false,
+//      status: error.response.status,
+//      error: error.response.data as TErrorResponse,
+//    };
+//  }
+//  console.error("Error: ", error);
+//  return {
+//    success: false,
+//    status: 0,
+//    error: { detail: "Error!" } as TErrorResponse,
+//  };
+//}
 
-function requestFailureCallback<TResponse>(
-  error: unknown,
-): TApiResponse<TResponse> {
-  if (axios.isAxiosError(error) && error.response) {
+async function handleTokenRefresh<TResponse>(
+  originalRequest: AxiosRequestConfig,
+): Promise<TApiResponse<TResponse>> {
+  // retry the original request
+  return await axios<TResponse>(originalRequest)
+    .then(
+      (retryResponse) =>
+        // return the retired request data
+        ({
+          success: true,
+          data: retryResponse.data,
+        }) as TApiResponse<TResponse>,
+    )
+    .catch((retryError) => {
+      console.error("Retry failed: ", retryError);
+      return {
+        success: false,
+        status: retryError.status,
+        error: { detail: "Retry failed!", error: retryError },
+      };
+    });
+}
+
+async function handle401Error<TResponse>(
+  originalRequest: AxiosRequestConfig,
+): Promise<TApiResponse<TResponse>> {
+  try {
+    // try to refresh token
+    await instance.post<TResponse>(
+      Services.refresh,
+      {},
+      { withCredentials: true },
+    );
+
+    // if refreshed successfully
+    return await handleTokenRefresh(originalRequest);
+  } catch (error) {
+    // the tokens are now expired
+    console.error("Refresh token error: ", error);
+    // delete tokens from user and logout the user
+    deleteLogin();
     return {
       success: false,
-      status: error.response.status,
-      error: error.response.data as TErrorResponse,
+      status: 401,
+      error: {
+        detail: "Refresh token expired!",
+        error: error,
+      } as TErrorResponse,
     };
   }
+}
+
+async function requestFailureCallback<TResponse>(
+  error: unknown,
+): Promise<TApiResponse<TResponse>> {
+  if (axios.isAxiosError(error) && error.response) {
+    // original request which will be used later deep to retry the request
+    const originalRequest = error.config as AxiosRequestConfig;
+
+    if (error.response.status !== 401 && !originalRequest) {
+      // other error by server
+      return {
+        success: false,
+        status: error.response.status,
+        error: error.response.data as TErrorResponse,
+      };
+    }
+
+    return await handle401Error<TResponse>(originalRequest);
+  }
+
+  // error is unknown and unexpected
   console.error("Error: ", error);
   return {
     success: false,
     status: 0,
-    error: { detail: "Error!" } as TErrorResponse,
+    error: { detail: "An unexpected error occurred!" } as TErrorResponse,
   };
 }
 
@@ -132,44 +205,6 @@ async function delete_<TRequest, TResponse>(
   //  .catch((error: AxiosError) => requestFailureCallback(url, error));
 }
 
-async function formDataPut<TResponse>(
-  url: string,
-  data?: FormData,
-  withCredentials: boolean = false,
-): Promise<TApiResponse<TResponse>> {
-  try {
-    const response = await formDataInstance.put<TResponse>(url, data, {
-      withCredentials,
-    });
-    return { success: true, data: response.data };
-  } catch (error) {
-    return requestFailureCallback(error);
-  }
-  //return formDataInstance
-  //  .put<TResponse>(url, data)
-  //  .then((response: AxiosResponse<TResponse>) => response.data)
-  //  .catch((error: AxiosError) => requestFailureCallback(url, error));
-}
-
-async function formDataPost<TResponse>(
-  url: string,
-  data?: FormData,
-  withCredentials: boolean = false,
-): Promise<TApiResponse<TResponse>> {
-  try {
-    const response = await formDataInstance.post<TResponse>(url, data, {
-      withCredentials,
-    });
-    return { success: true, data: response.data };
-  } catch (error) {
-    return requestFailureCallback(error);
-  }
-  //return formDataInstance
-  //  .post<TResponse>(url, data)
-  //  .then((response: AxiosResponse<TResponse>) => response.data)
-  //  .catch((error: AxiosError) => requestFailureCallback(url, error));
-}
-
-export { get, post, put, delete_, formDataPut, formDataPost };
+export { get, post, put, delete_ };
 
 export type { TApiResponse, TErrorResponse };
