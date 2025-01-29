@@ -1,10 +1,16 @@
-from rest_framework.generics import CreateAPIView, ListAPIView
+from rest_framework.generics import (
+    GenericAPIView,
+    ListAPIView,
+)
+from rest_framework.mixins import CreateModelMixin, DestroyModelMixin, UpdateModelMixin
+
+from .permissions import IsAdminUserRole
 
 from .models import CustomUser
 from .serializers import (
     CustomUserSerializer,
-    RegisterUserSerializer,
     LoginUserSerializer,
+    UserSerializer,
 )
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -12,17 +18,33 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.views import TokenRefreshView
-from rest_framework_simplejwt.exceptions import InvalidToken
+from rest_framework_simplejwt.exceptions import (
+    InvalidToken,
+    TokenError,
+)
 
 
-class UsersView(ListAPIView):
+class ListUsersView(ListAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserSerializer
     permission_classes = [IsAuthenticated]
 
 
-class UserRegistrationView(CreateAPIView):
-    serializer_class = RegisterUserSerializer
+class ManageUserView(
+    CreateModelMixin, UpdateModelMixin, DestroyModelMixin, GenericAPIView
+):
+    queryset = CustomUser.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated, IsAdminUserRole]
+
+    def put(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+    def patch(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
 
 
 class LoginView(APIView):
@@ -94,7 +116,7 @@ class CookieTokenRefreshView(TokenRefreshView):
 
         if not refresh_token:
             return Response(
-                {"error": "Refresh token not provided"},
+                {"error": "Refresh token is missing. Please log in again."},
                 status=status.HTTP_401_UNAUTHORIZED,
             )
 
@@ -103,7 +125,7 @@ class CookieTokenRefreshView(TokenRefreshView):
             access_token = str(refresh.access_token)
 
             response = Response(
-                {"message": "Access token token refreshed successfully"},
+                {"message": "Access token refreshed successfully"},
                 status=status.HTTP_200_OK,
             )
             response.set_cookie(
@@ -114,7 +136,14 @@ class CookieTokenRefreshView(TokenRefreshView):
                 samesite="None",
             )
             return response
-        except InvalidToken:
+
+        except (TokenError, InvalidToken) as e:
             return Response(
-                {"error": "Invalid token"}, status=status.HTTP_401_UNAUTHORIZED
+                {"error": "Invalid or expired refresh token. Please log in again."},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+        except Exception as e:
+            return Response(
+                {"error": f"An unexpected error occurred: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )

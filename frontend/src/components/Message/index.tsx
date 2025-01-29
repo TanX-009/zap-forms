@@ -1,18 +1,14 @@
 import React, { ReactNode } from "react";
+import styles from "./styles.module.css";
 
 interface TProps {
   children: ReactNode;
   status?: "error" | "success" | "neutral";
 }
 
-export default function Message({ children, status = "success" }: TProps) {
-  let color = "var(--primary)";
-  if (status === "error") color = "var(--error)";
-  else if (status === "neutral") color = "var(--onSurface)";
-  else if (status === "success") color = "var(--success)";
-
+export default function Message({ children, status = "neutral" }: TProps) {
   if (children && children !== "") {
-    return <p style={{ color: color }}>{children}</p>;
+    return <p className={styles[status]}>{children}</p>;
   }
   return <></>;
 }

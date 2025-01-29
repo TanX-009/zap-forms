@@ -35,13 +35,10 @@ export default function Navbar() {
         <Image src="/assets/icon.svg" alt="Logo" width={50} height={50} />
         ZapForms
       </div>
-      <p>{login ? login.username || "-" : ""}</p>
-      <Button
-        name="Logout"
-        type="button"
-        variant="hiClick"
-        onClick={onLogout}
-      />
+      <p>{login ? login.username || "-" : null}</p>
+      <Button type="button" variant="hiClick" onClick={onLogout}>
+        Logout
+      </Button>
     </div>
   );
 }

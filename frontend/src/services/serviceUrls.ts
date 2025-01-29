@@ -1,8 +1,13 @@
 const Services = {
+  refresh: "account/refresh/",
+
   login: "account/login/",
   logout: "account/logout/",
-  register: "account/register/",
-  refresh: "account/refresh/",
+
+  register: "account/",
+  delete: "account/",
+  update: "account/",
+
   users: "account/users/",
 } as const;
 

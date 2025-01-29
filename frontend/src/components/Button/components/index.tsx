@@ -1,21 +1,23 @@
-import React, { MouseEvent } from "react";
+import React, { MouseEvent, ReactNode } from "react";
 
 interface TProps {
-  name: string;
+  children: ReactNode;
+  className?: string;
   variant?: "loClick" | "hiClick";
   type?: "button" | "submit" | "reset";
   onClick?: (e: MouseEvent<HTMLButtonElement>) => void;
 }
 
 export default function Button({
-  name,
-  onClick = () => {},
+  children,
+  className = "",
   variant = "loClick",
   type = "button",
+  onClick = () => {},
 }: TProps) {
   return (
-    <button className={variant} type={type} onClick={onClick}>
-      {name}
+    <button className={`${variant} ${className}`} type={type} onClick={onClick}>
+      {children}
     </button>
   );
 }

@@ -39,10 +39,15 @@ export default function Login() {
       await setLogin(response.data.user);
       setMessage({ value: "Successfully logged in!", status: "success" });
     } else if (response.status === 401) {
-      console.warn("401", response);
+      console.error("401", response);
       setMessage({ value: "Invalid email or password!", status: "error" });
+    } else if (response.error.detail === "Network error!") {
+      setMessage({
+        value: "Network error! Please try again later.",
+        status: "error",
+      });
     } else {
-      console.warn("Unknown error!", response);
+      console.error("Unknown error!", response);
       setMessage({
         value: "Server error! Please try again later.",
         status: "error",
@@ -69,7 +74,9 @@ export default function Login() {
 
       <Message status={message.status}>{message.value}</Message>
 
-      <Button name="Login" type="submit" variant="hiClick" />
+      <Button type="submit" variant="hiClick">
+        Login
+      </Button>
     </form>
   );
 }

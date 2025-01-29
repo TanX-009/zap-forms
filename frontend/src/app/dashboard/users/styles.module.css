@@ -1,0 +1,17 @@
+.users {
+  max-width: var(--max-width);
+
+  margin: 0 auto;
+  padding: var(--sp-xs);
+}
+
+.users > .bar {
+  display: flex;
+  justify-content: space-between;
+}
+
+.users > .list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-xs);
+}

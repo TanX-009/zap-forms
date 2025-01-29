@@ -1,4 +1,6 @@
 .navbar {
+  max-width: var(--max-width);
+  margin: 0 auto;
   padding: var(--sp-5xs) var(--sp-2xs);
 
   display: flex;

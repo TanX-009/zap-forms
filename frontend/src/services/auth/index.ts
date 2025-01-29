@@ -1,5 +1,5 @@
 import { TUser } from "@/types/user";
-import { TApiResponse, post } from "../serviceConfig";
+import { TApiResponse, post, put } from "../serviceConfig";
 import Services from "../serviceUrls";
 
 interface TLoginRequest {
@@ -25,12 +25,6 @@ async function logout(): Promise<TApiResponse<TMessageResponse>> {
   return post(Services.logout, {}, true);
 }
 
-async function register<T>(
-  data: Record<string, unknown>,
-): Promise<TApiResponse<T>> {
-  return post(Services.register, data, true);
-}
-
 async function refresh(): Promise<TApiResponse<TMessageResponse>> {
   return post(Services.refresh, {}, true);
 }
@@ -38,7 +32,6 @@ async function refresh(): Promise<TApiResponse<TMessageResponse>> {
 const AuthService = {
   login: login,
   logout: logout,
-  register: register,
   refresh: refresh,
 };
 

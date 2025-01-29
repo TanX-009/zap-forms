@@ -1,0 +1,10 @@
+.user {
+  min-width: calc(var(--sp-xl) * 4);
+  width: fit-content;
+
+  padding: var(--sp-3xs);
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}

@@ -29,24 +29,6 @@ const instance = axios.create({
   },
 });
 
-//function requestFailureCallback<TResponse>(
-//  error: unknown,
-//): TApiResponse<TResponse> {
-//  if (axios.isAxiosError(error) && error.response) {
-//    return {
-//      success: false,
-//      status: error.response.status,
-//      error: error.response.data as TErrorResponse,
-//    };
-//  }
-//  console.error("Error: ", error);
-//  return {
-//    success: false,
-//    status: 0,
-//    error: { detail: "Error!" } as TErrorResponse,
-//  };
-//}
-
 async function handleTokenRefresh<TResponse>(
   originalRequest: AxiosRequestConfig,
 ): Promise<TApiResponse<TResponse>> {
@@ -86,8 +68,11 @@ async function handle401Error<TResponse>(
   } catch (error) {
     // the tokens are now expired
     console.error("Refresh token error: ", error);
+    // ------------------------------------------
     // delete tokens from user and logout the user
     deleteLogin();
+    // handler block when the tokens expire
+    // ------------------------------------------
     return {
       success: false,
       status: 401,
@@ -102,28 +87,55 @@ async function handle401Error<TResponse>(
 async function requestFailureCallback<TResponse>(
   error: unknown,
 ): Promise<TApiResponse<TResponse>> {
-  if (axios.isAxiosError(error) && error.response) {
-    // original request which will be used later deep to retry the request
-    const originalRequest = error.config as AxiosRequestConfig;
+  if (!axios.isAxiosError(error)) {
+    // error is unknown and unexpected
+    console.error("Error: ", error);
+    return {
+      success: false,
+      status: 0,
+      error: { detail: "An unexpected error occurred!" } as TErrorResponse,
+    };
+  }
 
-    if (error.response.status !== 401 && !originalRequest) {
-      // other error by server
-      return {
-        success: false,
-        status: error.response.status,
-        error: error.response.data as TErrorResponse,
-      };
-    }
+  if (error.code === "ERR_NETWORK") {
+    return {
+      success: false,
+      status: 0,
+      error: { detail: "Network error!" },
+    };
+  }
 
+  if (!error.response) {
+    return {
+      success: false,
+      status: 0,
+      error: { detail: "Unknown network error occured!" },
+    };
+  }
+
+  const originalRequest = error.config as AxiosRequestConfig;
+
+  if (!originalRequest) {
+    console.error("Original request config not found!");
+    return {
+      success: false,
+      status: error.response.status,
+      error: { detail: "An unexpected error occurred!" },
+    };
+  }
+
+  if (error.response.status === 401) {
     return await handle401Error<TResponse>(originalRequest);
   }
 
-  // error is unknown and unexpected
-  console.error("Error: ", error);
+  // other error by server
   return {
     success: false,
-    status: 0,
-    error: { detail: "An unexpected error occurred!" } as TErrorResponse,
+    status: error.response.status,
+    error: {
+      detail: "Request failed with status: " + error.response.status,
+      data: error.response.data,
+    },
   };
 }
 
@@ -141,10 +153,6 @@ async function get<TRequest, TResponse>(
   } catch (error) {
     return requestFailureCallback(error);
   }
-  //return instance
-  //  .get<TResponse>(url, { params })
-  //  .then((response: AxiosResponse<TResponse>) => response.data)
-  //  .catch((error: AxiosError) => requestFailureCallback(url, error));
 }
 
 async function put<TRequest, TResponse>(
@@ -160,10 +168,6 @@ async function put<TRequest, TResponse>(
   } catch (error) {
     return requestFailureCallback(error);
   }
-  //return instance
-  //  .put<TResponse>(url, data)
-  //  .then((response: AxiosResponse<TResponse>) => response.data)
-  //  .catch((error: AxiosError) => requestFailureCallback(url, error));
 }
 
 async function post<TRequest, TResponse>(
@@ -179,10 +183,6 @@ async function post<TRequest, TResponse>(
   } catch (error) {
     return requestFailureCallback(error);
   }
-  //return instance
-  //  .post<TResponse>(url, data)
-  //  .then((response: AxiosResponse<TResponse>) => response.data)
-  //  .catch((error: AxiosError) => requestFailureCallback(url, error));
 }
 
 async function delete_<TRequest, TResponse>(
@@ -199,10 +199,6 @@ async function delete_<TRequest, TResponse>(
   } catch (error) {
     return requestFailureCallback(error);
   }
-  //return instance
-  //  .delete<TResponse>(url, { params })
-  //  .then((response: AxiosResponse<TResponse>) => response.data)
-  //  .catch((error: AxiosError) => requestFailureCallback(url, error));
 }
 
 export { get, post, put, delete_ };

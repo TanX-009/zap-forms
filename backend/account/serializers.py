@@ -26,6 +26,23 @@ class RegisterUserSerializer(ModelSerializer):
         return user
 
 
+class UserSerializer(ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ("id", "email", "username", "role")
+
+    def create(self, validated_data):
+        user = CustomUser.objects.create_user(**validated_data)
+        return user
+
+    def update(self, instance, validated_data):
+        instance.email = validated_data.get("email", instance.email)
+        instance.username = validated_data.get("username", instance.username)
+        instance.role = validated_data.get("role", instance.role)
+        instance.save()
+        return instance
+
+
 class LoginUserSerializer(Serializer):
     email = serializers.EmailField(required=True)
     password = serializers.CharField(write_only=True)
