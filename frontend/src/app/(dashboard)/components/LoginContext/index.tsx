@@ -22,7 +22,7 @@ export default function LoginContextComponent({ children }: TProps) {
       const loginData = await getLogin();
       setLogin(loginData);
       if (!loginData) {
-        router.push("/auth/login");
+        router.push("/login");
       }
     })();
   }, [router]);

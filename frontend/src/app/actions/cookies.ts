@@ -33,5 +33,5 @@ export async function deleteLogin(redirectToLogin = true) {
   cookieStore.delete("access_token");
   cookieStore.delete("refresh_token");
 
-  if (redirectToLogin) redirect("/auth/login");
+  if (redirectToLogin) redirect("/login");
 }

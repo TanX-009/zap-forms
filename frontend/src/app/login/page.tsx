@@ -59,7 +59,7 @@ export default function Login() {
   useEffect(() => {
     (async function () {
       const login = await getLogin();
-      if (login) router.push("/dashboard");
+      if (login) router.push("/");
     })();
   }, [router, message]);
 

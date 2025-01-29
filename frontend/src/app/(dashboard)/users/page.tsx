@@ -54,7 +54,7 @@ export default function Users() {
   // redirections
   useEffect(() => {
     if (login?.role !== "admin") {
-      router.push("/dashboard");
+      router.push("/");
     }
   }, [login?.role, router]);
   if (login?.role !== "admin") {

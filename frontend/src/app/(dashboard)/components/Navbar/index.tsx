@@ -19,28 +19,28 @@ export default function Navbar() {
     await AuthService.logout();
     setLogin(null);
     await deleteLogin();
-    router.push("/auth/login");
+    router.push("/login");
   };
 
   useEffect(() => {
     (async function () {
       const userdata = await getLogin();
-      if (!userdata) router.push("/auth/login");
+      if (!userdata) router.push("/login");
       setLogin(userdata);
     })();
   }, [router]);
 
   return (
     <div className={styles.navbar}>
-      <Link href={"/dashboard"} className={styles.logo}>
+      <Link href={"/"} className={styles.logo}>
         <Image src="/assets/icon.svg" alt="Logo" width={50} height={50} />
         ZapForms
       </Link>
       <div className={styles.links}>
         <p>Hello, {login ? login.username || "-" : null}!</p>
 
-        {pathname !== "/dashboard/users" && login?.role === "admin" ? (
-          <Link className={"loClick"} href={"/dashboard/users"}>
+        {pathname !== "/users" && login?.role === "admin" ? (
+          <Link className={"loClick"} href={"/users"}>
             Users
           </Link>
         ) : null}
