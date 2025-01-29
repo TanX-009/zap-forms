@@ -1,17 +1,22 @@
 import Button from "@/components/Button/components";
 import Input from "@/components/Input";
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import styles from "./styles.module.css";
 import Select from "@/components/Select";
 import Message from "@/components/Message";
 import ManagementService from "@/services/management";
+import Form from "@/components/Form";
+
+interface TProps {
+  updateTick: () => void;
+}
 
 const roles = [
   { value: "admin", label: "Admin" },
   { value: "user", label: "User" },
 ];
 
-export default function AddUser() {
+export default function AddUser({ updateTick }: TProps) {
   const [message, setMessage] = React.useState<{
     value: string;
     status: "neutral" | "success" | "error";
@@ -44,9 +49,9 @@ export default function AddUser() {
       role,
     });
 
-    console.log(response);
     if (response.success) {
       setMessage({ value: "User added successfully!", status: "success" });
+      updateTick();
     } else if (response.status === 400) {
       const message =
         typeof response.error.data === "object"
@@ -64,7 +69,7 @@ export default function AddUser() {
   };
 
   return (
-    <form className={styles.addUser} onSubmit={onSubmit}>
+    <Form onSubmit={onSubmit}>
       <Input name="email" label={"Email"} type="email" required />
       <Input name="username" label={"Username"} type="text" required />
       <Select name="role" label={"Role"} options={roles} />
@@ -78,7 +83,9 @@ export default function AddUser() {
 
       <Message status={message.status}>{message.value}</Message>
 
-      <Button type="submit">Add</Button>
-    </form>
+      <Button className={styles.addButton} type="submit">
+        Add
+      </Button>
+    </Form>
   );
 }

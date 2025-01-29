@@ -36,6 +36,7 @@ class ManageUserView(
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated, IsAdminUserRole]
+    lookup_field = "pk"
 
     def put(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)

@@ -9,11 +9,38 @@ import styles from "./styles.module.css";
 import Button from "@/components/Button/components";
 import Modal from "@/components/Modal";
 import AddUser from "./components/AddUser";
+import { useRouter } from "next/navigation";
+import UpdateUser from "./components/UpdateUser";
 
 export default function Users() {
+  const router = useRouter();
+
   const [users, setUsers] = useState<TUser[]>([]);
   const [login] = useContext(LoginContext);
   const [isAddUserDialogVisible, setIsAddUserDialogVisible] = useState(false);
+
+  const [updateUser, setUpdateUser] = useState({
+    isVisible: false,
+    user: {} as TUser,
+  });
+  const [tick, updateTick] = useState(false);
+
+  const onAddTick = () => {
+    setIsAddUserDialogVisible(false);
+    updateTick(!tick);
+  };
+
+  const onUpdateTick = () => {
+    setUpdateUser({
+      ...updateUser,
+      isVisible: false,
+    });
+    updateTick(!tick);
+  };
+
+  const setIsUpdateUserDialogVisible = (isVisible: boolean) => {
+    setUpdateUser({ ...updateUser, isVisible });
+  };
 
   const onAddUser = () => {
     setIsAddUserDialogVisible(true);
@@ -22,7 +49,17 @@ export default function Users() {
   const { isLoading, fetchUsers } = useFetchUsers(setUsers);
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [tick]);
+
+  // redirections
+  useEffect(() => {
+    if (login?.role !== "admin") {
+      router.push("/dashboard");
+    }
+  }, [login?.role, router]);
+  if (login?.role !== "admin") {
+    return "Redirecting...";
+  }
 
   return (
     <div className={styles.users}>
@@ -31,7 +68,15 @@ export default function Users() {
         isVisible={isAddUserDialogVisible}
         setIsVisible={setIsAddUserDialogVisible}
       >
-        <AddUser />
+        <AddUser updateTick={onAddTick} />
+      </Modal>
+
+      <Modal
+        title="Update user"
+        isVisible={updateUser.isVisible}
+        setIsVisible={setIsUpdateUserDialogVisible}
+      >
+        <UpdateUser user={updateUser.user} updateTick={onUpdateTick} />
       </Modal>
 
       <div className={styles.bar}>
@@ -46,7 +91,7 @@ export default function Users() {
                 return user.id !== login?.id;
               })
               .map((user, index) => (
-                <User key={index} {...user} isAdmin={login?.role === "admin"} />
+                <User key={index} user={user} setUpdateUser={setUpdateUser} />
               ))}
       </div>
     </div>

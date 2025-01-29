@@ -16,4 +16,13 @@
   display: flex;
   align-items: flex-end;
   justify-content: center;
+
+  text-decoration: none;
+  color: inherit;
+}
+
+.links {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2xs);
 }

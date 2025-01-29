@@ -1,0 +1,18 @@
+.buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-3xs);
+}
+
+.delete {
+  color: var(--error);
+  background-color: var(--errorContainer);
+}
+
+.isDeleting {
+  display: flex;
+  flex-direction: column;
+
+  gap: var(--sp-3xs);
+}

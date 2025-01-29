@@ -7,15 +7,16 @@ import Image from "next/image";
 import React, { useEffect } from "react";
 import styles from "./styles.module.css";
 import { TUser } from "@/types/user";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function Navbar() {
   const router = useRouter();
+  const pathname = usePathname();
   const [login, setLogin] = React.useState<TUser | null>(null);
 
   const onLogout = async () => {
-    const response = await AuthService.logout();
-    console.log(response);
+    await AuthService.logout();
     setLogin(null);
     await deleteLogin();
     router.push("/auth/login");
@@ -31,14 +32,23 @@ export default function Navbar() {
 
   return (
     <div className={styles.navbar}>
-      <div className={styles.logo}>
+      <Link href={"/dashboard"} className={styles.logo}>
         <Image src="/assets/icon.svg" alt="Logo" width={50} height={50} />
         ZapForms
+      </Link>
+      <div className={styles.links}>
+        <p>Hello, {login ? login.username || "-" : null}!</p>
+
+        {pathname !== "/dashboard/users" && login?.role === "admin" ? (
+          <Link className={"loClick"} href={"/dashboard/users"}>
+            Users
+          </Link>
+        ) : null}
+
+        <Button type="button" variant="hiClick" onClick={onLogout}>
+          Logout
+        </Button>
       </div>
-      <p>{login ? login.username || "-" : null}</p>
-      <Button type="button" variant="hiClick" onClick={onLogout}>
-        Logout
-      </Button>
     </div>
   );
 }

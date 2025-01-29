@@ -141,13 +141,12 @@ async function requestFailureCallback<TResponse>(
 
 async function get<TRequest, TResponse>(
   url: string,
-  params?: TRequest,
-  withCredentials: boolean = false,
+  options?: { params?: TRequest; withCredentials?: boolean },
 ): Promise<TApiResponse<TResponse>> {
   try {
     const response = await instance.get<TResponse>(url, {
-      params,
-      withCredentials,
+      params: options?.params ?? {},
+      withCredentials: options?.withCredentials ?? true,
     });
     return { success: true, data: response.data };
   } catch (error) {
@@ -155,14 +154,18 @@ async function get<TRequest, TResponse>(
   }
 }
 
-async function put<TRequest, TResponse>(
+async function put<TRequest, TRequestParams, TResponse>(
   url: string,
   data: TRequest,
-  withCredentials: boolean = false,
+  options?: {
+    params?: TRequestParams;
+    withCredentials?: boolean;
+  },
 ): Promise<TApiResponse<TResponse>> {
   try {
     const response = await instance.put<TResponse>(url, data, {
-      withCredentials,
+      params: options?.params ?? {},
+      withCredentials: options?.withCredentials ?? true,
     });
     return { success: true, data: response.data };
   } catch (error) {
@@ -170,14 +173,37 @@ async function put<TRequest, TResponse>(
   }
 }
 
-async function post<TRequest, TResponse>(
+async function patch<TRequest, TRequestParams, TResponse>(
   url: string,
   data: TRequest,
-  withCredentials: boolean = false,
+  options?: {
+    params?: TRequestParams;
+    withCredentials?: boolean;
+  },
+): Promise<TApiResponse<TResponse>> {
+  try {
+    const response = await instance.patch<TResponse>(url, data, {
+      params: options?.params ?? {},
+      withCredentials: options?.withCredentials ?? true,
+    });
+    return { success: true, data: response.data };
+  } catch (error) {
+    return requestFailureCallback(error);
+  }
+}
+
+async function post<TRequest, TRequestParams, TResponse>(
+  url: string,
+  data: TRequest,
+  options?: {
+    params?: TRequestParams;
+    withCredentials?: boolean;
+  },
 ): Promise<TApiResponse<TResponse>> {
   try {
     const response = await instance.post<TResponse>(url, data, {
-      withCredentials,
+      params: options?.params ?? {},
+      withCredentials: options?.withCredentials ?? true,
     });
     return { success: true, data: response.data };
   } catch (error) {
@@ -187,13 +213,12 @@ async function post<TRequest, TResponse>(
 
 async function delete_<TRequest, TResponse>(
   url: string,
-  params?: TRequest,
-  withCredentials: boolean = false,
+  options?: { params?: TRequest; withCredentials?: boolean },
 ): Promise<TApiResponse<TResponse>> {
   try {
     const response = await instance.delete<TResponse>(url, {
-      params,
-      withCredentials,
+      params: options?.params ?? {},
+      withCredentials: options?.withCredentials ?? true,
     });
     return { success: true, data: response.data };
   } catch (error) {
@@ -201,6 +226,6 @@ async function delete_<TRequest, TResponse>(
   }
 }
 
-export { get, post, put, delete_ };
+export { get, put, patch, post, delete_ };
 
 export type { TApiResponse, TErrorResponse };

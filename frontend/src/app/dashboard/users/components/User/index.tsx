@@ -1,29 +1,34 @@
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import styles from "./styles.module.css";
 import Button from "@/components/Button/components";
+import { TUser } from "@/types/user";
 
 interface TProps {
-  username: string;
-  email: string;
-  role: string;
-  isAdmin: boolean;
+  user: TUser;
+  setUpdateUser: Dispatch<SetStateAction<{ isVisible: boolean; user: TUser }>>;
 }
 
-export default function User({ username, email, role, isAdmin }: TProps) {
+export default function User({ user, setUpdateUser }: TProps) {
   return (
     <div className={"panel " + styles.user}>
       <div>
         <p>
-          <b>Username</b>: {username || "-"}
+          <b>Username</b>: {user.username || "-"}
         </p>
         <p>
-          <b>Email</b>: {email}
+          <b>Email</b>: {user.email}
         </p>
         <p>
-          <b>Role</b>: {role}
+          <b>Role</b>: {user.role}
         </p>
       </div>
-      {isAdmin ? <Button>Edit</Button> : null}
+      <Button
+        onClick={() => {
+          setUpdateUser((val) => ({ ...val, user: user, isVisible: true }));
+        }}
+      >
+        Edit
+      </Button>
     </div>
   );
 }

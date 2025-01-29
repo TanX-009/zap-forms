@@ -5,6 +5,7 @@ interface TProps {
   name: string;
   label?: string | null;
   type?: "text" | "email" | "password";
+  defaultValue?: string;
   required?: boolean;
 }
 
@@ -12,6 +13,7 @@ export default function Input({
   name,
   label = null,
   type = "text",
+  defaultValue = "",
   required = false,
 }: TProps) {
   return (
@@ -22,6 +24,7 @@ export default function Input({
         type={type}
         id={name}
         name={name}
+        defaultValue={defaultValue}
         required={required}
       />
     </div>
