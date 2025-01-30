@@ -3,8 +3,9 @@ from rest_framework.generics import (
     ListAPIView,
 )
 from rest_framework.mixins import CreateModelMixin, DestroyModelMixin, UpdateModelMixin
+from rest_framework.viewsets import ModelViewSet
 
-from .permissions import IsAdminUserRole
+from zap_forms.permissions import IsAdminUserRole
 
 from .models import CustomUser
 from .serializers import (
@@ -30,22 +31,11 @@ class ListUsersView(ListAPIView):
     permission_classes = [IsAuthenticated]
 
 
-class ManageUserView(
-    CreateModelMixin, UpdateModelMixin, DestroyModelMixin, GenericAPIView
-):
+class ManageUserViewSet(ModelViewSet):
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated, IsAdminUserRole]
     lookup_field = "pk"
-
-    def put(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
-
-    def patch(self, request, *args, **kwargs):
-        return self.update(request, *args, **kwargs)
-
-    def delete(self, request, *args, **kwargs):
-        return self.destroy(request, *args, **kwargs)
 
 
 class LoginView(APIView):

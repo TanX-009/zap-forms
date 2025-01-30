@@ -1,17 +1,21 @@
-from django.urls import path
+from django.urls import include, path
+from rest_framework.routers import DefaultRouter
 from .views import (
     ListUsersView,
     LoginView,
     LogoutView,
     CookieTokenRefreshView,
-    ManageUserView,
+    ManageUserViewSet,
 )
 
+router = DefaultRouter()
+router.register(r"", ManageUserViewSet)
+
 urlpatterns = [
-    path("", ManageUserView.as_view(), name="users"),
-    path("<int:pk>/", ManageUserView.as_view(), name="users-manage"),
     path("login/", LoginView.as_view(), name="user-login"),
     path("logout/", LogoutView.as_view(), name="user-logout"),
     path("refresh/", CookieTokenRefreshView.as_view(), name="token-refresh"),
     path("users/", ListUsersView.as_view(), name="users"),
 ]
+
+urlpatterns += router.urls

@@ -11,9 +11,7 @@ class Command(BaseCommand):
         django_admin_email = os.getenv(
             "DEFAULT_DJANGO_ADMIN_USER_EMAIL", "admin@email.com"
         )
-        django_admin_username = os.getenv(
-            "DEFAULT_DJANGO_ADMIN_USER_USERNAME", "username"
-        )
+        django_admin_username = os.getenv("DEFAULT_DJANGO_ADMIN_USER_USERNAME", "admin")
         django_admin_password = os.getenv("DEFAULT_DJANGO_ADMIN_USER_PASSWORD", "admin")
 
         if not CustomUser.objects.filter(email=django_admin_email).exists():
