@@ -39,6 +39,7 @@
 
 .dialog > h3 {
   margin-bottom: var(--sp-xs);
+  margin-right: var(--sp-m);
 
   font-size: var(--h5);
 }

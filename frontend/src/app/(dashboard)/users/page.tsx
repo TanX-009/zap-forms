@@ -81,7 +81,9 @@ export default function Users() {
 
       <div className={styles.bar}>
         <h2>Users</h2>
-        <Button onClick={onAddUser}>Add user</Button>
+        <Button variant="hiClick" onClick={onAddUser}>
+          Add user
+        </Button>
       </div>
       <div className={styles.list}>
         {isLoading

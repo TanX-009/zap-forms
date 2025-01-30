@@ -136,7 +136,9 @@ export default function UpdateUser({ user, updateTick }: TProps) {
       <Message status={message.status}>{message.value}</Message>
 
       <div className={styles.buttons}>
-        <Button type="submit">Update</Button>
+        <Button variant="hiClick" type="submit">
+          Update
+        </Button>
         <Button
           className={styles.delete}
           type="button"

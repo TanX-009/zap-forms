@@ -83,7 +83,7 @@ export default function AddUser({ updateTick }: TProps) {
 
       <Message status={message.status}>{message.value}</Message>
 
-      <Button className={styles.addButton} type="submit">
+      <Button variant="hiClick" className={styles.addButton} type="submit">
         Add
       </Button>
     </Form>
