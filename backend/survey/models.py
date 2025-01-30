@@ -30,7 +30,6 @@ class Question(models.Model):
         ("text", "Text"),
         ("number", "Number"),
         ("multiple-choice", "Multiple Choice"),
-        ("scale", "Scale"),
     ]
 
     survey = models.ForeignKey(

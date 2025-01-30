@@ -1,7 +1,7 @@
 import React from "react";
 import styles from "./styles.module.css";
 import { MdClose } from "react-icons/md";
-import Button from "../Button/components";
+import Button from "../Button";
 
 interface TProps {
   children: React.ReactNode;

@@ -6,7 +6,7 @@ import React, { useContext, useEffect, useState } from "react";
 import User from "./components/User";
 import { LoginContext } from "../components/LoginContext";
 import styles from "./styles.module.css";
-import Button from "@/components/Button/components";
+import Button from "@/components/Button";
 import Modal from "@/components/Modal";
 import AddUser from "./components/AddUser";
 import { useRouter } from "next/navigation";

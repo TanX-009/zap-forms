@@ -1,4 +1,4 @@
-import Button from "@/components/Button/components";
+import Button from "@/components/Button";
 import Input from "@/components/Input";
 import React, { useState } from "react";
 import styles from "./styles.module.css";
@@ -30,7 +30,7 @@ export default function UpdateUser({ user, updateTick }: TProps) {
 
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setMessage({ value: "", status: "neutral" });
+    setMessage({ value: "Updating...", status: "neutral" });
 
     const form = new FormData(event.currentTarget);
 
@@ -74,6 +74,7 @@ export default function UpdateUser({ user, updateTick }: TProps) {
   };
 
   const onDelete = async () => {
+    setMessage({ value: "Deleting...", status: "neutral" });
     const response = await ManagementService.deleteUser(user.id);
 
     if (response.success) {
@@ -131,6 +132,7 @@ export default function UpdateUser({ user, updateTick }: TProps) {
         label={"Role"}
         options={roles}
         defaultValue={user.role}
+        required
       />
 
       <Message status={message.status}>{message.value}</Message>

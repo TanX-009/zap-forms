@@ -2,14 +2,14 @@
 
 import SurveyService from "@/services/survey";
 import { TSurvey } from "@/types/survey";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useCallback, useState } from "react";
 
 export default function useFetchSurveys(
   setter: Dispatch<SetStateAction<TSurvey[]>>,
 ) {
   const [isLoading, setIsLoading] = useState(false);
 
-  const fetchSurveys = async () => {
+  const fetchSurveys = useCallback(async () => {
     try {
       setIsLoading(true);
       const response = await SurveyService.getSurveys();
@@ -19,7 +19,7 @@ export default function useFetchSurveys(
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [setter]);
 
   return { isLoading, fetchSurveys };
 }

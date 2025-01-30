@@ -1,7 +1,7 @@
 import { TSurvey } from "@/types/survey";
 import React from "react";
 import styles from "./styles.module.css";
-import Button from "@/components/Button/components";
+import Button from "@/components/Button";
 import isoToNormal from "@/systems/isoToNormal";
 import { useRouter } from "next/navigation";
 

@@ -1,4 +1,4 @@
-import Button from "@/components/Button/components";
+import Button from "@/components/Button";
 import Input from "@/components/Input";
 import React, { useState } from "react";
 import Message from "@/components/Message";
@@ -18,7 +18,7 @@ export default function AddSurvey() {
 
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setMessage({ value: "", status: "neutral" });
+    setMessage({ value: "Adding...", status: "neutral" });
 
     const form = new FormData(event.currentTarget);
 

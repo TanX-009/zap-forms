@@ -1,0 +1,14 @@
+.tabs {
+  padding: var(--sp-5xs);
+
+  text-wrap: nowrap;
+
+  display: flex;
+  align-items: center;
+  gap: var(--sp-5xs);
+
+  overflow-x: auto;
+}
+.tabs::-webkit-scrollbar {
+  height: var(--sp-6xs);
+}

@@ -14,7 +14,10 @@ const Services = {
   deleteSurvey: "survey/surveys/",
   getSurveys: "survey/surveys/",
   getSurvey: "survey/surveys/",
-  getSurveyQuestions: "survey/surveys/$$survey_id$$/questions",
+
+  getSurveyQuestions: "survey/surveys/$$survey_id$$/questions/",
+
+  addQuestion: "survey/questions/",
 } as const;
 
 export default Services;

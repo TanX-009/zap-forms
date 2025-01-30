@@ -7,6 +7,7 @@ interface TProps {
   type?: "text" | "email" | "password";
   defaultValue?: string;
   required?: boolean;
+  className?: string;
 }
 
 export default function Input({
@@ -15,12 +16,13 @@ export default function Input({
   type = "text",
   defaultValue = "",
   required = false,
+  className = "",
 }: TProps) {
   return (
     <div className={styles.input}>
       {label ? <label htmlFor={name}>{label}</label> : null}
       <input
-        className={"input"}
+        className={"input " + className}
         type={type}
         id={name}
         name={name}

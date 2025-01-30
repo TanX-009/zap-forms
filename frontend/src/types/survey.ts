@@ -13,6 +13,7 @@ interface TQuestion {
   text: string;
   type: string;
   required: boolean;
+  options: { id: number; question: TQuestion["id"]; text: string }[] | null;
 }
 
 export type { TSurvey, TQuestion };

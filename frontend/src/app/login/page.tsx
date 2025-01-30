@@ -3,7 +3,7 @@
 import Input from "@/components/Input";
 import React, { useEffect, useState } from "react";
 import styles from "./styles.module.css";
-import Button from "@/components/Button/components";
+import Button from "@/components/Button";
 import Image from "next/image";
 import AuthService from "@/services/auth";
 import Message from "@/components/Message";

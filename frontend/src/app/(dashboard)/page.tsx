@@ -3,7 +3,7 @@
 import Modal from "@/components/Modal";
 import styles from "./styles.module.css";
 import { useEffect, useState } from "react";
-import Button from "@/components/Button/components";
+import Button from "@/components/Button";
 import AddSurvey from "./components/AddSurvey";
 import useFetchSurveys from "@/hooks/fetchSurveys";
 import { TSurvey } from "@/types/survey";
@@ -13,16 +13,16 @@ export default function Home() {
   const [surveys, setSurveys] = useState<TSurvey[]>([]);
 
   const [isAddSurveyVisible, setIsAddSurveyVisible] = useState(false);
-  const [tick, updateTick] = useState(false);
-  const onAdd = () => {
-    updateTick(!tick);
-    setIsAddSurveyVisible(false);
-  };
+  //const [tick, updateTick] = useState(false);
+  //const onAdd = () => {
+  //  updateTick(!tick);
+  //  setIsAddSurveyVisible(false);
+  //};
 
   const { isLoading, fetchSurveys } = useFetchSurveys(setSurveys);
   useEffect(() => {
     fetchSurveys();
-  }, [tick]);
+  }, [fetchSurveys]);
 
   return (
     <div className={styles.page}>
@@ -31,11 +31,13 @@ export default function Home() {
         isVisible={isAddSurveyVisible}
         setIsVisible={setIsAddSurveyVisible}
       >
-        <AddSurvey updateTick={onAdd} />
+        <AddSurvey />
       </Modal>
       <div className={styles.bar}>
         <h3>Add survey</h3>
-        <Button onClick={() => setIsAddSurveyVisible(true)}>Add</Button>
+        <Button variant="hiClick" onClick={() => setIsAddSurveyVisible(true)}>
+          Add
+        </Button>
       </div>
       <div className={styles.surveys}>
         {!isLoading && surveys.length === 0 ? (

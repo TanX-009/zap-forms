@@ -1,4 +1,4 @@
-import Button from "@/components/Button/components";
+import Button from "@/components/Button";
 import Input from "@/components/Input";
 import React, { Dispatch, SetStateAction } from "react";
 import styles from "./styles.module.css";
@@ -27,7 +27,7 @@ export default function AddUser({ updateTick }: TProps) {
 
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setMessage({ value: "", status: "neutral" });
+    setMessage({ value: "Adding...", status: "neutral" });
 
     const form = new FormData(event.currentTarget);
 
@@ -72,7 +72,7 @@ export default function AddUser({ updateTick }: TProps) {
     <Form onSubmit={onSubmit}>
       <Input name="email" label={"Email"} type="email" required />
       <Input name="username" label={"Username"} type="text" required />
-      <Select name="role" label={"Role"} options={roles} />
+      <Select name="role" label={"Role"} options={roles} required />
       <Input name="password" label={"Password"} type="password" required />
       <Input
         name="confirmPassword"

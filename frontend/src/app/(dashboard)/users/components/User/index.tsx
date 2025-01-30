@@ -1,6 +1,6 @@
 import React, { Dispatch, SetStateAction } from "react";
 import styles from "./styles.module.css";
-import Button from "@/components/Button/components";
+import Button from "@/components/Button";
 import { TUser } from "@/types/user";
 
 interface TProps {

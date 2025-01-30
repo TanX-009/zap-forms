@@ -2,14 +2,14 @@
 
 import ManagementService from "@/services/management";
 import { TUser } from "@/types/user";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useCallback, useState } from "react";
 
 export default function useFetchUsers(
   setter: Dispatch<SetStateAction<TUser[]>>,
 ) {
   const [isLoading, setIsLoading] = useState(false);
 
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     try {
       setIsLoading(true);
       const response = await ManagementService.getUsers();
@@ -19,7 +19,7 @@ export default function useFetchUsers(
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [setter]);
 
   return { isLoading, fetchUsers };
 }

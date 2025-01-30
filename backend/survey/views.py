@@ -12,7 +12,7 @@ from rest_framework.decorators import api_view, permission_classes
 from django.db import transaction
 from rest_framework.views import APIView
 
-from .models import Survey, Question
+from .models import QuestionOption, Survey, Question
 from .serializers import (
     SurveySerializer,
     QuestionSerializer,
@@ -69,6 +69,24 @@ class QuestionViewSet(
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
     permission_classes = [IsAuthenticated]
+
+    def create(self, request, *args, **kwargs):
+        """Handles creating a question and its options if it's a multiple-choice question."""
+        with transaction.atomic():
+            options = request.data.pop("options", None)  # Extract options if present
+            serializer = QuestionSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            question = serializer.save()
+
+            # Handle multiple-choice question options
+            if question.type == "multiple-choice" and options:
+                option_instances = [
+                    QuestionOption(question=question, text=option_text)
+                    for option_text in options
+                ]
+                QuestionOption.objects.bulk_create(option_instances)
+
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 # # Add question to a survey

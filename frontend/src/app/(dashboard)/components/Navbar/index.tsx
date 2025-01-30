@@ -1,7 +1,7 @@
 "use client";
 
 import { deleteLogin, getLogin } from "@/app/actions/cookies";
-import Button from "@/components/Button/components";
+import Button from "@/components/Button";
 import AuthService from "@/services/auth";
 import Image from "next/image";
 import React, { useEffect } from "react";

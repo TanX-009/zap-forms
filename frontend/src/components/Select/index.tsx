@@ -5,6 +5,7 @@ interface TPropsBase {
   name: string;
   options: { value: string; label: string }[];
   label?: string | null;
+  required?: boolean;
 }
 
 type TProps =
@@ -17,9 +18,10 @@ export default function Select({
   selected = null,
   defaultValue = null,
   label = null,
+  required = false,
 }: TProps) {
   let _defaultValue = "";
-  if (selected && !defaultValue) {
+  if ((selected || selected === 0) && !defaultValue) {
     _defaultValue = options[selected].value;
   } else if (defaultValue && !selected) {
     _defaultValue = defaultValue;
@@ -34,14 +36,15 @@ export default function Select({
         name={name}
         id={name}
         defaultValue={_defaultValue}
-        required={true}
+        B
+        required={required}
       >
         <option value="" disabled>
           Select {name}...
         </option>
         {options.map((option, index) => (
           <option key={index} value={option.value}>
-            {option.value}
+            {option.label}
           </option>
         ))}
       </select>
