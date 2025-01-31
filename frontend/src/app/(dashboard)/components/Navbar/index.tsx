@@ -3,12 +3,12 @@
 import { deleteLogin, getLogin } from "@/app/actions/cookies";
 import Button from "@/components/Button";
 import AuthService from "@/services/auth";
-import Image from "next/image";
 import React, { useEffect } from "react";
 import styles from "./styles.module.css";
 import { TUser } from "@/types/user";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
+import Logo from "@/components/Logo";
 
 export default function Navbar() {
   const router = useRouter();
@@ -33,14 +33,7 @@ export default function Navbar() {
   return (
     <div className={styles.navbar}>
       <Link href={"/"} className={styles.logo}>
-        <Image
-          src="/assets/icon.svg"
-          alt="Logo"
-          width={60}
-          height={60}
-          priority
-        />
-        ZapForms
+        <Logo multiplier={36} />
       </Link>
       <div className={styles.links}>
         <p>Hello, {login ? login.username || "-" : null}!</p>

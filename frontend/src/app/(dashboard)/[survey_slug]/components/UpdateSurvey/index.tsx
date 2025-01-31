@@ -10,9 +10,10 @@ import { TSurvey } from "@/types/survey";
 
 interface TProps {
   survey: TSurvey;
+  onSurveyUpdate: () => void;
 }
 
-export default function UpdateSurvey({ survey }: TProps) {
+export default function UpdateSurvey({ survey, onSurveyUpdate }: TProps) {
   const [message, setMessage] = useState<{
     value: string;
     status: "neutral" | "success" | "error";
@@ -27,8 +28,8 @@ export default function UpdateSurvey({ survey }: TProps) {
 
     const form = new FormData(event.currentTarget);
 
-    const name = form.get("text") as string;
-    const description = form.get("required") as string;
+    const name = form.get("name") as string;
+    const description = form.get("description") as string;
     const online = form.get("online") as string;
 
     const onlineBool = online === "online";
@@ -50,13 +51,14 @@ export default function UpdateSurvey({ survey }: TProps) {
       },
       survey.slug,
     );
+    console.log(response);
 
     if (response.success) {
       setMessage({
         value: "Question updated successfully!",
         status: "success",
       });
-      //updateTick();
+      onSurveyUpdate();
     } else if (response.status === 400) {
       const message =
         typeof response.error.data === "object"
@@ -92,7 +94,7 @@ export default function UpdateSurvey({ survey }: TProps) {
       <Select
         name="online"
         label="Online"
-        defaultValue={survey.online ? "Online" : "Offline"}
+        defaultValue={survey.online ? "online" : "offline"}
         required
         options={[
           { value: "online", label: "Online" },

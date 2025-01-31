@@ -43,6 +43,11 @@ export default function EditSurvey() {
     updateQuestionTick(!questionTick);
   };
 
+  const onSurveyUpdate = () => {
+    setIsSurveyUpdating(false);
+    updateSurveyTick(!surveyTick);
+  };
+
   const setIsQuestionUpdating = (isVisible: boolean) => {
     setUpdateQuestion({ ...updateQuestion, isVisible });
   };
@@ -68,7 +73,7 @@ export default function EditSurvey() {
         isVisible={isSurveyUpdating}
         setIsVisible={setIsSurveyUpdating}
       >
-        <UpdateSurvey survey={survey} />
+        <UpdateSurvey survey={survey} onSurveyUpdate={onSurveyUpdate} />
       </Modal>
 
       <Modal
@@ -109,7 +114,7 @@ export default function EditSurvey() {
             </p>
           </div>
           <div className={styles.buttons}>
-            <Button>Edit</Button>
+            <Button onClick={() => setIsSurveyUpdating(true)}>Edit</Button>
             <Button
               className={styles.delete}
               onClick={() => setIsDeleting(true)}

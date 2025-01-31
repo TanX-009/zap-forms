@@ -13,13 +13,12 @@ class Survey(models.Model):
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
-
-        # Ensure uniqueness of the slug
-        original_slug = self.slug
-        counter = 1
-        while Survey.objects.filter(slug=self.slug).exists():
-            self.slug = f"{original_slug}-{counter}"
-            counter += 1
+            # Ensure uniqueness of the slug
+            original_slug = self.slug
+            counter = 1
+            while Survey.objects.filter(slug=self.slug).exists():
+                self.slug = f"{original_slug}-{counter}"
+                counter += 1
 
         super().save(*args, **kwargs)
 
@@ -51,7 +50,6 @@ class Question(models.Model):
                 .order_by("-sequence")
                 .first()
             )
-            print(last_question)
             self.sequence = (last_question.sequence + 1) if last_question else 1
         super().save(*args, **kwargs)
 
