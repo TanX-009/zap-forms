@@ -46,8 +46,8 @@ export default function AddQuestion({ survey, updateTick }: TProps) {
         break;
       case "Multiple choice":
         type = "multiple-choice";
-        const options_str = form.get("options") as string;
-        options = options_str ? options_str.split(",") : [];
+        const optionsStr = form.get("options") as string;
+        options = optionsStr ? optionsStr.split(",") : [];
         options = options.map((option) => option.trim());
         // check if there are at least 2 options
         if (options.length < 2) {

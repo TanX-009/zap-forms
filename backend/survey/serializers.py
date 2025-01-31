@@ -19,7 +19,7 @@ class QuestionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Question
-        fields = ["id", "text", "type", "required", "sequence", "options"]
+        fields = ["id", "text", "type", "required", "sequence", "survey", "options"]
 
     def get_options(self, obj):
         if obj.type == "multiple-choice":

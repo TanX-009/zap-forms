@@ -12,12 +12,15 @@ const Services = {
 
   addSurvey: "survey/surveys/",
   deleteSurvey: "survey/surveys/",
+  updateSurvey: "survey/surveys/",
   getSurveys: "survey/surveys/",
   getSurvey: "survey/surveys/",
 
   getSurveyQuestions: "survey/surveys/$$survey_id$$/questions/",
 
   addQuestion: "survey/questions/",
+  deleteQuestion: "survey/questions/",
+  updateQuestion: "survey/questions/",
 } as const;
 
 export default Services;

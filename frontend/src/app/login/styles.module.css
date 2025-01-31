@@ -1,7 +1,7 @@
 .login {
   height: 100%;
   width: 100%;
-  max-width: calc(var(--max-width) / 4);
+  max-width: calc(var(--max-width) / 2.6);
 
   padding: var(--sp-2xs);
   margin: auto;

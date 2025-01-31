@@ -3,7 +3,6 @@
 import useFetchUsers from "@/hooks/fetchUsers";
 import { TUser } from "@/types/user";
 import React, { useContext, useEffect, useState } from "react";
-import User from "./components/User";
 import { LoginContext } from "../components/LoginContext";
 import styles from "./styles.module.css";
 import Button from "@/components/Button";
@@ -11,6 +10,7 @@ import Modal from "@/components/Modal";
 import AddUser from "./components/AddUser";
 import { useRouter } from "next/navigation";
 import UpdateUser from "./components/UpdateUser";
+import UserCard from "./components/UserCard";
 
 export default function Users() {
   const router = useRouter();
@@ -49,7 +49,7 @@ export default function Users() {
   const { isLoading, fetchUsers } = useFetchUsers(setUsers);
   useEffect(() => {
     fetchUsers();
-  }, [tick]);
+  }, [tick, fetchUsers]);
 
   // redirections
   useEffect(() => {
@@ -93,7 +93,11 @@ export default function Users() {
                 return user.id !== login?.id;
               })
               .map((user, index) => (
-                <User key={index} user={user} setUpdateUser={setUpdateUser} />
+                <UserCard
+                  key={index}
+                  user={user}
+                  setUpdateUser={setUpdateUser}
+                />
               ))}
       </div>
     </div>

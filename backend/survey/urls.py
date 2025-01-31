@@ -3,7 +3,6 @@ from rest_framework.routers import DefaultRouter
 from .views import (
     SurveyViewSet,
     QuestionViewSet,
-    set_survey_online_status,
     SurveyQuestionsListView,
     SubmitSurveyResponseView,
 )
@@ -15,11 +14,6 @@ router.register(r"questions", QuestionViewSet, basename="question")
 
 urlpatterns = [
     path("", include(router.urls)),
-    path(
-        "surveys/<int:survey_id>/online/",
-        set_survey_online_status,
-        name="set_survey_online_status",
-    ),
     path(
         "surveys/<int:survey_id>/questions/",
         SurveyQuestionsListView.as_view(),

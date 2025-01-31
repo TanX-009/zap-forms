@@ -1,5 +1,5 @@
 import { TUser } from "@/types/user";
-import { delete_, get, patch, put, TApiResponse } from "../serviceConfig";
+import { delete_, get, patch, post, TApiResponse } from "../serviceConfig";
 import Services from "../serviceUrls";
 
 interface TRegisterRequest {
@@ -23,7 +23,7 @@ async function getUsers(): Promise<TApiResponse<TUser[]>> {
 async function registerUser(
   data: TRegisterRequest,
 ): Promise<TApiResponse<null>> {
-  return put(Services.register, data);
+  return post(Services.register, data);
 }
 
 async function updateUser(data: TUpdateRequest): Promise<TApiResponse<null>> {

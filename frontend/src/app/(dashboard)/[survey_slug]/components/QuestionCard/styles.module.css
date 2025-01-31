@@ -21,3 +21,13 @@
   gap: var(--sp-3xs);
   flex-wrap: wrap;
 }
+
+.buttons {
+  display: flex;
+  gap: var(--sp-3xs);
+}
+
+.delete {
+  background-color: var(--errorContainer);
+  color: var(--error);
+}

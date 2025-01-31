@@ -1,0 +1,11 @@
+[project]
+authors = [
+  {name = "Tanmay Muley", email = "tanmaymuley009@gmail.com"},
+]
+
+[tool.black]
+# line-length = 78
+
+
+[tool.pyright]
+typeCheckingMode = "off"

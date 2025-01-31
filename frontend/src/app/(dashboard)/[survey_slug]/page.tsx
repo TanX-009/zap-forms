@@ -10,6 +10,8 @@ import Modal from "@/components/Modal";
 import DeleteSurvey from "./components/DeleteSurvey";
 import AddQuestion from "./components/AddQuestion";
 import QuestionCard from "./components/QuestionCard";
+import UpdateQuestion from "./components/UpdateQuestion";
+import UpdateSurvey from "./components/UpdateSurvey";
 
 export default function EditSurvey() {
   const params = useParams();
@@ -19,28 +21,56 @@ export default function EditSurvey() {
 
   const [isAdding, setIsAdding] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [tick, updateTick] = useState(false);
+  const [updateQuestion, setUpdateQuestion] = useState({
+    isVisible: false,
+    question: {} as TQuestion,
+  });
+  const [isSurveyUpdating, setIsSurveyUpdating] = useState(false);
+  const [questionTick, updateQuestionTick] = useState(false);
+  const [surveyTick, updateSurveyTick] = useState(false);
 
+  // click handlers
   const onQuestionAdded = () => {
     setIsAdding(false);
-    updateTick(!tick);
+    updateQuestionTick(!questionTick);
   };
 
+  const onQuestionUpdate = () => {
+    setUpdateQuestion({
+      ...updateQuestion,
+      isVisible: false,
+    });
+    updateQuestionTick(!questionTick);
+  };
+
+  const setIsQuestionUpdating = (isVisible: boolean) => {
+    setUpdateQuestion({ ...updateQuestion, isVisible });
+  };
+
+  // data fetching
   const { isLoading: isSurveyLoading, fetchSurvey } = useFetchSurvey(setSurvey);
   const { isLoading: areQuestionsLoading, fetchQuestions } =
     useFetchQuestions(setQuestions);
 
   useEffect(() => {
     if (typeof params.survey_slug === "string") fetchSurvey(params.survey_slug);
-  }, [params.survey_slug, fetchSurvey]);
+  }, [surveyTick, params.survey_slug, fetchSurvey]);
 
   useEffect(() => {
     if (survey && survey.id) fetchQuestions(survey.id);
-  }, [tick, survey, fetchQuestions]);
+  }, [questionTick, survey, fetchQuestions]);
 
   if (!survey || !questions) return "Loading...";
   return (
     <div className={styles.editSurvey}>
+      <Modal
+        title="Update survey"
+        isVisible={isSurveyUpdating}
+        setIsVisible={setIsSurveyUpdating}
+      >
+        <UpdateSurvey survey={survey} />
+      </Modal>
+
       <Modal
         title="Delete survey"
         isVisible={isDeleting}
@@ -57,11 +87,29 @@ export default function EditSurvey() {
         <AddQuestion survey={survey} updateTick={onQuestionAdded} />
       </Modal>
 
+      <Modal
+        title="Update question"
+        isVisible={updateQuestion.isVisible}
+        setIsVisible={setIsQuestionUpdating}
+      >
+        <UpdateQuestion
+          question={updateQuestion.question}
+          updateTick={onQuestionUpdate}
+        />
+      </Modal>
+
       {!isSurveyLoading ? (
         <div className={styles.bar}>
-          <h3>{survey.name}</h3>
+          <div>
+            <h3 className={styles.surveyName}>{survey.name}</h3>
+            <p>{survey.description}</p>
+            <p>
+              <b>Status: </b>
+              {survey.online ? "Online" : "Offline"}
+            </p>
+          </div>
           <div className={styles.buttons}>
-            <Button>Change sequence</Button>
+            <Button>Edit</Button>
             <Button
               className={styles.delete}
               onClick={() => setIsDeleting(true)}
@@ -74,16 +122,34 @@ export default function EditSurvey() {
         "Loading..."
       )}
       {!areQuestionsLoading ? (
-        <div className={styles.questions}>
-          {questions.length === 0 ? (
-            <h4>No questions added yet!</h4>
-          ) : (
-            questions.map((question, index) => (
-              <QuestionCard key={index} question={question} />
-            ))
-          )}
-          <Button onClick={() => setIsAdding(true)}>Add question</Button>
-        </div>
+        <>
+          <div className={styles.bar}>
+            <div>
+              <h3 className={styles.questionsTitle}>Questions</h3>
+              <p>
+                <b>Count: </b>
+                {questions.length}
+              </p>
+            </div>
+            <div className={styles.buttons}>
+              <Button>Edit sequence</Button>
+            </div>
+          </div>
+          <div className={styles.questions}>
+            {questions.length === 0 ? (
+              <h4>No questions added yet!</h4>
+            ) : (
+              questions.map((question, index) => (
+                <QuestionCard
+                  key={index}
+                  question={question}
+                  setUpdateQuestion={setUpdateQuestion}
+                />
+              ))
+            )}
+            <Button onClick={() => setIsAdding(true)}>Add question</Button>
+          </div>
+        </>
       ) : (
         "Loading..."
       )}

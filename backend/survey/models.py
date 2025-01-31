@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import models, transaction
 from django.utils.text import slugify
 
 
@@ -38,21 +38,35 @@ class Question(models.Model):
     text = models.TextField()
     type = models.CharField(max_length=20, choices=QUESTION_TYPES)
     required = models.BooleanField(default=True)
-    sequence = models.PositiveIntegerField(default=1)  # New sequence field
+    sequence = models.PositiveIntegerField(default=0)
 
     class Meta:
         ordering = ["sequence"]  # Ensures questions are ordered by sequence
 
     def save(self, *args, **kwargs):
         """Auto-assign sequence if not provided"""
-        if not self.sequence:
+        if not self.pk:
             last_question = (
                 Question.objects.filter(survey=self.survey)
                 .order_by("-sequence")
                 .first()
             )
+            print(last_question)
             self.sequence = (last_question.sequence + 1) if last_question else 1
         super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        """Update sequence of remaining questions after deletion"""
+        survey = self.survey
+        with transaction.atomic():
+            super().delete(*args, **kwargs)
+            # Update sequence of remaining questions
+            for index, question in enumerate(survey.questions.all(), start=1):
+                question.sequence = index
+                question.save()
+
+    def __str__(self):
+        return self.text
 
 
 # Choices for Multiple Choice Questions

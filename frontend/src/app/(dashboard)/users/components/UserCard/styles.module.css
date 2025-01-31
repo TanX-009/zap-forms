@@ -7,4 +7,12 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
+  gap: var(--sp-3xs);
+}
+
+.content {
+  font-size: var(--sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-5xs);
 }

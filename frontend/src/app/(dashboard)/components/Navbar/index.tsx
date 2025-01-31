@@ -33,7 +33,13 @@ export default function Navbar() {
   return (
     <div className={styles.navbar}>
       <Link href={"/"} className={styles.logo}>
-        <Image src="/assets/icon.svg" alt="Logo" width={50} height={50} />
+        <Image
+          src="/assets/icon.svg"
+          alt="Logo"
+          width={60}
+          height={60}
+          priority
+        />
         ZapForms
       </Link>
       <div className={styles.links}>

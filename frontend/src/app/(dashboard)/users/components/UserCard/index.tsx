@@ -8,10 +8,10 @@ interface TProps {
   setUpdateUser: Dispatch<SetStateAction<{ isVisible: boolean; user: TUser }>>;
 }
 
-export default function User({ user, setUpdateUser }: TProps) {
+export default function UserCard({ user, setUpdateUser }: TProps) {
   return (
     <div className={"panel " + styles.user}>
-      <div>
+      <div className={styles.content}>
         <p>
           <b>Username</b>: {user.username || "-"}
         </p>

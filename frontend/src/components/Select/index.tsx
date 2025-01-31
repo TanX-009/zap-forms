@@ -36,7 +36,6 @@ export default function Select({
         name={name}
         id={name}
         defaultValue={_defaultValue}
-        B
         required={required}
       >
         <option value="" disabled>

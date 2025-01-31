@@ -1,6 +1,6 @@
 import Button from "@/components/Button";
 import Input from "@/components/Input";
-import React, { Dispatch, SetStateAction } from "react";
+import React from "react";
 import styles from "./styles.module.css";
 import Select from "@/components/Select";
 import Message from "@/components/Message";

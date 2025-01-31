@@ -8,7 +8,6 @@ from rest_framework.mixins import (
 )
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes
 from django.db import transaction
 from rest_framework.views import APIView
 
@@ -22,11 +21,12 @@ from .serializers import (
 
 
 class SurveyViewSet(
+    viewsets.GenericViewSet,
     CreateModelMixin,
     DestroyModelMixin,
     ListModelMixin,
     RetrieveModelMixin,
-    viewsets.GenericViewSet,
+    UpdateModelMixin,  # Add UpdateModelMixin
 ):
     queryset = Survey.objects.all()
     serializer_class = SurveySerializer
@@ -34,46 +34,26 @@ class SurveyViewSet(
     lookup_field = "slug"  # Use slug as the lookup field
 
 
-# # Create a survey
-# class SurveyCreateView(generics.CreateAPIView):
-#     queryset = Survey.objects.all()
-#     serializer_class = SurveySerializer
-#
-#
-# # Delete a survey
-# class SurveyDeleteView(generics.DestroyAPIView):
-#     queryset = Survey.objects.all()
-#     serializer_class = SurveySerializer
-#
-#     def perform_destroy(self, instance):
-#         instance.delete()
-
-
-# Set survey online status
-@api_view(["PATCH"])
-@permission_classes([IsAuthenticated])
-def set_survey_online_status(request, survey_id):
-    try:
-        survey = Survey.objects.get(pk=survey_id)
-    except Survey.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    survey.online = request.data.get("online", survey.online)
-    survey.save()
-    return Response(SurveySerializer(survey).data)
-
-
 class QuestionViewSet(
-    CreateModelMixin, UpdateModelMixin, DestroyModelMixin, viewsets.GenericViewSet
+    CreateModelMixin,
+    UpdateModelMixin,
+    DestroyModelMixin,
+    viewsets.GenericViewSet,
 ):
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
     permission_classes = [IsAuthenticated]
 
-    def create(self, request, *args, **kwargs):
-        """Handles creating a question and its options if it's a multiple-choice question."""
+    def create(
+        self,
+        request,
+    ):
+        """
+        Handles creating a question and
+        its options if it's a multiple-choice question.
+        """
         with transaction.atomic():
-            options = request.data.pop("options", None)  # Extract options if present
+            options = request.data.pop("options", None)
             serializer = QuestionSerializer(data=request.data)
             serializer.is_valid(raise_exception=True)
             question = serializer.save()
@@ -88,32 +68,40 @@ class QuestionViewSet(
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+    def update(self, request, *_, **kwargs):
+        """
+        Handles updating a question and
+        its options if it's a multiple-choice question.
+        """
+        with transaction.atomic():
+            partial = kwargs.pop("partial", False)
+            options = request.data.pop("options", None)
+            instance = self.get_object()
+            serializer = self.get_serializer(
+                instance, data=request.data, partial=partial
+            )
+            serializer.is_valid(raise_exception=True)
+            question = serializer.save()
 
-# # Add question to a survey
-# class QuestionCreateView(generics.CreateAPIView):
-#     queryset = Question.objects.all()
-#     serializer_class = QuestionSerializer
-#
-#
-# # Update question from a survey
-# class QuestionUpdateView(generics.UpdateAPIView):
-#     queryset = Question.objects.all()
-#     serializer_class = QuestionSerializer
-#
-#
-# # Delete question from a survey
-# class QuestionDeleteView(generics.DestroyAPIView):
-#     queryset = Question.objects.all()
-#     serializer_class = QuestionSerializer
-#
-#     def perform_destroy(self, instance):
-#         instance.delete()
+            # Handle multiple-choice question options
+            if question.type == "multiple-choice":
+                print("asdf")
+                # Delete existing options
+                QuestionOption.objects.filter(question=question).delete()
+                if options:
+                    option_instances = [
+                        QuestionOption(question=question, text=option_text)
+                        for option_text in options
+                    ]
+                    QuestionOption.objects.bulk_create(option_instances)
+
+            return Response(serializer.data)
 
 
 class QuestionReorderView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
         """
         Update the sequence of multiple questions at once.
         Expecting a list of objects with "id" and "sequence".
@@ -124,7 +112,8 @@ class QuestionReorderView(APIView):
 
         if not questions_data:
             return Response(
-                {"error": "No data provided"}, status=status.HTTP_400_BAD_REQUEST
+                {"error": "No data provided"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         question_objects = []
@@ -139,20 +128,22 @@ class QuestionReorderView(APIView):
         )  # Efficient bulk update
 
         return Response(
-            {"message": "Questions reordered successfully"}, status=status.HTTP_200_OK
+            {"message": "Questions reordered successfully"},
+            status=status.HTTP_200_OK,
         )
 
 
 # Get all questions from a survey
 class SurveyQuestionsListView(APIView):
-    def get(self, request, survey_id, *args, **kwargs):
+    def get(self, _, survey_id):
         try:
             questions = Question.objects.filter(survey_id=survey_id)
             serializer = QuestionSerializer(questions, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Question.DoesNotExist:
             return Response(
-                {"detail": "Survey not found"}, status=status.HTTP_404_NOT_FOUND
+                {"detail": "Survey not found"},
+                status=status.HTTP_404_NOT_FOUND,
             )
 
 
@@ -180,7 +171,8 @@ class SubmitSurveyResponseView(APIView):
                 response = response_serializer.save()
             else:
                 return Response(
-                    response_serializer.errors, status=status.HTTP_400_BAD_REQUEST
+                    response_serializer.errors,
+                    status=status.HTTP_400_BAD_REQUEST,
                 )
 
             # Create the Answer objects
@@ -193,19 +185,8 @@ class SubmitSurveyResponseView(APIView):
                     created_answers.append(answer_serializer.data)
                 else:
                     return Response(
-                        answer_serializer.errors, status=status.HTTP_400_BAD_REQUEST
+                        answer_serializer.errors,
+                        status=status.HTTP_400_BAD_REQUEST,
                     )
 
             return Response(created_answers, status=status.HTTP_201_CREATED)
-
-
-# # Submit response to a survey
-# class ResponseCreateView(generics.CreateAPIView):
-#     queryset = Responses.objects.all()
-#     serializer_class = ResponsesSerializer
-#
-#
-# # Submit answers to a response
-# class AnswerCreateView(generics.CreateAPIView):
-#     queryset = Answer.objects.all()
-#     serializer_class = AnswerSerializer
