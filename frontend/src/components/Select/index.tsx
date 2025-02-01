@@ -1,10 +1,10 @@
-import React from "react";
+import React, { ReactNode } from "react";
 import styles from "./styles.module.css";
 
 interface TPropsBase {
   name: string;
   options: { value: string; label: string }[];
-  label?: string | null;
+  label?: ReactNode | null;
   required?: boolean;
 }
 

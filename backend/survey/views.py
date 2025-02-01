@@ -6,7 +6,7 @@ from rest_framework.mixins import (
     RetrieveModelMixin,
     UpdateModelMixin,
 )
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from django.db import transaction
 from rest_framework.views import APIView
@@ -30,8 +30,14 @@ class SurveyViewSet(
 ):
     queryset = Survey.objects.all()
     serializer_class = SurveySerializer
-    permission_classes = [IsAuthenticated]
     lookup_field = "slug"  # Use slug as the lookup field
+
+    def get_permissions(self):
+        if self.action == "retrieve":
+            permission_classes = [AllowAny]
+        else:
+            permission_classes = [IsAuthenticated]
+        return [permission() for permission in permission_classes]
 
 
 class QuestionViewSet(
@@ -155,6 +161,7 @@ class SubmitSurveyResponseView(APIView):
         answers_data = request.data.get("answers", [])
 
         if not user_email or not user_name or not survey_id or not answers_data:
+            print(user_email, user_name, survey_id, answers_data)
             return Response(
                 {"detail": "Invalid data"}, status=status.HTTP_400_BAD_REQUEST
             )

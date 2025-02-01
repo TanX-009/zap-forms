@@ -1,4 +1,4 @@
-import { TQuestion, TSurvey } from "@/types/survey";
+import { TAnswer, TQuestion, TSurvey } from "@/types/survey";
 import { delete_, get, patch, post, TApiResponse } from "../serviceConfig";
 import Services from "../serviceUrls";
 
@@ -21,6 +21,13 @@ interface TUpdateQuestionRequest {
   required: boolean;
   survey: TSurvey["id"];
   options?: string[];
+}
+
+interface TSubmitSurveyRequest {
+  user_email: string;
+  user_name: string;
+  survey: TSurvey["id"];
+  answers: TAnswer[];
 }
 
 async function addSurvey(
@@ -77,6 +84,12 @@ async function updateQuestion(
   return patch(`${Services.updateQuestion}${id}/`, data);
 }
 
+async function submitSurvey(
+  data: TSubmitSurveyRequest,
+): Promise<TApiResponse<null>> {
+  return post(Services.submitSurvey, data);
+}
+
 const SurveyService = {
   addSurvey: addSurvey,
   deleteSurvey: deleteSurvey,
@@ -89,6 +102,8 @@ const SurveyService = {
   addQuestion: addQuestion,
   deleteQuestion: deleteQuestion,
   updateQuestion: updateQuestion,
+
+  submitSurvey: submitSurvey,
 };
 
 export default SurveyService;

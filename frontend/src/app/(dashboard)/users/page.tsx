@@ -2,8 +2,7 @@
 
 import useFetchUsers from "@/hooks/fetchUsers";
 import { TUser } from "@/types/user";
-import React, { useContext, useEffect, useState } from "react";
-import { LoginContext } from "../components/LoginContext";
+import React, { useEffect, useState } from "react";
 import styles from "./styles.module.css";
 import Button from "@/components/Button";
 import Modal from "@/components/Modal";
@@ -11,12 +10,13 @@ import AddUser from "./components/AddUser";
 import { useRouter } from "next/navigation";
 import UpdateUser from "./components/UpdateUser";
 import UserCard from "./components/UserCard";
+import { getLogin } from "@/app/actions/cookies";
 
 export default function Users() {
   const router = useRouter();
 
   const [users, setUsers] = useState<TUser[]>([]);
-  const [login] = useContext(LoginContext);
+  const [login, setLogin] = useState<TUser | null>(null);
   const [isAddUserDialogVisible, setIsAddUserDialogVisible] = useState(false);
 
   const [updateUser, setUpdateUser] = useState({
@@ -53,9 +53,13 @@ export default function Users() {
 
   // redirections
   useEffect(() => {
-    if (login?.role !== "admin") {
-      router.push("/");
-    }
+    (async () => {
+      const loginData = await getLogin();
+      setLogin(loginData);
+      if (loginData?.role !== "admin") {
+        router.push("/");
+      }
+    })();
   }, [login?.role, router]);
   if (login?.role !== "admin") {
     return "Redirecting...";

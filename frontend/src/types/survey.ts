@@ -13,7 +13,15 @@ interface TQuestion {
   text: string;
   type: string;
   required: boolean;
+  sequence: number;
   options: { id: number; question: TQuestion["id"]; text: string }[] | null;
 }
 
-export type { TSurvey, TQuestion };
+interface TAnswer {
+  question: TQuestion["id"];
+  text_answer: string | null;
+  choice_answer: number | null;
+  numeric_answer: number | null;
+}
+
+export type { TSurvey, TQuestion, TAnswer };

@@ -21,6 +21,8 @@ const Services = {
   addQuestion: "survey/questions/",
   deleteQuestion: "survey/questions/",
   updateQuestion: "survey/questions/",
+
+  submitSurvey: "survey/submit-response/",
 } as const;
 
 export default Services;

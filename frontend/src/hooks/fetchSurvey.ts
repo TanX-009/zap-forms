@@ -8,6 +8,7 @@ export default function useFetchSurvey(
   setter: Dispatch<SetStateAction<TSurvey | null>>,
 ) {
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const fetchSurvey = useCallback(
     async (slug: string) => {
@@ -15,7 +16,8 @@ export default function useFetchSurvey(
         setIsLoading(true);
         const response = await SurveyService.getSurvey(slug);
         if (response.success) setter(response.data);
-        if (!response.success && response.status === 401) {
+        if (!response.success && response.status === 404) {
+          setError("Not found!");
         }
       } finally {
         setIsLoading(false);
@@ -24,5 +26,5 @@ export default function useFetchSurvey(
     [setter],
   );
 
-  return { isLoading, fetchSurvey };
+  return { isLoading, fetchSurvey, error };
 }

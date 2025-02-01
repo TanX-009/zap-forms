@@ -1,0 +1,52 @@
+.form {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--sp-s-xl);
+}
+
+.inputs {
+  width: 100%;
+  max-width: calc(var(--max-width) / 2);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-s);
+
+  margin: 0 auto;
+  padding: var(--sp-s);
+
+  font-size: var(--h5);
+}
+
+.buttons {
+  width: 100%;
+  margin-top: var(--sp-xl);
+
+  font-size: var(--sm);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3xs);
+  flex-wrap: wrap;
+}
+
+.required {
+  font-size: var(--sm);
+  text-align: center;
+}
+
+.star {
+  color: var(--error);
+  font-size: var(--p);
+}
+
+.submit {
+  background: var(--secondary);
+  color: var(--onSecondary);
+}

@@ -10,17 +10,27 @@ class CustomUserSerializer(ModelSerializer):
         fields = ("id", "email", "username", "role")
 
 
-class RegisterUserSerializer(ModelSerializer):
-    class Meta:
-        model = CustomUser
-        fields = ("email", "username", "password", "role")
-        extra_kwargs = {"password": {"write_only": True}}
+# class RegisterUserSerializer(ModelSerializer):
+#     class Meta:
+#         model = CustomUser
+#         fields = ("email", "username", "password", "role")
+#         extra_kwargs = {"password": {"write_only": True}}
 
 
 class UserSerializer(ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ("id", "email", "username", "role")
+        fields = ("id", "email", "username", "password", "role")
+        extra_kwargs = {"password": {"write_only": True}}
+
+    def create(self, validated_data):
+        user = CustomUser.objects.create_user(
+            email=validated_data["email"],
+            password=validated_data["password"],
+            username=validated_data["username"],
+            role=validated_data["role"],
+        )
+        return user
 
 
 class LoginUserSerializer(Serializer):

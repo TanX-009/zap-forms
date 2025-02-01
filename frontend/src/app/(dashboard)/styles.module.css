@@ -7,7 +7,7 @@
   gap: var(--sp-s);
 
   margin: 0 auto;
-  padding: var(--sp-3xs) var(--sp-xs) var(--sp-3xs) var(--sp-3xs);
+  padding: var(--sp-3xs);
 }
 
 .bar {

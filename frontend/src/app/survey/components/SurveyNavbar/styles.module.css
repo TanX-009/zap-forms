@@ -1,0 +1,40 @@
+.navbar {
+  width: 100%;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--sp-xs) var(--sp-2xs);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-xs);
+  flex-wrap: wrap;
+
+  font-weight: bold;
+}
+
+.logo {
+  font-size: var(--p);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  flex-wrap: wrap;
+
+  text-decoration: none;
+  color: inherit;
+}
+
+.links {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2xs);
+  flex-wrap: wrap;
+}
+
+.current {
+  font-size: var(--h4);
+}
+
+.total {
+  font-size: var(--p);
+}

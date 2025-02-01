@@ -1,6 +1,5 @@
 import React from "react";
 import Navbar from "./components/Navbar";
-import LoginContextComponent from "./components/LoginContext";
 
 export default function DashboardLayout({
   children,
@@ -10,7 +9,7 @@ export default function DashboardLayout({
   return (
     <>
       <Navbar />
-      <LoginContextComponent>{children}</LoginContextComponent>
+      {children}
 
       {/* systems */}
     </>

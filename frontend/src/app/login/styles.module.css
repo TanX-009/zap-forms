@@ -3,7 +3,7 @@
   width: 100%;
   max-width: calc(var(--max-width) / 2.6);
 
-  padding: var(--sp-2xs);
+  padding: var(--sp-xs);
   margin: auto;
 
   display: flex;

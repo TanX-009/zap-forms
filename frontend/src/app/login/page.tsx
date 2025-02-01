@@ -4,11 +4,11 @@ import Input from "@/components/Input";
 import React, { useEffect, useState } from "react";
 import styles from "./styles.module.css";
 import Button from "@/components/Button";
-import Image from "next/image";
 import AuthService from "@/services/auth";
 import Message from "@/components/Message";
 import { deleteLogin, getLogin, setLogin } from "@/app/actions/cookies";
 import { useRouter } from "next/navigation";
+import Logo from "@/components/Logo";
 
 interface TMessage {
   value: string;
@@ -66,8 +66,7 @@ export default function Login() {
   return (
     <form className={styles.login} onSubmit={onLogin}>
       <div className={styles.title}>
-        <Image src="/assets/icon.svg" alt="Logo" width={100} height={100} />
-        <h1>ZapForms</h1>
+        <Logo multiplier={60} />
       </div>
       <Input name="email" type="email" label="Email" required />
       <Input name="password" type="password" label="Password" required />

@@ -51,7 +51,6 @@ export default function UpdateSurvey({ survey, onSurveyUpdate }: TProps) {
       },
       survey.slug,
     );
-    console.log(response);
 
     if (response.success) {
       setMessage({
