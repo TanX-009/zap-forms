@@ -1,3 +1,8 @@
+.centerStage {
+  margin: var(--sp-3xs) auto;
+  font-size: var(--sp-l);
+}
+
 .loading {
   width: 1em;
   height: 1em;

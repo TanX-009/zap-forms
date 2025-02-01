@@ -53,7 +53,7 @@ export default function Survey() {
 
   if (error === "Not found!")
     return <Error icon={<MdError />}>Survey not found!</Error>;
-  if (isSurveyLoading || areQuestionsLoading) return <Loading />;
+  if (isSurveyLoading || areQuestionsLoading) return <Loading centerStage={true} />;
 
   if (!survey?.online)
     return (

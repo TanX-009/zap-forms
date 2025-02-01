@@ -143,7 +143,7 @@ export default function SurveyPage() {
     if (!survey) router.push(returnPath);
   }, [survey, returnPath, router]);
 
-  if (!survey) return <Loading />;
+  if (!survey) return <Loading centerStage={true} />;
   return (
     <>
       <Modal

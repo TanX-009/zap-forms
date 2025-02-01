@@ -66,7 +66,7 @@ export default function EditSurvey() {
     if (survey && survey.id) fetchQuestions(survey.id);
   }, [questionTick, survey, fetchQuestions]);
 
-  if (!survey || !questions) return <Loading />;
+  if (!survey || !questions) return <Loading centerStage={true} />;
   return (
     <div className={styles.editSurvey}>
       <Modal
@@ -125,7 +125,7 @@ export default function EditSurvey() {
           </div>
         </div>
       ) : (
-        <Loading />
+        <Loading centerStage={true} />
       )}
       {!areQuestionsLoading ? (
         <>
@@ -157,7 +157,7 @@ export default function EditSurvey() {
           </div>
         </>
       ) : (
-        <Loading />
+        <Loading centerStage={true} />
       )}
     </div>
   );

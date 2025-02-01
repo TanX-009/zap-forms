@@ -1,9 +1,15 @@
 import React from "react";
 import styles from "./styles.module.css";
 
-export default function Loading() {
+interface TProps {
+  centerStage?: boolean;
+}
+
+export default function Loading({ centerStage = false }: TProps) {
   return (
-    <div className={styles.loading}>
+    <div
+      className={`${styles.loading} ${centerStage ? styles.centerStage : ""}`}
+    >
       <span />
       <span />
       <span />

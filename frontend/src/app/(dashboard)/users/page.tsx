@@ -12,6 +12,7 @@ import UpdateUser from "./components/UpdateUser";
 import UserCard from "./components/UserCard";
 import { getLogin } from "@/app/actions/cookies";
 import Loading from "@/components/Loading";
+import Error from "@/components/Error";
 
 export default function Users() {
   const router = useRouter();
@@ -63,7 +64,11 @@ export default function Users() {
     })();
   }, [login?.role, router]);
   if (login?.role !== "admin") {
-    return "Redirecting...";
+    return (
+      <Error>
+        Redirecting <Loading centerStage={true} />
+      </Error>
+    );
   }
 
   return (
@@ -92,7 +97,7 @@ export default function Users() {
       </div>
       <div className={styles.list}>
         {isLoading ? (
-          <Loading />
+          <Loading centerStage={true} />
         ) : (
           users
             .filter((user) => {
