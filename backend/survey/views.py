@@ -1,4 +1,5 @@
 from rest_framework import status, viewsets
+from rest_framework.fields import json
 from rest_framework.mixins import (
     CreateModelMixin,
     DestroyModelMixin,
@@ -8,6 +9,7 @@ from rest_framework.mixins import (
 )
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.parsers import MultiPartParser, FormParser
 from django.db import transaction
 from rest_framework.views import APIView
 
@@ -154,16 +156,27 @@ class SurveyQuestionsListView(APIView):
 
 
 class SubmitSurveyResponseView(APIView):
+    parser_classes = (MultiPartParser, FormParser)  # Enable file handling
+
     def post(self, request):
         user_email = request.data.get("user_email")
         user_name = request.data.get("user_name")
         survey_id = request.data.get("survey")
-        answers_data = request.data.get("answers", [])
+        answers_data = request.data.get("answers", "[]")
+        audio_file = request.FILES.get("audio")  # Get uploaded audio file
 
         if not user_email or not user_name or not survey_id or not answers_data:
-            print(user_email, user_name, survey_id, answers_data)
             return Response(
                 {"detail": "Invalid data"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Parse the answers_data from JSON string to list of dictionaries
+        try:
+            answers_data = json.loads(answers_data)
+        except json.JSONDecodeError:
+            return Response(
+                {"detail": "Invalid answers data format"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         with transaction.atomic():
@@ -178,8 +191,7 @@ class SubmitSurveyResponseView(APIView):
                 response = response_serializer.save()
             else:
                 return Response(
-                    response_serializer.errors,
-                    status=status.HTTP_400_BAD_REQUEST,
+                    response_serializer.errors, status=status.HTTP_400_BAD_REQUEST
                 )
 
             # Create the Answer objects
@@ -192,8 +204,11 @@ class SubmitSurveyResponseView(APIView):
                     created_answers.append(answer_serializer.data)
                 else:
                     return Response(
-                        answer_serializer.errors,
-                        status=status.HTTP_400_BAD_REQUEST,
+                        answer_serializer.errors, status=status.HTTP_400_BAD_REQUEST
                     )
+
+            # Save audio file if provided
+            if audio_file:
+                response.audio_file.save(f"response_{response.id}.wav", audio_file)
 
             return Response(created_answers, status=status.HTTP_201_CREATED)

@@ -13,10 +13,10 @@ import useFetchQuestions from "@/hooks/fetchQuestions";
 export default function Survey() {
   const params = useParams();
   const router = useRouter();
-  const { survey, setSurvey, setUser, setQuestions } =
+  const { survey, setSurvey, setUser, setQuestions, audio } =
     useContext(SurveyContext);
 
-  const onSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
 
@@ -24,6 +24,7 @@ export default function Survey() {
     const name = form.get("name") as string;
 
     setUser({ name: name, email: email });
+    if (!audio.isRecording) await audio.startRecording();
     if (survey?.slug) router.push(`/survey/${survey.slug}/1`);
   };
 

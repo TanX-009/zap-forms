@@ -66,3 +66,6 @@ docker-compose.override.yml
 # 3rd party libraries
 *.egg-info/
 .eggs/
+
+# Saved files
+recordings/

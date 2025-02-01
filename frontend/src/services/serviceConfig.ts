@@ -29,6 +29,15 @@ const instance = axios.create({
   },
 });
 
+const formDataInstance = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_SERVER_API_URL as string,
+  timeout: 100000,
+  headers: {
+    Accept: "application/json",
+    "content-type": "multipart/form-data",
+  },
+});
+
 async function handleTokenRefresh<TResponse>(
   originalRequest: AxiosRequestConfig,
 ): Promise<TApiResponse<TResponse>> {
@@ -226,6 +235,72 @@ async function delete_<TRequest, TResponse>(
   }
 }
 
-export { get, put, patch, post, delete_ };
+async function formData_put<TRequest, TRequestParams, TResponse>(
+  url: string,
+  data: TRequest,
+  options?: {
+    params?: TRequestParams;
+    withCredentials?: boolean;
+  },
+): Promise<TApiResponse<TResponse>> {
+  try {
+    const response = await formDataInstance.put<TResponse>(url, data, {
+      params: options?.params ?? {},
+      withCredentials: options?.withCredentials ?? true,
+    });
+    return { success: true, data: response.data };
+  } catch (error) {
+    return requestFailureCallback(error);
+  }
+}
+
+async function formData_patch<TRequest, TRequestParams, TResponse>(
+  url: string,
+  data: TRequest,
+  options?: {
+    params?: TRequestParams;
+    withCredentials?: boolean;
+  },
+): Promise<TApiResponse<TResponse>> {
+  try {
+    const response = await formDataInstance.patch<TResponse>(url, data, {
+      params: options?.params ?? {},
+      withCredentials: options?.withCredentials ?? true,
+    });
+    return { success: true, data: response.data };
+  } catch (error) {
+    return requestFailureCallback(error);
+  }
+}
+
+async function formData_post<TRequest, TRequestParams, TResponse>(
+  url: string,
+  data: TRequest,
+  options?: {
+    params?: TRequestParams;
+    withCredentials?: boolean;
+  },
+): Promise<TApiResponse<TResponse>> {
+  try {
+    const response = await formDataInstance.post<TResponse>(url, data, {
+      params: options?.params ?? {},
+      withCredentials: options?.withCredentials ?? true,
+    });
+    return { success: true, data: response.data };
+  } catch (error) {
+    return requestFailureCallback(error);
+  }
+}
+
+export {
+  get,
+  put,
+  patch,
+  post,
+  delete_,
+  formData_put,
+  formData_patch,
+  formData_post,
+};
 
 export type { TApiResponse, TErrorResponse };

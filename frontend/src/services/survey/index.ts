@@ -1,5 +1,12 @@
 import { TAnswer, TQuestion, TSurvey } from "@/types/survey";
-import { delete_, get, patch, post, TApiResponse } from "../serviceConfig";
+import {
+  delete_,
+  formData_post,
+  get,
+  patch,
+  post,
+  TApiResponse,
+} from "../serviceConfig";
 import Services from "../serviceUrls";
 
 interface TAddSurveyRequest {
@@ -28,6 +35,7 @@ interface TSubmitSurveyRequest {
   user_name: string;
   survey: TSurvey["id"];
   answers: TAnswer[];
+  audioBlob: Blob | null;
 }
 
 async function addSurvey(
@@ -87,7 +95,17 @@ async function updateQuestion(
 async function submitSurvey(
   data: TSubmitSurveyRequest,
 ): Promise<TApiResponse<null>> {
-  return post(Services.submitSurvey, data);
+  const formData = new FormData();
+  formData.append("user_email", data.user_email);
+  formData.append("user_name", data.user_name);
+  formData.append("survey", data.survey.toString());
+  formData.append("answers", JSON.stringify(data.answers));
+
+  if (data.audioBlob) {
+    formData.append("audio", data.audioBlob, "recording.wav");
+  }
+
+  return formData_post(Services.submitSurvey, formData);
 }
 
 const SurveyService = {

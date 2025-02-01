@@ -22,6 +22,9 @@ class Survey(models.Model):
 
         super().save(*args, **kwargs)
 
+    def __str__(self) -> str:
+        return self.name
+
 
 # Question Model
 class Question(models.Model):
@@ -74,6 +77,9 @@ class QuestionOption(models.Model):
     )
     text = models.CharField(max_length=255)
 
+    def __str__(self):
+        return self.text
+
 
 # User Response Model
 class Responses(models.Model):
@@ -83,6 +89,10 @@ class Responses(models.Model):
         Survey, on_delete=models.CASCADE, related_name="responses"
     )
     created_at = models.DateTimeField(auto_now_add=True)
+    audio_file = models.FileField(upload_to="recordings/", blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.survey}: {self.user_email}, {self.user_name}, {self.audio_file}"
 
 
 # Answer Model (Stores responses to questions)
@@ -98,3 +108,12 @@ class Answer(models.Model):
     numeric_answer = models.FloatField(
         blank=True, null=True
     )  # For scale/number answers
+
+    def __str__(self) -> str:
+        if self.text_answer:
+            return f"{self.response}-{self.question}: { self.text_answer }"
+        elif self.choice_answer:
+            return f"{self.response}-{self.question}: { self.choice_answer }"
+        elif self.numeric_answer:
+            return f"{self.response}-{self.question}: { self.numeric_answer }"
+        return f"{self.response}-{self.question}"

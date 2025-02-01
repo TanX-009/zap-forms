@@ -12,6 +12,11 @@ interface TProps {
   answers: TAnswer[];
   user: { name: string; email: string };
   setComplete: Dispatch<SetStateAction<boolean>>;
+  audio: {
+    isRecording: boolean;
+    startRecording: () => void;
+    stopRecording: () => Promise<Blob | null>;
+  };
 }
 
 export default function SubmitSurvey({
@@ -19,6 +24,7 @@ export default function SubmitSurvey({
   answers,
   user,
   setComplete,
+  audio,
 }: TProps) {
   const router = useRouter();
   const [message, setMessage] = useState<{
@@ -33,11 +39,14 @@ export default function SubmitSurvey({
     event.preventDefault();
     setMessage({ value: "Submitting...", status: "neutral" });
 
+    const audioBlob = await audio.stopRecording();
+
     const response = await SurveyService.submitSurvey({
       user_email: user.email,
       user_name: user.name,
       survey: survey.id,
       answers: answers,
+      audioBlob: audioBlob,
     });
 
     if (response.success) {

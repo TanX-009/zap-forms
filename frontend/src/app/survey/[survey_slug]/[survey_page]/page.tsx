@@ -66,6 +66,7 @@ export default function SurveyPage() {
     user,
     complete,
     setComplete,
+    audio,
   } = useContext(SurveyContext);
 
   const [question, setQuestion] = useState<TQuestion | undefined>(undefined);
@@ -154,6 +155,7 @@ export default function SurveyPage() {
           survey={survey}
           user={user}
           setComplete={setComplete}
+          audio={audio}
         />
       </Modal>
 
