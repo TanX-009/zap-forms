@@ -1,0 +1,42 @@
+.loading {
+  width: 1em;
+  height: 1em;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.loading > span {
+  width: calc(1em / 3.6);
+  height: calc(1em / 3.6);
+
+  transform: translateY(-80%) scale(1);
+
+  background-color: var(--primary);
+  border-radius: var(--radius);
+
+  animation: wave 1.5s infinite ease-in-out;
+}
+
+.loading span:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.loading span:nth-child(2) {
+  animation-delay: 0.3s;
+}
+
+.loading span:nth-child(3) {
+  animation-delay: 0.6s;
+}
+
+@keyframes wave {
+  0%,
+  100% {
+    transform: translateY(-80%) scale(1);
+  }
+  50% {
+    transform: translateY(80%) scale(1.5);
+  }
+}

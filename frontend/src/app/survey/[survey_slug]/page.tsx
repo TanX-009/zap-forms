@@ -9,6 +9,10 @@ import Button from "@/components/Button";
 import { useParams, useRouter } from "next/navigation";
 import useFetchSurvey from "@/hooks/fetchSurvey";
 import useFetchQuestions from "@/hooks/fetchQuestions";
+import Error from "@/components/Error";
+import { MdError } from "react-icons/md";
+import Loading from "@/components/Loading";
+import { IoCloudOffline } from "react-icons/io5";
 
 export default function Survey() {
   const params = useParams();
@@ -47,10 +51,14 @@ export default function Survey() {
     if (survey?.id) fetchQuestions(survey.id);
   }, [survey, fetchQuestions]);
 
-  if (error === "Not found!") return "Survey not found!";
-  if (isSurveyLoading || areQuestionsLoading) return "Loading...";
+  if (error === "Not found!")
+    return <Error icon={<MdError />}>Survey not found!</Error>;
+  if (isSurveyLoading || areQuestionsLoading) return <Loading />;
 
-  if (!survey?.online) return "The survey is not online yet!";
+  if (!survey?.online)
+    return (
+      <Error icon={<IoCloudOffline />}>The survey is not online yet!</Error>
+    );
 
   //setSurvey({ ...survey, status: "post" });
   return (

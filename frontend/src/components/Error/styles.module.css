@@ -1,0 +1,25 @@
+.error {
+  width: 100%;
+  height: 100%;
+  max-width: var(--max-width);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-m);
+
+  margin: 0 auto;
+  padding: var(--sp-3xs);
+  text-align: center;
+}
+
+.icon {
+  font-size: var(--sp-3xl);
+  color: var(--secondary);
+}
+
+.error > h2 {
+  font-size: var(--h4);
+  color: var(--primary);
+}

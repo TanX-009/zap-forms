@@ -5,6 +5,7 @@ interface TProps {
   className?: string;
   variant?: "loClick" | "hiClick";
   type?: "button" | "submit" | "reset";
+  disabled?: boolean;
   onClick?: (e: MouseEvent<HTMLButtonElement>) => void;
 }
 
@@ -13,10 +14,16 @@ export default function Button({
   className = "",
   variant = "loClick",
   type = "button",
+  disabled = false,
   onClick = () => {},
 }: TProps) {
   return (
-    <button className={`${variant} ${className}`} type={type} onClick={onClick}>
+    <button
+      className={`${variant} ${className}`}
+      type={type}
+      disabled={disabled}
+      onClick={onClick}
+    >
       {children}
     </button>
   );

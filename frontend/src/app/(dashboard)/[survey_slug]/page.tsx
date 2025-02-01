@@ -12,6 +12,7 @@ import AddQuestion from "./components/AddQuestion";
 import QuestionCard from "./components/QuestionCard";
 import UpdateQuestion from "./components/UpdateQuestion";
 import UpdateSurvey from "./components/UpdateSurvey";
+import Loading from "@/components/Loading";
 
 export default function EditSurvey() {
   const params = useParams();
@@ -65,7 +66,7 @@ export default function EditSurvey() {
     if (survey && survey.id) fetchQuestions(survey.id);
   }, [questionTick, survey, fetchQuestions]);
 
-  if (!survey || !questions) return "Loading...";
+  if (!survey || !questions) return <Loading />;
   return (
     <div className={styles.editSurvey}>
       <Modal
@@ -124,7 +125,7 @@ export default function EditSurvey() {
           </div>
         </div>
       ) : (
-        "Loading..."
+        <Loading />
       )}
       {!areQuestionsLoading ? (
         <>
@@ -137,7 +138,7 @@ export default function EditSurvey() {
               </p>
             </div>
             <div className={styles.buttons}>
-              <Button>Edit sequence</Button>
+              <Button disabled={true}>Edit sequence</Button>
             </div>
           </div>
           <div className={styles.questions}>
@@ -156,7 +157,7 @@ export default function EditSurvey() {
           </div>
         </>
       ) : (
-        "Loading..."
+        <Loading />
       )}
     </div>
   );

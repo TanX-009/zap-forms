@@ -13,6 +13,7 @@ import { FaStarOfLife } from "react-icons/fa";
 import Modal from "@/components/Modal";
 import SubmitSurvey from "./components/SubmitSurvey";
 import getOneNestBack from "@/systems/getOneNestBack";
+import Loading from "@/components/Loading";
 
 const findQuestionBySequence = (
   questions: TQuestion[],
@@ -142,7 +143,7 @@ export default function SurveyPage() {
     if (!survey) router.push(returnPath);
   }, [survey, returnPath, router]);
 
-  if (!survey) return "Loading...";
+  if (!survey) return <Loading />;
   return (
     <>
       <Modal

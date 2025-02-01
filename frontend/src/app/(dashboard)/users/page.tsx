@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import UpdateUser from "./components/UpdateUser";
 import UserCard from "./components/UserCard";
 import { getLogin } from "@/app/actions/cookies";
+import Loading from "@/components/Loading";
 
 export default function Users() {
   const router = useRouter();
@@ -90,19 +91,17 @@ export default function Users() {
         </Button>
       </div>
       <div className={styles.list}>
-        {isLoading
-          ? "Loading..."
-          : users
-              .filter((user) => {
-                return user.id !== login?.id;
-              })
-              .map((user, index) => (
-                <UserCard
-                  key={index}
-                  user={user}
-                  setUpdateUser={setUpdateUser}
-                />
-              ))}
+        {isLoading ? (
+          <Loading />
+        ) : (
+          users
+            .filter((user) => {
+              return user.id !== login?.id;
+            })
+            .map((user, index) => (
+              <UserCard key={index} user={user} setUpdateUser={setUpdateUser} />
+            ))
+        )}
       </div>
     </div>
   );
