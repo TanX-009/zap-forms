@@ -240,6 +240,7 @@ export default function SurveyPage() {
               <Link
                 className={"loClick"}
                 href={`/survey/${survey.slug}/${question?.sequence - 1}`}
+                aria-label="Previous question"
               >
                 Previous
               </Link>

@@ -32,14 +32,14 @@ export default function Navbar() {
 
   return (
     <div className={styles.navbar}>
-      <Link href={"/"} className={styles.logo}>
+      <Link href={"/"} className={styles.logo} aria-label="Return to dashboard">
         <Logo multiplier={36} />
       </Link>
       <div className={styles.links}>
         <p>Hello, {login ? login.username || "-" : null}!</p>
 
         {pathname !== "/users" && login?.role === "admin" ? (
-          <Link className={"loClick"} href={"/users"}>
+          <Link className={"loClick"} href={"/users"} aria-label="Manage users">
             Users
           </Link>
         ) : null}

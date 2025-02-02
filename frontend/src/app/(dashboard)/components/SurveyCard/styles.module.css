@@ -34,3 +34,9 @@
 .info {
   display: flex;
 }
+
+.buttons {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3xs);
+}

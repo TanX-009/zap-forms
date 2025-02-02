@@ -1,9 +1,10 @@
 import { TSurvey } from "@/types/survey";
-import React from "react";
+import React, { useState } from "react";
 import styles from "./styles.module.css";
 import Button from "@/components/Button";
 import isoToNormal from "@/systems/isoToNormal";
 import { useRouter } from "next/navigation";
+import { getBaseUrl } from "@/app/actions/url";
 
 interface TProps {
   survey: TSurvey;
@@ -11,20 +12,56 @@ interface TProps {
 
 export default function SurveyCard({ survey }: TProps) {
   const router = useRouter();
+  const [copied, setCopied] = useState(false);
 
   const created_at = isoToNormal(survey.created_at);
+
+  const onCopy = async () => {
+    try {
+      const baseUrl = await getBaseUrl();
+      await navigator.clipboard.writeText(`${baseUrl}/survey/${survey.slug}`);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000); // Reset after 2 seconds
+    } catch (err) {
+      console.error("Failed to copy:", err);
+    }
+  };
+
+  const onShare = async () => {
+    try {
+      const baseUrl = await getBaseUrl();
+      await navigator.share({
+        title: "Check this out!",
+        text: "I found something interesting!",
+        url: `${baseUrl}/survey/${survey.slug}`,
+      });
+      console.log("Content shared successfully!");
+    } catch (error) {
+      console.error("Error sharing:", error);
+    }
+  };
 
   return (
     <div className={`panel ${styles.survey}`}>
       <div className={styles.title}>
         <h4>{survey.name}</h4>
-        <Button
-          onClick={() => {
-            router.push(`/${survey.slug}`);
-          }}
-        >
-          Edit
-        </Button>
+        <div className={styles.buttons}>
+          <Button
+            onClick={() => {
+              router.push(`/${survey.slug}`);
+            }}
+          >
+            Edit
+          </Button>
+          {copied ? (
+            <Button disabled>Copied!</Button>
+          ) : (
+            <Button onClick={onCopy}>Copy link</Button>
+          )}
+          {"share" in navigator ? (
+            <Button onClick={onShare}>Share</Button>
+          ) : null}
+        </div>
       </div>
 
       <p>{survey.description}</p>

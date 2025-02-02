@@ -84,7 +84,7 @@ class QuestionOption(models.Model):
 # User Response Model
 class Responses(models.Model):
     user_email = models.EmailField()
-    user_name = models.CharField()
+    user_name = models.CharField(max_length=255)
     survey = models.ForeignKey(
         Survey, on_delete=models.CASCADE, related_name="responses"
     )

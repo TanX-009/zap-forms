@@ -38,7 +38,6 @@ export default function Logo({ multiplier = 20 }: TProps) {
           paintOrder: "stroke markers fill",
           fillOpacity: "1",
         }}
-        aria-label="ap Forms"
         transform="translate(11.988 -329.473) scale(.93136)"
       />
     </svg>

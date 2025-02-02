@@ -23,7 +23,7 @@ export default function Modal({
   return (
     <div className={styles.modal}>
       <div className={"panel " + styles.dialog}>
-        <Button className={styles.close} onClick={onClose}>
+        <Button className={styles.close} onClick={onClose} ariaLabel="Close">
           <MdClose />
         </Button>
         <h3>{title}</h3>
