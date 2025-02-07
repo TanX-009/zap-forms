@@ -7,6 +7,7 @@ import Message from "@/components/Message";
 import Form from "@/components/Form";
 import { TQuestion } from "@/types/survey";
 import SurveyService from "@/services/survey";
+import handleResponse from "@/systems/handleResponse";
 
 interface TProps {
   question: TQuestion;
@@ -84,52 +85,28 @@ export default function UpdateQuestion({ question, updateTick }: TProps) {
       question.id,
     );
 
-    if (response.success) {
-      setMessage({
-        value: "Question updated successfully!",
-        status: "success",
-      });
-      updateTick();
-    } else if (response.status === 400) {
-      const message =
-        typeof response.error.data === "object"
-          ? Object.values(response.error.data)[0]
-          : "Something went wrong!";
-      setMessage({ value: message, status: "error" });
-    } else if (response.status === 403) {
-      setMessage({
-        value: "You are not authorized to perform this action!",
-        status: "error",
-      });
-    } else {
-      setMessage({ value: "Unknown Error !", status: "error" });
-    }
+    handleResponse(
+      response,
+      "Question updated successfully!",
+      setMessage,
+      () => {
+        updateTick();
+      },
+    );
   };
 
   const onDelete = async () => {
     setMessage({ value: "Deleting...", status: "neutral" });
     const response = await SurveyService.deleteQuestion(question.id);
 
-    if (response.success) {
-      setMessage({
-        value: "Question deleted successfully!",
-        status: "success",
-      });
-      updateTick();
-    } else if (response.status === 400) {
-      const message =
-        typeof response.error.data === "object"
-          ? Object.values(response.error.data)[0]
-          : "Something went wrong!";
-      setMessage({ value: message, status: "error" });
-    } else if (response.status === 403) {
-      setMessage({
-        value: "You are not authorized to perform this action!",
-        status: "error",
-      });
-    } else {
-      setMessage({ value: "Unknown Error !", status: "error" });
-    }
+    handleResponse(
+      response,
+      "Question deleted successfully!",
+      setMessage,
+      () => {
+        updateTick();
+      },
+    );
   };
 
   if (isDeleting) {

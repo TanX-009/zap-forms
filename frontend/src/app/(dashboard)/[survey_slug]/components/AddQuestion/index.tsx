@@ -1,6 +1,5 @@
 import Tabs from "@/components/Tabs";
 import React, { useEffect, useState } from "react";
-import styles from "./styles.module.css";
 import Form from "@/components/Form";
 import Button from "@/components/Button";
 import SurveyService from "@/services/survey";
@@ -8,6 +7,7 @@ import { TSurvey } from "@/types/survey";
 import Input from "@/components/Input";
 import Select from "@/components/Select";
 import Message from "@/components/Message";
+import handleResponse from "@/systems/handleResponse";
 
 const tabs = ["Text", "Number", "Multiple choice"];
 
@@ -76,23 +76,9 @@ export default function AddQuestion({ survey, updateTick }: TProps) {
       options,
     });
 
-    if (response.success) {
-      setMessage({ value: "Question added successfully!", status: "success" });
+    handleResponse(response, "Question added successfully!", setMessage, () => {
       updateTick();
-    } else if (response.status === 400) {
-      const message =
-        typeof response.error.data === "object"
-          ? Object.values(response.error.data)[0]
-          : "Something went wrong!";
-      setMessage({ value: message, status: "error" });
-    } else if (response.status === 403) {
-      setMessage({
-        value: "You are not authorized to perform this action!",
-        status: "error",
-      });
-    } else {
-      setMessage({ value: "Unknown Error !", status: "error" });
-    }
+    });
   };
 
   useEffect(() => {
@@ -100,15 +86,10 @@ export default function AddQuestion({ survey, updateTick }: TProps) {
   }, [questionType]);
 
   return (
-    <div className={styles.addQuestion}>
+    <div>
       <Tabs current={questionType} setter={setQuestionType} tabs={tabs} />
       <Form onSubmit={onSubmit}>
-        <Input
-          className={styles.question}
-          name="text"
-          label="Question"
-          required
-        />
+        <Input name="text" label="Question" required />
         {questionType === "Multiple choice" ? (
           <>
             <Input

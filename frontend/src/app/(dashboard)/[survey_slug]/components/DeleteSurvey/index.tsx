@@ -4,6 +4,7 @@ import styles from "./styles.module.css";
 import SurveyService from "@/services/survey";
 import Message from "@/components/Message";
 import { useRouter } from "next/navigation";
+import handleResponse from "@/systems/handleResponse";
 
 interface TProps {
   setIsDeleting: Dispatch<SetStateAction<boolean>>;
@@ -21,23 +22,9 @@ export default function DeleteSurvey({ setIsDeleting, slug }: TProps) {
   const onDelete = async () => {
     const response = await SurveyService.deleteSurvey(slug);
 
-    if (response.success) {
-      setMessage({ value: "Survey deleted successfully!", status: "success" });
+    handleResponse(response, "Survey deleted successfully!", setMessage, () => {
       router.push("/");
-    } else if (response.status === 400) {
-      const message =
-        typeof response.error.data === "object"
-          ? Object.values(response.error.data)[0]
-          : "Something went wrong!";
-      setMessage({ value: message, status: "error" });
-    } else if (response.status === 403) {
-      setMessage({
-        value: "You are not authorized to perform this action!",
-        status: "error",
-      });
-    } else {
-      setMessage({ value: "Unknown Error !", status: "error" });
-    }
+    });
   };
   return (
     <div className={styles.deleteSurvey}>

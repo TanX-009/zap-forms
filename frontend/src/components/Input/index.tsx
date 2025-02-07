@@ -23,10 +23,10 @@ export default function Input({
   onChange = () => {},
 }: TProps) {
   return (
-    <div className={styles.input}>
+    <div className={`${styles.input} ${className}`}>
       {label ? <label htmlFor={name}>{label}</label> : null}
       <input
-        className={"input " + className}
+        className={"input"}
         type={type}
         id={name}
         name={name}

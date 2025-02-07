@@ -1,0 +1,63 @@
+.analytics {
+  width: 100%;
+  max-width: var(--max-view-width);
+
+  margin: 0 auto;
+  padding: var(--sp-s);
+}
+
+.tableContainer {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  max-width: fit-content;
+
+  padding: var(--sp-3xs);
+  margin: auto;
+
+  border: var(--border) solid var(--primary);
+  border-radius: var(--radius);
+}
+
+.thead {
+  font-size: var(--p);
+  text-wrap: nowrap;
+}
+
+.thead th {
+  padding: var(--sp-3xs);
+  text-align: start;
+}
+
+.tr td {
+  padding: var(--sp-3xs);
+}
+
+.pagination {
+  width: 100%;
+  max-width: var(--max-width);
+
+  padding: var(--sp-3xs);
+  margin: 0 auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3xs);
+  flex-wrap: wrap;
+}
+
+.buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-3xs);
+  flex-wrap: wrap;
+}
+
+.pagesize {
+  width: var(--sp-xl);
+}

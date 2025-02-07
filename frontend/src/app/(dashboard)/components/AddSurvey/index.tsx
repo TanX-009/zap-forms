@@ -5,6 +5,7 @@ import Message from "@/components/Message";
 import Form from "@/components/Form";
 import SurveyService from "@/services/survey";
 import { useRouter } from "next/navigation";
+import handleResponse from "@/systems/handleResponse";
 
 export default function AddSurvey() {
   const router = useRouter();
@@ -31,23 +32,14 @@ export default function AddSurvey() {
       online: false,
     });
 
-    if (response.success) {
-      setMessage({ value: "Survey added successfully!", status: "success" });
-      router.push(`/${response.data.slug}`);
-    } else if (response.status === 400) {
-      const message =
-        typeof response.error.data === "object"
-          ? Object.values(response.error.data)[0]
-          : "Something went wrong!";
-      setMessage({ value: message, status: "error" });
-    } else if (response.status === 403) {
-      setMessage({
-        value: "You are not authorized to perform this action!",
-        status: "error",
-      });
-    } else {
-      setMessage({ value: "Unknown Error !", status: "error" });
-    }
+    handleResponse(
+      response,
+      "Survey added successfully!",
+      setMessage,
+      (data) => {
+        router.push(`/${data.slug}`);
+      },
+    );
   };
 
   return (

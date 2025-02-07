@@ -1,3 +1,5 @@
+import csv
+from django.http import HttpResponse
 from rest_framework import status, viewsets
 from rest_framework.fields import json
 from rest_framework.mixins import (
@@ -10,10 +12,11 @@ from rest_framework.mixins import (
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.pagination import PageNumberPagination
 from django.db import transaction
 from rest_framework.views import APIView
 
-from .models import QuestionOption, Survey, Question
+from .models import QuestionOption, Responses, Survey, Question
 from .serializers import (
     SurveySerializer,
     QuestionSerializer,
@@ -93,7 +96,6 @@ class QuestionViewSet(
 
             # Handle multiple-choice question options
             if question.type == "multiple-choice":
-                print("asdf")
                 # Delete existing options
                 QuestionOption.objects.filter(question=question).delete()
                 if options:
@@ -212,3 +214,79 @@ class SubmitSurveyResponseView(APIView):
                 response.audio_file.save(f"response_{response.id}.wav", audio_file)
 
             return Response(created_answers, status=status.HTTP_201_CREATED)
+
+
+class SurveyResponsesPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = "page_size"
+    max_page_size = 100
+
+
+class SurveyAnswersListView(APIView):
+    # permission_classes = [IsAuthenticated]
+
+    def get(self, request, survey_id):
+        try:
+            survey = Survey.objects.get(id=survey_id)
+            responses = Responses.objects.filter(survey=survey)
+
+            paginator = SurveyResponsesPagination()
+            paginated_responses = paginator.paginate_queryset(responses, request)
+
+            serializer = ResponsesSerializer(paginated_responses, many=True)
+            return paginator.get_paginated_response(serializer.data)
+
+        except Survey.DoesNotExist:
+            return Response(
+                {"detail": "Survey not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+
+
+class ExportSurveyResponsesCSV(APIView):
+    def get(self, _, survey_id):
+        try:
+            survey = Survey.objects.get(id=survey_id)
+            responses = Responses.objects.filter(survey=survey)
+
+            if not responses.exists():
+                return Response(
+                    {"detail": "No responses found for this survey"},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
+
+            response = HttpResponse(content_type="text/csv")
+            response["Content-Disposition"] = (
+                f'attachment; filename="survey_{survey_id}_responses.csv"'
+            )
+
+            writer = csv.writer(response)
+
+            # Writing the header
+            header = [
+                "Response ID",
+                "User",
+                "Created At",
+                "Updated At",
+            ]  # Add more fields if necessary
+            writer.writerow(header)
+
+            # Writing response data
+            for response_obj in responses:
+                writer.writerow(
+                    [
+                        response_obj.id,
+                        (
+                            response_obj.user.username
+                            if response_obj.user
+                            else "Anonymous"
+                        ),
+                        response_obj.created_at,
+                        response_obj.updated_at,
+                    ]
+                )
+
+            return response
+        except Survey.DoesNotExist:
+            return Response(
+                {"detail": "Survey not found"}, status=status.HTTP_404_NOT_FOUND
+            )

@@ -1,4 +1,4 @@
-import { TAnswer, TQuestion, TSurvey } from "@/types/survey";
+import { TAnswer, TQuestion, TSurvey, TSurveyResponses } from "@/types/survey";
 import {
   delete_,
   formData_post,
@@ -38,6 +38,13 @@ interface TSubmitSurveyRequest {
   audioBlob: Blob | null;
 }
 
+interface TGetSurveyResponsesResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: TSurveyResponses[];
+}
+
 async function addSurvey(
   data: TAddSurveyRequest,
 ): Promise<TApiResponse<TSurvey>> {
@@ -72,6 +79,22 @@ async function getSurveyQuestions(
 ): Promise<TApiResponse<TQuestion[]>> {
   return get(
     Services.getSurveyQuestions.replace("$$survey_id$$", id.toString()),
+  );
+}
+
+async function getSurveyResponses(
+  id: number,
+  pageNum: number,
+  pageSize: number,
+): Promise<TApiResponse<TGetSurveyResponsesResponse>> {
+  return get(
+    Services.geTSurveyResponses.replace("$$survey_id$$", id.toString()),
+    {
+      params: {
+        page: pageNum,
+        page_size: pageSize,
+      },
+    },
   );
 }
 
@@ -116,6 +139,7 @@ const SurveyService = {
   getSurvey: getSurvey,
 
   getSurveyQuestions: getSurveyQuestions,
+  getSurveyResponses: getSurveyResponses,
 
   addQuestion: addQuestion,
   deleteQuestion: deleteQuestion,

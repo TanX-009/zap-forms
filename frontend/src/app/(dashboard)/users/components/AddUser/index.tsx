@@ -6,6 +6,7 @@ import Select from "@/components/Select";
 import Message from "@/components/Message";
 import ManagementService from "@/services/management";
 import Form from "@/components/Form";
+import handleResponse from "@/systems/handleResponse";
 
 interface TProps {
   updateTick: () => void;
@@ -49,23 +50,9 @@ export default function AddUser({ updateTick }: TProps) {
       role,
     });
 
-    if (response.success) {
-      setMessage({ value: "User added successfully!", status: "success" });
+    handleResponse(response, "User added successfully!", setMessage, () => {
       updateTick();
-    } else if (response.status === 400) {
-      const message =
-        typeof response.error.data === "object"
-          ? Object.values(response.error.data)[0]
-          : "Something went wrong!";
-      setMessage({ value: message, status: "error" });
-    } else if (response.status === 403) {
-      setMessage({
-        value: "You are not authorized to perform this action!",
-        status: "error",
-      });
-    } else {
-      setMessage({ value: "Unknown Error !", status: "error" });
-    }
+    });
   };
 
   return (

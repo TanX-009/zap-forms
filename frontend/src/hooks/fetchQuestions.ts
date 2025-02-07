@@ -15,8 +15,6 @@ export default function useFetchQuestions(
         setIsLoading(true);
         const response = await SurveyService.getSurveyQuestions(id);
         if (response.success) setter(response.data);
-        if (!response.success && response.status === 401) {
-        }
       } finally {
         setIsLoading(false);
       }

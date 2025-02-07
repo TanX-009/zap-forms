@@ -5,6 +5,7 @@ import Button from "@/components/Button";
 import isoToNormal from "@/systems/isoToNormal";
 import { useRouter } from "next/navigation";
 import { getBaseUrl } from "@/app/actions/url";
+import Link from "next/link";
 
 interface TProps {
   survey: TSurvey;
@@ -61,6 +62,10 @@ export default function SurveyCard({ survey }: TProps) {
           {"share" in navigator ? (
             <Button onClick={onShare}>Share</Button>
           ) : null}
+
+          <Link className={"loClick"} href={`${survey.slug}/analytics`}>
+            Analytics
+          </Link>
         </div>
       </div>
 

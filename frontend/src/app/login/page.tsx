@@ -9,6 +9,7 @@ import Message from "@/components/Message";
 import { deleteLogin, getLogin, setLogin } from "@/app/actions/cookies";
 import { useRouter } from "next/navigation";
 import Logo from "@/components/Logo";
+import handleResponse from "@/systems/handleResponse";
 
 interface TMessage {
   value: string;
@@ -35,24 +36,14 @@ export default function Login() {
       password: password,
     });
 
-    if (response.success) {
-      await setLogin(response.data.user);
-      setMessage({ value: "Successfully logged in!", status: "success" });
-    } else if (response.status === 401) {
-      console.error("401", response);
-      setMessage({ value: "Invalid email or password!", status: "error" });
-    } else if (response.error.detail === "Network error!") {
-      setMessage({
-        value: "Network error! Please try again later.",
-        status: "error",
-      });
-    } else {
-      console.error("Unknown error!", response);
-      setMessage({
-        value: "Server error! Please try again later.",
-        status: "error",
-      });
-    }
+    handleResponse(
+      response,
+      "Successfully logged in!",
+      setMessage,
+      async (data) => {
+        await setLogin(data.user);
+      },
+    );
   };
 
   // redirect if already logged in

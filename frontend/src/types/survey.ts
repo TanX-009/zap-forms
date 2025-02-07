@@ -24,4 +24,15 @@ interface TAnswer {
   numeric_answer: number | null;
 }
 
-export type { TSurvey, TQuestion, TAnswer };
+interface TSurveyResponses {
+  answers: TAnswer[];
+  audio_file: string;
+  created_at: string;
+  id: number;
+  survey: number;
+  user_email: string;
+  user_name: string;
+  questions: TQuestion[];
+}
+
+export type { TSurvey, TQuestion, TAnswer, TSurveyResponses };

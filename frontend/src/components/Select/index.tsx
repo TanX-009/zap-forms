@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React, { ChangeEvent, ReactNode } from "react";
 import styles from "./styles.module.css";
 
 interface TPropsBase {
@@ -6,6 +6,8 @@ interface TPropsBase {
   options: { value: string; label: string }[];
   label?: ReactNode | null;
   required?: boolean;
+  className?: string;
+  onChange?: (event: ChangeEvent<HTMLSelectElement>) => void;
 }
 
 type TProps =
@@ -19,6 +21,8 @@ export default function Select({
   defaultValue = null,
   label = null,
   required = false,
+  className = "",
+  onChange = () => {},
 }: TProps) {
   let _defaultValue = "";
   if ((selected || selected === 0) && !defaultValue) {
@@ -29,7 +33,7 @@ export default function Select({
     _defaultValue = "";
   }
   return (
-    <div className={styles.select}>
+    <div className={`${styles.select} ${className}`}>
       {label ? <label htmlFor={name}>{label}</label> : null}
       <select
         className={"input"}
@@ -37,6 +41,7 @@ export default function Select({
         id={name}
         defaultValue={_defaultValue}
         required={required}
+        onChange={onChange}
       >
         <option value="" disabled>
           Select {name}...

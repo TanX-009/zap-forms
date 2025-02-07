@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.fields import SerializerMethodField
 from .models import Survey, Question, QuestionOption, Responses, Answer
 
 
@@ -15,7 +16,7 @@ class QuestionOptionSerializer(serializers.ModelSerializer):
 
 
 class QuestionSerializer(serializers.ModelSerializer):
-    options = serializers.SerializerMethodField()
+    options = QuestionOptionSerializer(many=True, read_only=True)
 
     class Meta:
         model = Question
@@ -28,13 +29,28 @@ class QuestionSerializer(serializers.ModelSerializer):
         return None
 
 
-class ResponsesSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Responses
-        fields = "__all__"
-
-
 class AnswerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Answer
         fields = "__all__"
+
+
+class ResponsesAnswerSerializer(serializers.ModelSerializer):
+    # question = QuestionSerializer()
+
+    class Meta:
+        model = Answer
+        fields = "__all__"
+
+
+class ResponsesSerializer(serializers.ModelSerializer):
+    answers = ResponsesAnswerSerializer(many=True, read_only=True)
+    questions = SerializerMethodField()
+
+    class Meta:
+        model = Responses
+        fields = "__all__"
+
+    def get_questions(self, obj):
+        questions = Question.objects.filter(survey=obj.survey)
+        return QuestionSerializer(questions, many=True).data

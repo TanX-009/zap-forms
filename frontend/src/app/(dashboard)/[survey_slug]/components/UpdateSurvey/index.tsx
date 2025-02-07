@@ -7,6 +7,7 @@ import Message from "@/components/Message";
 import Form from "@/components/Form";
 import SurveyService from "@/services/survey";
 import { TSurvey } from "@/types/survey";
+import handleResponse from "@/systems/handleResponse";
 
 interface TProps {
   survey: TSurvey;
@@ -52,26 +53,14 @@ export default function UpdateSurvey({ survey, onSurveyUpdate }: TProps) {
       survey.slug,
     );
 
-    if (response.success) {
-      setMessage({
-        value: "Question updated successfully!",
-        status: "success",
-      });
-      onSurveyUpdate();
-    } else if (response.status === 400) {
-      const message =
-        typeof response.error.data === "object"
-          ? Object.values(response.error.data)[0]
-          : "Something went wrong!";
-      setMessage({ value: message, status: "error" });
-    } else if (response.status === 403) {
-      setMessage({
-        value: "You are not authorized to perform this action!",
-        status: "error",
-      });
-    } else {
-      setMessage({ value: "Unknown Error !", status: "error" });
-    }
+    handleResponse(
+      response,
+      "Question updated successfully!",
+      setMessage,
+      () => {
+        onSurveyUpdate();
+      },
+    );
   };
 
   return (

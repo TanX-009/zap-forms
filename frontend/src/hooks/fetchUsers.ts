@@ -14,8 +14,6 @@ export default function useFetchUsers(
       setIsLoading(true);
       const response = await ManagementService.getUsers();
       if (response.success) setter(response.data);
-      if (!response.success && response.status === 401) {
-      }
     } finally {
       setIsLoading(false);
     }

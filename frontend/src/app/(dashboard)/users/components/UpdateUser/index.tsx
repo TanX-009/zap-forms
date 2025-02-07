@@ -7,6 +7,7 @@ import Message from "@/components/Message";
 import ManagementService from "@/services/management";
 import { TUser } from "@/types/user";
 import Form from "@/components/Form";
+import handleResponse from "@/systems/handleResponse";
 
 interface TProps {
   user: TUser;
@@ -54,46 +55,18 @@ export default function UpdateUser({ user, updateTick }: TProps) {
       role,
     });
 
-    if (response.success) {
-      setMessage({ value: "User updated successfully!", status: "success" });
+    handleResponse(response, "User updated successfully!", setMessage, () => {
       updateTick();
-    } else if (response.status === 400) {
-      const message =
-        typeof response.error.data === "object"
-          ? Object.values(response.error.data)[0]
-          : "Something went wrong!";
-      setMessage({ value: message, status: "error" });
-    } else if (response.status === 403) {
-      setMessage({
-        value: "You are not authorized to perform this action!",
-        status: "error",
-      });
-    } else {
-      setMessage({ value: "Unknown Error !", status: "error" });
-    }
+    });
   };
 
   const onDelete = async () => {
     setMessage({ value: "Deleting...", status: "neutral" });
     const response = await ManagementService.deleteUser(user.id);
 
-    if (response.success) {
-      setMessage({ value: "User deleted successfully!", status: "success" });
+    handleResponse(response, "User deleted successfully!", setMessage, () => {
       updateTick();
-    } else if (response.status === 400) {
-      const message =
-        typeof response.error.data === "object"
-          ? Object.values(response.error.data)[0]
-          : "Something went wrong!";
-      setMessage({ value: message, status: "error" });
-    } else if (response.status === 403) {
-      setMessage({
-        value: "You are not authorized to perform this action!",
-        status: "error",
-      });
-    } else {
-      setMessage({ value: "Unknown Error !", status: "error" });
-    }
+    });
   };
 
   if (isDeleting) {
