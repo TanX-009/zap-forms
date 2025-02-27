@@ -1,4 +1,5 @@
 import csv
+from django.conf import settings
 from django.http import HttpResponse
 from rest_framework import status, viewsets
 from rest_framework.fields import json
@@ -16,7 +17,7 @@ from rest_framework.pagination import PageNumberPagination
 from django.db import transaction
 from rest_framework.views import APIView
 
-from .models import QuestionOption, Responses, Survey, Question
+from .models import Answer, QuestionOption, Responses, Survey, Question
 from .serializers import (
     SurveySerializer,
     QuestionSerializer,
@@ -262,28 +263,50 @@ class ExportSurveyResponsesCSV(APIView):
             writer = csv.writer(response)
 
             # Writing the header
-            header = [
-                "Response ID",
-                "User",
-                "Created At",
-                "Updated At",
-            ]  # Add more fields if necessary
+            header = ["Name", "Email", "Audio"]
+            questions = Question.objects.filter(survey=survey).order_by("sequence")
+
+            for question in questions:
+                header.append(question.text)
+
+            header.append("Created at")
             writer.writerow(header)
 
             # Writing response data
+            backend_url = settings.BACKEND_URL
+
             for response_obj in responses:
-                writer.writerow(
-                    [
-                        response_obj.id,
-                        (
-                            response_obj.user.username
-                            if response_obj.user
-                            else "Anonymous"
-                        ),
-                        response_obj.created_at,
-                        response_obj.updated_at,
-                    ]
-                )
+                row = [
+                    response_obj.user_name,
+                    response_obj.user_email,
+                    (
+                        f"{backend_url}{response_obj.audio_file.url}"
+                        if response_obj.audio_file
+                        else ""
+                    ),
+                ]
+
+                for question in questions:
+                    answer = Answer.objects.filter(
+                        response=response_obj, question=question
+                    ).first()
+                    if answer:
+                        if answer.text_answer:
+                            row.append(answer.text_answer)
+                        elif answer.numeric_answer is not None:
+                            row.append(str(answer.numeric_answer))
+                        elif answer.choice_answer:
+                            option = QuestionOption.objects.filter(
+                                id=answer.choice_answer.id
+                            ).first()
+                            row.append(option.text if option else "")
+                        else:
+                            row.append("-")
+                    else:
+                        row.append("-")
+
+                row.append(response_obj.created_at)
+                writer.writerow(row)
 
             return response
         except Survey.DoesNotExist:

@@ -1,25 +1,22 @@
-import os
 from django.core.management.base import BaseCommand
-from account.models import CustomUser
+from django.contrib.auth.models import User
+from django.conf import settings
 
 
 class Command(BaseCommand):
-    help = "Create a default user from environment variables"
+    help = "Create a default user and admin user from settings"
 
     def handle(self, *args, **options):
-        # Retrieve environment variables or use default values
-        django_admin_email = os.getenv(
-            "DEFAULT_DJANGO_ADMIN_USER_EMAIL", "admin@email.com"
-        )
-        django_admin_username = os.getenv("DEFAULT_DJANGO_ADMIN_USER_USERNAME", "admin")
-        django_admin_password = os.getenv("DEFAULT_DJANGO_ADMIN_USER_PASSWORD", "admin")
+        # Retrieve default values from settings
+        django_admin_email = settings.DEFAULT_DJANGO_ADMIN_USER_EMAIL
+        django_admin_username = settings.DEFAULT_DJANGO_ADMIN_USER_USERNAME
+        django_admin_password = settings.DEFAULT_DJANGO_ADMIN_USER_PASSWORD
 
-        if not CustomUser.objects.filter(email=django_admin_email).exists():
-            CustomUser.objects.create_superuser(
+        if not User.objects.filter(email=django_admin_email).exists():
+            User.objects.create_superuser(
                 email=django_admin_email,
-                password=django_admin_password,
-                role="admin",
                 username=django_admin_username,
+                password=django_admin_password,
             )
             self.stdout.write(f"Default admin user created: {django_admin_email}")
         else:
@@ -27,16 +24,15 @@ class Command(BaseCommand):
                 f"Default admin user already exists: {django_admin_email}"
             )
 
-        admin_email = os.getenv("DEFAULT_ADMIN_USER_EMAIL", "user@email.com")
-        admin_username = os.getenv("DEFAULT_ADMIN_USER_USERNAME", "username")
-        admin_password = os.getenv("DEFAULT_ADMIN_USER_PASSWORD", "user")
+        admin_email = settings.DEFAULT_ADMIN_USER_EMAIL
+        admin_username = settings.DEFAULT_ADMIN_USER_USERNAME
+        admin_password = settings.DEFAULT_ADMIN_USER_PASSWORD
 
-        if not CustomUser.objects.filter(email=admin_email).exists():
-            CustomUser.objects.create_user(
+        if not User.objects.filter(email=admin_email).exists():
+            User.objects.create_user(
                 email=admin_email,
-                password=admin_password,
                 username=admin_username,
-                role="admin",
+                password=admin_password,
             )
             self.stdout.write(f"Default user created: {admin_email}")
         else:

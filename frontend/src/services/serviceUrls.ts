@@ -10,20 +10,21 @@ const Services = {
 
   users: "account/users/",
 
-  addSurvey: "api/surveys/",
-  deleteSurvey: "api/surveys/",
-  updateSurvey: "api/surveys/",
-  getSurveys: "api/surveys/",
-  getSurvey: "api/surveys/",
+  addSurvey: "api/survey/",
+  deleteSurvey: "api/survey/",
+  updateSurvey: "api/survey/",
+  getSurveys: "api/survey/",
+  getSurvey: "api/survey/",
 
-  getSurveyQuestions: "api/surveys/$$survey_id$$/questions/",
-  geTSurveyResponses: "api/surveys/$$survey_id$$/responses/",
+  getSurveyQuestions: "api/survey/$$survey_id$$/questions/",
+  geTSurveyResponses: "api/survey/$$survey_id$$/responses/",
 
   addQuestion: "api/questions/",
   deleteQuestion: "api/questions/",
   updateQuestion: "api/questions/",
 
   submitSurvey: "api/submit-response/",
+  exportSurvey: "api/survey/$$survey_id$$/export/",
 
   audio: "/api",
 } as const;

@@ -36,6 +36,10 @@
   padding: var(--sp-3xs);
 }
 
+.downloadCSV {
+  width: fit-content;
+}
+
 .pagination {
   width: 100%;
   max-width: var(--max-width);

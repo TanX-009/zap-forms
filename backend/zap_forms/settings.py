@@ -13,22 +13,29 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 import os
 from pathlib import Path
 from datetime import timedelta
+import environ
 
-
+# SECURITY WARNING: don't run with debug turned on in production!
+env = environ.Env(DEBUG=(bool, False))
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Read the .env file
+environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-#vz5$%rkwn$nykjbb2wda_9w#m!oy&q86=oh6fp+(ot9@wa@!y"
+SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env("DEBUG")
 
 ALLOWED_HOSTS = []
+
+# Backend url
+BACKEND_URL = env("BACKEND_URL", default="http://localhost:8000")
 
 
 # Application definition
@@ -159,3 +166,19 @@ CORS_ALLOW_CREDENTIALS = True
 # Media settings
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
+# Default values for the admin user
+DEFAULT_DJANGO_ADMIN_USER_EMAIL = env(
+    "DEFAULT_DJANGO_ADMIN_USER_EMAIL", default="admin@email.com"
+)
+DEFAULT_DJANGO_ADMIN_USER_USERNAME = env(
+    "DEFAULT_DJANGO_ADMIN_USER_USERNAME", default="admin"
+)
+DEFAULT_DJANGO_ADMIN_USER_PASSWORD = env(
+    "DEFAULT_DJANGO_ADMIN_USER_PASSWORD", default="admin"
+)
+
+# Default values for the regular user
+DEFAULT_ADMIN_USER_EMAIL = env("DEFAULT_ADMIN_USER_EMAIL", default="user@email.com")
+DEFAULT_ADMIN_USER_USERNAME = env("DEFAULT_ADMIN_USER_USERNAME", default="user")
+DEFAULT_ADMIN_USER_PASSWORD = env("DEFAULT_ADMIN_USER_PASSWORD", default="user")

@@ -11,6 +11,7 @@ import styles from "./styles.module.css";
 import useFetchResponses from "@/hooks/fetchResponses";
 import Select from "@/components/Select";
 import Button from "@/components/Button";
+import { GoDownload } from "react-icons/go";
 
 const pageOptions = [
   { value: "10", label: "10" },
@@ -54,6 +55,8 @@ export default function Analysis() {
     if (survey?.id) fetchResponses(survey.id, page);
   }, [survey, page, fetchResponses]);
 
+  if (!survey) return <Loading centerStage />;
+
   return (
     <div className={styles.analytics}>
       <div className={styles.pagination}>
@@ -61,7 +64,7 @@ export default function Analysis() {
           Page {page} of {Math.ceil(totalCount / pageSize)}
         </p>
         <label>
-          Page Size:
+          {"Page Size: "}
           <select
             className={"input"}
             value={pageSize}
@@ -80,6 +83,16 @@ export default function Analysis() {
           <Button disabled={!nextPage} onClick={() => setPage((p) => p + 1)}>
             Next
           </Button>
+
+          <a
+            href={`${process.env.NEXT_PUBLIC_SERVER_API_URL}/${Services.exportSurvey.replace(
+              "$$survey_id$$",
+              survey.id.toString(),
+            )}`}
+            className={`hiClick ${styles.downloadCSV}`}
+          >
+            <GoDownload /> CSV
+          </a>
         </div>
       </div>
       {isSurveyLoading || areAnswersLoading || !survey || !responses ? (

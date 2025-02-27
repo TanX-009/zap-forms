@@ -13,18 +13,18 @@ from .views import (
 
 # Create a router and register our viewsets with it.
 router = DefaultRouter()
-router.register(r"surveys", SurveyViewSet, basename="survey")
+router.register(r"survey", SurveyViewSet, basename="survey")
 router.register(r"questions", QuestionViewSet, basename="question")
 
 urlpatterns = [
     path("", include(router.urls)),
     path(
-        "surveys/<int:survey_id>/questions/",
+        "survey/<int:survey_id>/questions/",
         SurveyQuestionsListView.as_view(),
         name="survey_questions_list",
     ),
     path(
-        "surveys/<int:survey_id>/responses/",
+        "survey/<int:survey_id>/responses/",
         SurveyAnswersListView.as_view(),
         name="survey_responses",
     ),
