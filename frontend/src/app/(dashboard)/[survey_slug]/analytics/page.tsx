@@ -9,17 +9,16 @@ import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import styles from "./styles.module.css";
 import useFetchResponses from "@/hooks/fetchResponses";
-import Select from "@/components/Select";
 import Button from "@/components/Button";
 import { GoDownload } from "react-icons/go";
 
-const pageOptions = [
-  { value: "10", label: "10" },
-  { value: "20", label: "20" },
-  { value: "30", label: "30" },
-  { value: "50", label: "50" },
-  { value: "100", label: "100" },
-];
+//const pageOptions = [
+//  { value: "10", label: "10" },
+//  { value: "20", label: "20" },
+//  { value: "30", label: "30" },
+//  { value: "50", label: "50" },
+//  { value: "100", label: "100" },
+//];
 
 export default function Analysis() {
   const params = useParams();
