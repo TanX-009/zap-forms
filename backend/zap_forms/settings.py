@@ -14,6 +14,7 @@ import os
 from pathlib import Path
 from datetime import timedelta
 import environ
+import logging.config
 
 # SECURITY WARNING: don't run with debug turned on in production!
 env = environ.Env(DEBUG=(bool, False))
@@ -32,7 +33,7 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG")
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = env("DJANGO_ALLOWED_HOSTS", default="127.0.0.1").split(",")
 
 # Backend url
 BACKEND_URL = env("BACKEND_URL", default="http://localhost:8000")
@@ -95,11 +96,11 @@ WSGI_APPLICATION = "zap_forms.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "zap_forms",
-        "USER": "zap_user",
-        "PASSWORD": "admin",
-        "HOST": "localhost",
-        "PORT": "5432",
+        "NAME": env("POSTGRES_DB", default="zap_forms"),
+        "USER": env("POSTGRES_USER", default="zap_user"),
+        "PASSWORD": env("POSTGRES_PASSWORD", default="admin"),
+        "HOST": env("POSTGRES_HOST", default="localhost"),
+        "PORT": env("POSTGRES_PORT", default="5432"),
     }
 }
 
@@ -139,6 +140,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = "static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")  # Collects static files here
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -167,6 +169,7 @@ CORS_ALLOW_CREDENTIALS = True
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
+
 # Default values for the admin user
 DEFAULT_DJANGO_ADMIN_USER_EMAIL = env(
     "DEFAULT_DJANGO_ADMIN_USER_EMAIL", default="admin@email.com"
@@ -182,3 +185,38 @@ DEFAULT_DJANGO_ADMIN_USER_PASSWORD = env(
 DEFAULT_ADMIN_USER_EMAIL = env("DEFAULT_ADMIN_USER_EMAIL", default="user@email.com")
 DEFAULT_ADMIN_USER_USERNAME = env("DEFAULT_ADMIN_USER_USERNAME", default="user")
 DEFAULT_ADMIN_USER_PASSWORD = env("DEFAULT_ADMIN_USER_PASSWORD", default="user")
+
+
+# Logging Configuration
+
+# Clear prev config
+LOGGING_CONFIG = None
+
+# Get loglevel from env
+LOGLEVEL = env("DJANGO_LOGLEVEL", default="info").upper()
+
+logging.config.dictConfig(
+    {
+        "version": 1,
+        "disable_existing_loggers": False,
+        "formatters": {
+            "console": {
+                "format": "%(asctime)s %(levelname)s [%(name)s:%(lineno)s] %(module)s %(process)d %(thread)d %(message)s",
+            },
+        },
+        "handlers": {
+            "console": {
+                "class": "logging.StreamHandler",
+                "formatter": "console",
+            },
+        },
+        "loggers": {
+            "": {
+                "level": LOGLEVEL,
+                "handlers": [
+                    "console",
+                ],
+            },
+        },
+    }
+)
