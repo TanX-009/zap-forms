@@ -37,6 +37,7 @@ ALLOWED_HOSTS = env("DJANGO_ALLOWED_HOSTS", default="127.0.0.1").split(",")
 
 # Backend url
 BACKEND_URL = env("BACKEND_URL", default="http://localhost:8000")
+FORCE_SCRIPT_NAME = env("FORCE_SCRIPT_NAME", default=None)
 
 
 # Application definition
