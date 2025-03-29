@@ -19,6 +19,7 @@ class Command(BaseCommand):
                 email=django_admin_email,
                 username=django_admin_username,
                 password=django_admin_password,
+                role="admin",
             )
             self.stdout.write(f"Default admin user created: {django_admin_email}")
         else:
