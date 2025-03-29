@@ -13,6 +13,9 @@ import QuestionCard from "./components/QuestionCard";
 import UpdateQuestion from "./components/UpdateQuestion";
 import UpdateSurvey from "./components/UpdateSurvey";
 import Loading from "@/components/Loading";
+import SurveyService from "@/services/survey";
+import handleResponse from "@/systems/handleResponse";
+import Message from "@/components/Message";
 
 export default function EditSurvey() {
   const params = useParams();
@@ -26,9 +29,18 @@ export default function EditSurvey() {
     isVisible: false,
     question: {} as TQuestion,
   });
+  const [isEditingSequence, setIsEditingSequence] = useState(false);
   const [isSurveyUpdating, setIsSurveyUpdating] = useState(false);
   const [questionTick, updateQuestionTick] = useState(false);
   const [surveyTick, updateSurveyTick] = useState(false);
+
+  const [editSequenceMessage, setEditSequenceMessage] = useState<{
+    value: string;
+    status: "neutral" | "success" | "error";
+  }>({
+    value: "",
+    status: "neutral",
+  });
 
   // click handlers
   const onQuestionAdded = () => {
@@ -36,6 +48,7 @@ export default function EditSurvey() {
     updateQuestionTick(!questionTick);
   };
 
+  // update question
   const onQuestionUpdate = () => {
     setUpdateQuestion({
       ...updateQuestion,
@@ -44,6 +57,7 @@ export default function EditSurvey() {
     updateQuestionTick(!questionTick);
   };
 
+  // update survey
   const onSurveyUpdate = () => {
     setIsSurveyUpdating(false);
     updateSurveyTick(!surveyTick);
@@ -53,15 +67,40 @@ export default function EditSurvey() {
     setUpdateQuestion({ ...updateQuestion, isVisible });
   };
 
+  const onEditQuestionSequence = () => {
+    setIsEditingSequence(true);
+    setEditSequenceMessage({ value: "", status: "neutral" });
+  };
+
+  // reorder questions post request
+  const onQuestionsReorder = async () => {
+    if (!questions || !survey) return;
+    setEditSequenceMessage({ value: "Reordering...", status: "neutral" });
+    const response = await SurveyService.reorderQuestions(questions);
+    handleResponse(
+      response,
+      "Edited sequence successfully!",
+      setEditSequenceMessage,
+      () => {
+        setIsEditingSequence(false);
+        setTimeout(() => {
+          setEditSequenceMessage({ value: "", status: "neutral" });
+        }, 2000);
+      },
+    );
+  };
+
   // data fetching
   const { isLoading: isSurveyLoading, fetchSurvey } = useFetchSurvey(setSurvey);
   const { isLoading: areQuestionsLoading, fetchQuestions } =
     useFetchQuestions(setQuestions);
 
+  // fetch survey
   useEffect(() => {
     if (typeof params.survey_slug === "string") fetchSurvey(params.survey_slug);
   }, [surveyTick, params.survey_slug, fetchSurvey]);
 
+  // fetch survey questions
   useEffect(() => {
     if (survey && survey.id) fetchQuestions(survey.id);
   }, [questionTick, survey, fetchQuestions]);
@@ -74,7 +113,11 @@ export default function EditSurvey() {
         isVisible={isSurveyUpdating}
         setIsVisible={setIsSurveyUpdating}
       >
-        <UpdateSurvey survey={survey} onSurveyUpdate={onSurveyUpdate} />
+        <UpdateSurvey
+          survey={survey}
+          onSurveyUpdate={onSurveyUpdate}
+          questions={questions}
+        />
       </Modal>
 
       <Modal
@@ -137,8 +180,17 @@ export default function EditSurvey() {
                 {questions.length}
               </p>
             </div>
-            <div className={styles.buttons}>
-              <Button disabled={true}>Edit sequence</Button>
+            <div className={`${styles.buttons} ${styles.editSequence}`}>
+              {isEditingSequence ? (
+                <Button onClick={onQuestionsReorder}>
+                  Stop editing sequence
+                </Button>
+              ) : (
+                <Button onClick={onEditQuestionSequence}>Edit sequence</Button>
+              )}
+              <Message status={editSequenceMessage.status}>
+                {editSequenceMessage.value}
+              </Message>
             </div>
           </div>
           <div className={styles.questions}>
@@ -148,8 +200,11 @@ export default function EditSurvey() {
               questions.map((question, index) => (
                 <QuestionCard
                   key={index}
+                  index={index}
                   question={question}
+                  setQuestions={setQuestions}
                   setUpdateQuestion={setUpdateQuestion}
+                  isEditingSequence={isEditingSequence}
                 />
               ))
             )}

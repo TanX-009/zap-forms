@@ -13,7 +13,6 @@ export default function useFetchResponses(
   const [nextPage, setNextPage] = useState<string | null>(null);
   const [prevPage, setPrevPage] = useState<string | null>(null);
   const [totalCount, setTotalCount] = useState(0);
-  console.log(page, nextPage, prevPage, totalCount);
 
   const fetchResponses = useCallback(
     async (id: number, pageNum: number = 1) => {

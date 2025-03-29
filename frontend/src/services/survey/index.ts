@@ -74,6 +74,12 @@ async function getSurvey(
   return get(`${Services.getSurvey}${slug}/`);
 }
 
+async function reorderQuestions(
+  data: TQuestion[],
+): Promise<TApiResponse<null>> {
+  return post(Services.reorderQuestions, data);
+}
+
 async function getSurveyQuestions(
   id: number,
 ): Promise<TApiResponse<TQuestion[]>> {
@@ -88,7 +94,7 @@ async function getSurveyResponses(
   pageSize: number,
 ): Promise<TApiResponse<TGetSurveyResponsesResponse>> {
   return get(
-    Services.geTSurveyResponses.replace("$$survey_id$$", id.toString()),
+    Services.getSurveyResponses.replace("$$survey_id$$", id.toString()),
     {
       params: {
         page: pageNum,
@@ -138,6 +144,7 @@ const SurveyService = {
   getSurveys: getSurveys,
   getSurvey: getSurvey,
 
+  reorderQuestions: reorderQuestions,
   getSurveyQuestions: getSurveyQuestions,
   getSurveyResponses: getSurveyResponses,
 

@@ -17,11 +17,12 @@ const Services = {
   getSurvey: "api/survey/",
 
   getSurveyQuestions: "api/survey/$$survey_id$$/questions/",
-  geTSurveyResponses: "api/survey/$$survey_id$$/responses/",
+  getSurveyResponses: "api/survey/$$survey_id$$/responses/",
 
   addQuestion: "api/questions/",
   deleteQuestion: "api/questions/",
   updateQuestion: "api/questions/",
+  reorderQuestions: "api/reorder/",
 
   submitSurvey: "api/submit-response/",
   exportSurvey: "api/survey/$$survey_id$$/export/",

@@ -36,7 +36,6 @@ export default function SurveyCard({ survey }: TProps) {
         text: "I found something interesting!",
         url: `${baseUrl}/survey/${survey.slug}`,
       });
-      console.log("Content shared successfully!");
     } catch (error) {
       console.error("Error sharing:", error);
     }

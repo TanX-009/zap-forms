@@ -4,6 +4,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import (
     ExportSurveyResponsesCSV,
+    QuestionReorderView,
     SurveyAnswersListView,
     SurveyViewSet,
     QuestionViewSet,
@@ -18,6 +19,11 @@ router.register(r"questions", QuestionViewSet, basename="question")
 
 urlpatterns = [
     path("", include(router.urls)),
+    path(
+        "reorder/",
+        QuestionReorderView.as_view(),
+        name="questions_reorder",
+    ),
     path(
         "survey/<int:survey_id>/questions/",
         SurveyQuestionsListView.as_view(),

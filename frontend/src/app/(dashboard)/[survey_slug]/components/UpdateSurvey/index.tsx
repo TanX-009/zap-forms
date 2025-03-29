@@ -6,15 +6,20 @@ import Select from "@/components/Select";
 import Message from "@/components/Message";
 import Form from "@/components/Form";
 import SurveyService from "@/services/survey";
-import { TSurvey } from "@/types/survey";
+import { TQuestion, TSurvey } from "@/types/survey";
 import handleResponse from "@/systems/handleResponse";
 
 interface TProps {
   survey: TSurvey;
+  questions: TQuestion[];
   onSurveyUpdate: () => void;
 }
 
-export default function UpdateSurvey({ survey, onSurveyUpdate }: TProps) {
+export default function UpdateSurvey({
+  survey,
+  onSurveyUpdate,
+  questions,
+}: TProps) {
   const [message, setMessage] = useState<{
     value: string;
     status: "neutral" | "success" | "error";
@@ -41,6 +46,14 @@ export default function UpdateSurvey({ survey, onSurveyUpdate }: TProps) {
       description === survey.description
     ) {
       setMessage({ value: "No changes detected!", status: "error" });
+      return;
+    }
+
+    if (questions.length === 0 && onlineBool) {
+      setMessage({
+        value: "No questions added!\nCan't set status to Online!",
+        status: "error",
+      });
       return;
     }
 

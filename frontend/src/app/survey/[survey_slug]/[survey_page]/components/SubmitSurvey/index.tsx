@@ -49,13 +49,6 @@ export default function SubmitSurvey({
       answers: answers,
       audioBlob: audioBlob,
     });
-    console.log({
-      user_email: user.email,
-      user_name: user.name,
-      survey: survey.id,
-      answers: answers,
-      audioBlob: audioBlob,
-    });
 
     handleResponse(
       response,

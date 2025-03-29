@@ -117,9 +117,7 @@ class QuestionReorderView(APIView):
         Update the sequence of multiple questions at once.
         Expecting a list of objects with "id" and "sequence".
         """
-        questions_data = request.data.get(
-            "questions", []
-        )  # Expecting [{"id": 1, "sequence": 2}, ...]
+        questions_data = request.data  # Expecting [{"id": 1, "sequence": 2}, ...]
 
         if not questions_data:
             return Response(
