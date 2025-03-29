@@ -37,7 +37,7 @@ export default function AddSurvey() {
       "Survey added successfully!",
       setMessage,
       (data) => {
-        router.push(`/${data.slug}`);
+        router.push(`/edit/${data.slug}`);
       },
     );
   };

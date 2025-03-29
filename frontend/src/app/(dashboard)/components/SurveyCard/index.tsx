@@ -48,7 +48,7 @@ export default function SurveyCard({ survey }: TProps) {
         <div className={styles.buttons}>
           <Button
             onClick={() => {
-              router.push(`/${survey.slug}`);
+              router.push(`/edit/${survey.slug}`);
             }}
           >
             Edit
@@ -62,7 +62,7 @@ export default function SurveyCard({ survey }: TProps) {
             <Button onClick={onShare}>Share</Button>
           ) : null}
 
-          <Link className={"loClick"} href={`${survey.slug}/analytics`}>
+          <Link className={"loClick"} href={`/edit/${survey.slug}/analytics`}>
             Analytics
           </Link>
         </div>

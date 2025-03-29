@@ -38,8 +38,12 @@ export default function Navbar() {
       <div className={styles.links}>
         <p>Hello, {login ? login.username || "-" : null}!</p>
 
-        {pathname !== "/users" && login?.role === "admin" ? (
-          <Link className={"loClick"} href={"/users"} aria-label="Manage users">
+        {pathname !== "/edit/users" && login?.role === "admin" ? (
+          <Link
+            className={"loClick"}
+            href={"/edit/users"}
+            aria-label="Manage users"
+          >
             Users
           </Link>
         ) : null}
