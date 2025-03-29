@@ -54,107 +54,116 @@ export default function Analysis() {
     if (survey?.id) fetchResponses(survey.id, page);
   }, [survey, page, fetchResponses]);
 
-  if (!survey) return <Loading centerStage />;
+  if (isSurveyLoading || areAnswersLoading || !survey || !responses)
+    return <Loading centerStage />;
 
   return (
     <div className={styles.analytics}>
-      <div className={styles.pagination}>
-        <p>
-          Page {page} of {Math.ceil(totalCount / pageSize)}
-        </p>
-        <label>
-          {"Page Size: "}
-          <select
-            className={"input"}
-            value={pageSize}
-            onChange={(e) => setPageSize(Number(e.target.value))}
-          >
-            <option value="5">5</option>
-            <option value="10">10</option>
-            <option value="20">20</option>
-            <option value="50">50</option>
-          </select>
-        </label>
-        <div className={styles.buttons}>
-          <Button disabled={!prevPage} onClick={() => setPage((p) => p - 1)}>
-            Previous
-          </Button>
-          <Button disabled={!nextPage} onClick={() => setPage((p) => p + 1)}>
-            Next
-          </Button>
-
-          <a
-            href={`${process.env.NEXT_PUBLIC_SERVER_API_URL}/${Services.exportSurvey.replace(
-              "$$survey_id$$",
-              survey.id.toString(),
-            )}`}
-            className={`hiClick ${styles.downloadCSV}`}
-          >
-            <GoDownload /> CSV
-          </a>
-        </div>
-      </div>
-      {isSurveyLoading || areAnswersLoading || !survey || !responses ? (
-        <Loading centerStage />
+      {responses.length === 0 ? (
+        <h2 className={styles.noResponses}>No responses yet!</h2>
       ) : (
-        <div className={styles.tableContainer}>
-          <table className={styles.table}>
-            <thead className={styles.thead}>
-              <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Audio</th>
-                {responses[0].questions.map((question, index) => {
-                  return <th key={index}>{question.text}</th>;
+        <>
+          <div className={styles.pagination}>
+            <p>
+              Page {page} of {Math.ceil(totalCount / pageSize)}
+            </p>
+            <label>
+              {"Page Size: "}
+              <select
+                className={"input"}
+                value={pageSize}
+                onChange={(e) => setPageSize(Number(e.target.value))}
+              >
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+              </select>
+            </label>
+            <div className={styles.buttons}>
+              <Button
+                disabled={!prevPage}
+                onClick={() => setPage((p) => p - 1)}
+              >
+                Previous
+              </Button>
+              <Button
+                disabled={!nextPage}
+                onClick={() => setPage((p) => p + 1)}
+              >
+                Next
+              </Button>
+
+              <a
+                href={`${process.env.NEXT_PUBLIC_SERVER_API_URL}/${Services.exportSurvey.replace(
+                  "$$survey_id$$",
+                  survey.id.toString(),
+                )}`}
+                className={`hiClick ${styles.downloadCSV}`}
+              >
+                <GoDownload /> CSV
+              </a>
+            </div>
+          </div>
+          <div className={styles.tableContainer}>
+            <table className={styles.table}>
+              <thead className={styles.thead}>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Audio</th>
+                  {responses[0].questions.map((question, index) => {
+                    return <th key={index}>{question.text}</th>;
+                  })}
+                  <th>Created at</th>
+                </tr>
+              </thead>
+              <tbody>
+                {responses.map((response, index) => {
+                  const created_at = isoToNormal(response.created_at);
+                  return (
+                    <tr key={index} className={styles.tr}>
+                      <td>{response.user_name}</td>
+                      <td>{response.user_email}</td>
+                      <td>
+                        <audio controls>
+                          <source
+                            src={`${process.env.NEXT_PUBLIC_SERVER_API_URL}${Services.audio}${response.audio_file}`}
+                            type="audio/wav"
+                          />
+                          Your browser does not support the audio element.
+                        </audio>
+                      </td>
+                      {response.answers.map((answer, index) => {
+                        let ans = "-";
+                        if (answer.text_answer) ans = answer.text_answer;
+                        if (answer.numeric_answer)
+                          ans = answer.numeric_answer.toString();
+                        if (
+                          answer.choice_answer &&
+                          response.questions[index].options
+                        ) {
+                          ans =
+                            response.questions[index]?.options[
+                              answer.choice_answer - 1
+                            ]?.text;
+                        }
+                        return (
+                          <td className={styles.queTD} key={index}>
+                            {ans}
+                          </td>
+                        );
+                      })}
+                      <td>
+                        {created_at.time} {created_at.date}
+                      </td>
+                    </tr>
+                  );
                 })}
-                <th>Created at</th>
-              </tr>
-            </thead>
-            <tbody>
-              {responses.map((response, index) => {
-                const created_at = isoToNormal(response.created_at);
-                return (
-                  <tr key={index} className={styles.tr}>
-                    <td>{response.user_name}</td>
-                    <td>{response.user_email}</td>
-                    <td>
-                      <audio controls>
-                        <source
-                          src={`${process.env.NEXT_PUBLIC_SERVER_API_URL}${Services.audio}${response.audio_file}`}
-                          type="audio/wav"
-                        />
-                        Your browser does not support the audio element.
-                      </audio>
-                    </td>
-                    {response.answers.map((answer, index) => {
-                      let ans = "-";
-                      if (answer.text_answer) ans = answer.text_answer;
-                      if (answer.numeric_answer)
-                        ans = answer.numeric_answer.toString();
-                      if (
-                        answer.choice_answer &&
-                        response.questions[index].options
-                      ) {
-                        ans =
-                          response.questions[index]?.options[
-                            answer.choice_answer - 1
-                          ]?.text;
-                      }
-                      return (
-                        <td className={styles.queTD} key={index}>
-                          {ans}
-                        </td>
-                      );
-                    })}
-                    <td>
-                      {created_at.time} {created_at.date}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+              </tbody>
+            </table>
+          </div>
+        </>
       )}
     </div>
   );

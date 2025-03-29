@@ -65,3 +65,8 @@
 .pagesize {
   width: var(--sp-xl);
 }
+
+.noResponses {
+  width: 100%;
+  text-align: center;
+}
