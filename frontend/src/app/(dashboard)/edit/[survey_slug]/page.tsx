@@ -68,6 +68,7 @@ export default function EditSurvey() {
   };
 
   const onEditQuestionSequence = () => {
+    if (questions && questions.length === 0) return;
     setIsEditingSequence(true);
     setEditSequenceMessage({ value: "", status: "neutral" });
   };
