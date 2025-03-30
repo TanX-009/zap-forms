@@ -9,7 +9,7 @@ import Select from "@/components/Select";
 import Message from "@/components/Message";
 import handleResponse from "@/systems/handleResponse";
 
-const tabs = ["Text", "Number", "Multiple choice"];
+const tabs = ["Text", "Number", "Multiple choice", "Checkbox"];
 
 interface TProps {
   survey: TSurvey;
@@ -36,7 +36,7 @@ export default function AddQuestion({ survey, updateTick }: TProps) {
     const required = form.get("required") as string;
     let options: string[] = [];
 
-    let type: "text" | "number" | "multiple-choice" = "text";
+    let type: "text" | "number" | "multiple-choice" | "checkbox" = "text";
     switch (questionType) {
       case "Text":
         type = "text";
@@ -66,6 +66,28 @@ export default function AddQuestion({ survey, updateTick }: TProps) {
           return;
         }
         break;
+      case "Checkbox":
+        type = "checkbox";
+        const checkboxOptionsStr = form.get("options") as string;
+        options = checkboxOptionsStr ? checkboxOptionsStr.split(",") : [];
+        options = options.map((option) => option.trim());
+        // check if there are at least 2 options
+        if (options.length < 2) {
+          setMessage({
+            value: "Checkbox questions must have at least 2 options!",
+            status: "error",
+          });
+          return;
+        }
+        // check if there are no duplicate options
+        if (new Set(options).size !== options.length) {
+          setMessage({
+            value: "Checkbox questions must have unique options!",
+            status: "error",
+          });
+          return;
+        }
+        break;
     }
 
     const response = await SurveyService.addQuestion({
@@ -90,7 +112,7 @@ export default function AddQuestion({ survey, updateTick }: TProps) {
       <Tabs current={questionType} setter={setQuestionType} tabs={tabs} />
       <Form onSubmit={onSubmit}>
         <Input name="text" label="Question" required />
-        {questionType === "Multiple choice" ? (
+        {questionType === "Multiple choice" || questionType === "Checkbox" ? (
           <>
             <Input
               name="options"

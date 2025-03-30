@@ -1,32 +1,31 @@
 import React, { Dispatch, FormEvent, SetStateAction, useState } from "react";
 import styles from "./styles.module.css";
 import Form from "@/components/Form";
-import { TAnswer, TSurvey } from "@/types/survey";
+import { TAnswer, TCoords, TSurvey } from "@/types/survey";
 import SurveyService from "@/services/survey";
 import Message from "@/components/Message";
 import Button from "@/components/Button";
 import { useRouter } from "next/navigation";
 import handleResponse from "@/systems/handleResponse";
-import { TUser } from "@/types/user";
 
 interface TProps {
   survey: TSurvey;
   answers: TAnswer[];
-  user: TUser | null;
   setComplete: Dispatch<SetStateAction<boolean>>;
   audio: {
     isRecording: boolean;
     startRecording: () => void;
     stopRecording: () => Promise<Blob | null>;
   };
+  location: TCoords;
 }
 
 export default function SubmitSurvey({
   survey,
   answers,
-  user,
   setComplete,
   audio,
+  location,
 }: TProps) {
   const router = useRouter();
   const [message, setMessage] = useState<{
@@ -43,15 +42,15 @@ export default function SubmitSurvey({
 
     const audioBlob = await audio.stopRecording();
 
-    if (!user) return;
-    console.log(user.id);
     const response = await SurveyService.submitSurvey({
-      user: user.id,
       survey: survey.id,
       answers: answers,
       audioBlob: audioBlob,
+      longitude: location.longitude,
+      latitude: location.latitude,
     });
 
+    console.log(response);
     handleResponse(
       response,
       "Response submitted successfully!",

@@ -9,6 +9,7 @@ import useFetchSurveys from "@/hooks/fetchSurveys";
 import { TSurvey } from "@/types/survey";
 import SurveyCard from "./components/SurveyCard";
 import { LoginContext } from "@/systems/LoginContext";
+import Loading from "@/components/Loading";
 
 export default function Home() {
   const [surveys, setSurveys] = useState<TSurvey[]>([]);
@@ -31,24 +32,25 @@ export default function Home() {
         <AddSurvey />
       </Modal>
       <div className={styles.surveys}>
-        {!isLoading && surveys.length === 0 ? (
-          <div className={styles.empty}>No surveys available</div>
-        ) : (
-          <>
-            {user?.role === "admin" ? (
-              <Button
-                variant="hiClick"
-                className={styles.addSurvey}
-                onClick={() => setIsAddSurveyVisible(true)}
-              >
-                Add survey
-              </Button>
-            ) : null}
-            {surveys.map((survey, index) => (
-              <SurveyCard key={index} survey={survey} />
-            ))}
-          </>
-        )}
+        {isLoading ? <Loading centerStage /> : null}
+
+        {surveys.length === 0 ? (
+          <div className={styles.empty}>No surveys added!</div>
+        ) : null}
+
+        {user?.role === "admin" ? (
+          <Button
+            variant="hiClick"
+            className={styles.addSurvey}
+            onClick={() => setIsAddSurveyVisible(true)}
+          >
+            Add survey
+          </Button>
+        ) : null}
+
+        {surveys.map((survey, index) => (
+          <SurveyCard key={index} survey={survey} />
+        ))}
       </div>
     </div>
   );

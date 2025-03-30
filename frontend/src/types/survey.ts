@@ -1,3 +1,5 @@
+import { TUser } from "./user";
+
 interface TSurvey {
   id: number;
   name: string;
@@ -20,8 +22,9 @@ interface TQuestion {
 interface TAnswer {
   question: TQuestion["id"];
   text_answer: string | null;
-  choice_answer: number | null;
-  numeric_answer: number | null;
+  choice_answer: string | null; // For single-choice questions
+  numeric_answer: string | null;
+  checkbox_answers: string[]; // For checkbox (multiple selections)
 }
 
 interface TSurveyResponses {
@@ -30,9 +33,15 @@ interface TSurveyResponses {
   created_at: string;
   id: number;
   survey: number;
-  user_email: string;
-  user_name: string;
+  user: TUser;
   questions: TQuestion[];
+  longitude: number;
+  latitude: number;
 }
 
-export type { TSurvey, TQuestion, TAnswer, TSurveyResponses };
+interface TCoords {
+  longitude: number | null;
+  latitude: number | null;
+}
+
+export type { TSurvey, TQuestion, TAnswer, TSurveyResponses, TCoords };

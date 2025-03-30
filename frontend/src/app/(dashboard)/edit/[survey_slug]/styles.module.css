@@ -19,6 +19,7 @@
 
 .surveyName {
   font-size: var(--h3);
+  color: var(--secondary);
 }
 
 .questionsTitle {

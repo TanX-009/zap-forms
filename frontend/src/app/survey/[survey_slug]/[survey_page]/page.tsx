@@ -14,6 +14,7 @@ import SubmitSurvey from "./components/SubmitSurvey";
 import getOneNestBack from "@/systems/getOneNestBack";
 import Loading from "@/components/Loading";
 import RadioGroup from "@/components/RadioGroup";
+import CheckboxGroup from "@/components/CheckboxGroup";
 
 const findQuestionBySequence = (
   questions: TQuestion[],
@@ -64,16 +65,17 @@ export default function SurveyPage() {
     questions,
     answers,
     setAnswers,
-    user,
     complete,
     setComplete,
     audio,
+    location,
   } = useContext(SurveyContext);
 
   const [question, setQuestion] = useState<TQuestion | undefined>(undefined);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  console.log(answers);
   const returnPath = getOneNestBack(pathname);
 
   const onNext = (event: FormEvent<HTMLFormElement>) => {
@@ -89,16 +91,28 @@ export default function SurveyPage() {
       text_answer: null,
       numeric_answer: null,
       choice_answer: null,
+      checkbox_answers: [],
     };
     switch (question.type) {
       case "text":
         answerObj.text_answer = answer || null;
         break;
       case "number":
-        answerObj.numeric_answer = Number(answer) || null;
+        answerObj.numeric_answer = answer || null;
         break;
       case "multiple-choice":
-        answerObj.choice_answer = Number(answer) || null;
+        answerObj.choice_answer = answer || null;
+        break;
+      case "checkbox":
+        const checkboxAnswers: string[] = [];
+        for (const [key, value] of form.entries()) {
+          if (key === "answer" && typeof value === "string") {
+            checkboxAnswers.push(value);
+          }
+        }
+
+        answerObj.checkbox_answers =
+          checkboxAnswers.length > 0 ? checkboxAnswers : [];
         break;
     }
     const allAnswers = answers;
@@ -154,9 +168,9 @@ export default function SurveyPage() {
         <SubmitSurvey
           answers={answers}
           survey={survey}
-          user={user}
           setComplete={setComplete}
           audio={audio}
+          location={location}
         />
       </Modal>
 
@@ -213,6 +227,7 @@ export default function SurveyPage() {
           ) : null}
           {question?.type === "multiple-choice" ? (
             <RadioGroup
+              search
               name="answer"
               label={
                 <>
@@ -230,6 +245,28 @@ export default function SurveyPage() {
                   answers,
                   question.id,
                 )?.choice_answer?.toString() || ""
+              }
+              options={convertOptions(question.options)}
+              required={question.required}
+            />
+          ) : null}
+          {question?.type === "checkbox" ? (
+            <CheckboxGroup
+              search
+              name="answer"
+              label={
+                <>
+                  {question.text}
+                  {question.required ? (
+                    <span className={styles.star}>
+                      {" "}
+                      <FaStarOfLife />
+                    </span>
+                  ) : null}
+                </>
+              }
+              defaultValue={
+                findAnswerById(answers, question.id)?.checkbox_answers || []
               }
               options={convertOptions(question.options)}
               required={question.required}

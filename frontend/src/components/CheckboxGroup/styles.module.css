@@ -1,0 +1,34 @@
+.checkboxGroup {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3xs);
+}
+
+.checkboxOptions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3xs);
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3xs);
+  cursor: pointer;
+}
+
+.checkboxLabel > input[type="checkbox"] {
+  appearance: none;
+  border: var(--sp-5xs) solid var(--surfaceContainer);
+  background: var(--surfaceContainer);
+}
+
+.checkboxLabel > input[type="checkbox"]:checked {
+  border: var(--sp-5xs) solid var(--surfaceContainer);
+  background: var(--primary);
+}
+
+.notSelected {
+  font-size: var(--p);
+}

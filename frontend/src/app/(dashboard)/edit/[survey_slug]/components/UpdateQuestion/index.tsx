@@ -133,7 +133,7 @@ export default function UpdateQuestion({ question, updateTick }: TProps) {
         defaultValue={question.text}
         required
       />
-      {question.type === "multiple-choice" ? (
+      {question.type === "multiple-choice" || question.type === "checkbox" ? (
         <Input
           name="options"
           label={"Options"}

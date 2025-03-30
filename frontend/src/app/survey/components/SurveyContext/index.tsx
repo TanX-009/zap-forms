@@ -1,7 +1,6 @@
 "use client";
 
-import { TAnswer, TQuestion, TSurvey } from "@/types/survey";
-import { TUser } from "@/types/user";
+import { TAnswer, TCoords, TQuestion, TSurvey } from "@/types/survey";
 import React, {
   createContext,
   ReactNode,
@@ -18,8 +17,6 @@ export type TSurveyContext = {
   setQuestions: Dispatch<SetStateAction<TQuestion[] | null>>;
   answers: TAnswer[];
   setAnswers: Dispatch<SetStateAction<TAnswer[]>>;
-  user: TUser | null;
-  setUser: Dispatch<SetStateAction<TUser | null>>;
   complete: boolean;
   setComplete: Dispatch<SetStateAction<boolean>>;
   audio: {
@@ -27,10 +24,8 @@ export type TSurveyContext = {
     startRecording: () => void;
     stopRecording: () => Promise<Blob | null>;
   };
-  getLocation: () => Promise<{
-    longitude: number | null;
-    latitude: number | null;
-  }>;
+  location: TCoords;
+  getLocation: () => Promise<void>;
 };
 
 export const SurveyContext = createContext<TSurveyContext>({
@@ -40,8 +35,6 @@ export const SurveyContext = createContext<TSurveyContext>({
   setQuestions: () => {},
   answers: [],
   setAnswers: () => {},
-  user: null,
-  setUser: () => {},
   complete: false,
   setComplete: () => {},
   audio: {
@@ -49,7 +42,8 @@ export const SurveyContext = createContext<TSurveyContext>({
     startRecording: () => {},
     stopRecording: async () => null,
   },
-  getLocation: async () => ({ longitude: null, latitude: null }),
+  location: { longitude: null, latitude: null },
+  getLocation: async () => {},
 });
 
 interface TProps {
@@ -60,8 +54,11 @@ export default function SurveyContextComponent({ children }: TProps) {
   const [survey, setSurvey] = useState<TSurvey | null>(null);
   const [questions, setQuestions] = useState<TQuestion[] | null>([]);
   const [answers, setAnswers] = useState<TAnswer[]>([]);
-  const [user, setUser] = useState<TUser | null>(null);
   const [complete, setComplete] = useState(false);
+  const [location, setLocation] = useState<TCoords>({
+    longitude: null,
+    latitude: null,
+  });
 
   const [isRecording, setIsRecording] = useState(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -114,27 +111,26 @@ export default function SurveyContextComponent({ children }: TProps) {
     });
   };
 
-  const getLocation = (): Promise<{
-    longitude: number | null;
-    latitude: number | null;
-  }> => {
+  const getLocation = (): Promise<void> => {
     return new Promise((resolve) => {
       if (!navigator.geolocation) {
         console.error("Geolocation is not supported by this browser.");
-        resolve({ latitude: null, longitude: null });
+        resolve();
         return;
       }
 
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          resolve({
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          });
+          resolve(
+            setLocation({
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+            }),
+          );
         },
         (error) => {
           console.error("Error getting location:", error);
-          resolve({ latitude: null, longitude: null });
+          resolve();
         },
       );
     });
@@ -149,8 +145,6 @@ export default function SurveyContextComponent({ children }: TProps) {
         setQuestions,
         answers,
         setAnswers,
-        user,
-        setUser,
         complete,
         setComplete,
         audio: {
@@ -158,6 +152,7 @@ export default function SurveyContextComponent({ children }: TProps) {
           startRecording,
           stopRecording,
         },
+        location,
         getLocation,
       }}
     >

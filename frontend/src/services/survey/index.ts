@@ -8,7 +8,6 @@ import {
   TApiResponse,
 } from "../serviceConfig";
 import Services from "../serviceUrls";
-import { TUser } from "@/types/user";
 
 interface TAddSurveyRequest {
   name: string;
@@ -18,7 +17,7 @@ interface TAddSurveyRequest {
 
 interface TAddQuestionRequest {
   text: string;
-  type: "text" | "number" | "multiple-choice";
+  type: "text" | "number" | "multiple-choice" | "checkbox";
   required: boolean;
   survey: TSurvey["id"];
   options?: string[];
@@ -32,10 +31,11 @@ interface TUpdateQuestionRequest {
 }
 
 interface TSubmitSurveyRequest {
-  user: TUser["id"];
   survey: TSurvey["id"];
   answers: TAnswer[];
   audioBlob: Blob | null;
+  latitude: number | null;
+  longitude: number | null;
 }
 
 interface TGetSurveyResponsesResponse {
@@ -125,9 +125,10 @@ async function submitSurvey(
   data: TSubmitSurveyRequest,
 ): Promise<TApiResponse<null>> {
   const formData = new FormData();
-  formData.append("user", data.user.toString());
   formData.append("survey", data.survey.toString());
   formData.append("answers", JSON.stringify(data.answers));
+  formData.append("longitude", data.longitude ? data.longitude.toString() : "");
+  formData.append("latitude", data.latitude ? data.latitude.toString() : "");
 
   if (data.audioBlob) {
     formData.append("audio", data.audioBlob, "recording.wav");

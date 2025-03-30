@@ -109,13 +109,14 @@ export default function Analysis() {
             <table className={styles.table}>
               <thead className={styles.thead}>
                 <tr>
-                  <th>Name</th>
-                  <th>Email</th>
+                  <th>User</th>
                   <th>Audio</th>
                   {responses[0].questions.map((question, index) => {
                     return <th key={index}>{question.text}</th>;
                   })}
                   <th>Created at</th>
+                  <th>Longitude</th>
+                  <th>Latitude</th>
                 </tr>
               </thead>
               <tbody>
@@ -123,8 +124,7 @@ export default function Analysis() {
                   const created_at = isoToNormal(response.created_at);
                   return (
                     <tr key={index} className={styles.tr}>
-                      <td>{response.user_name}</td>
-                      <td>{response.user_email}</td>
+                      <td>{response.user.email || ""}</td>
                       <td>
                         <audio controls>
                           <source
@@ -145,8 +145,36 @@ export default function Analysis() {
                         ) {
                           ans =
                             response.questions[index]?.options[
-                              answer.choice_answer - 1
+                              Number(answer.choice_answer) - 1
                             ]?.text;
+                        }
+
+                        if (
+                          answer.checkbox_answers.length > 0 &&
+                          response.questions[index].options
+                        ) {
+                          const anss: string[] = [];
+
+                          for (
+                            let i = 0;
+                            i < answer.checkbox_answers.length;
+                            i++
+                          ) {
+                            for (
+                              let j = 0;
+                              j < response.questions[index].options.length;
+                              j++
+                            ) {
+                              if (
+                                response.questions[index].options[j].id ===
+                                Number(answer.checkbox_answers[i])
+                              )
+                                anss.push(
+                                  response.questions[index].options[j].text,
+                                );
+                            }
+                          }
+                          ans = anss.join(", ");
                         }
                         return (
                           <td className={styles.queTD} key={index}>
@@ -157,6 +185,8 @@ export default function Analysis() {
                       <td>
                         {created_at.time} {created_at.date}
                       </td>
+                      <td>{response.longitude}</td>
+                      <td>{response.latitude}</td>
                     </tr>
                   );
                 })}

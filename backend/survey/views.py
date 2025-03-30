@@ -62,7 +62,7 @@ class QuestionViewSet(
     ):
         """
         Handles creating a question and
-        its options if it's a multiple-choice question.
+        its options if it's a multiple-choice or checkbox question.
         """
         with transaction.atomic():
             options = request.data.pop("options", None)
@@ -70,8 +70,8 @@ class QuestionViewSet(
             serializer.is_valid(raise_exception=True)
             question = serializer.save()
 
-            # Handle multiple-choice question options
-            if question.type == "multiple-choice" and options:
+            # Handle multiple-choice and checkbox question options
+            if question.type in ["multiple-choice", "checkbox"] and options:
                 option_instances = [
                     QuestionOption(question=question, text=option_text)
                     for option_text in options
@@ -83,7 +83,7 @@ class QuestionViewSet(
     def update(self, request, *_, **kwargs):
         """
         Handles updating a question and
-        its options if it's a multiple-choice question.
+        its options if it's a multiple-choice or checkbox question.
         """
         with transaction.atomic():
             partial = kwargs.pop("partial", False)
@@ -95,8 +95,8 @@ class QuestionViewSet(
             serializer.is_valid(raise_exception=True)
             question = serializer.save()
 
-            # Handle multiple-choice question options
-            if question.type == "multiple-choice":
+            # Handle multiple-choice and checkbox question options
+            if question.type in ["multiple-choice", "checkbox"]:
                 # Delete existing options
                 QuestionOption.objects.filter(question=question).delete()
                 if options:
@@ -160,9 +160,11 @@ class SubmitSurveyResponseView(APIView):
     parser_classes = (MultiPartParser, FormParser)  # Enable file handling
 
     def post(self, request):
-        user = request.data.get("user")
+        user = request.user
         survey_id = request.data.get("survey")
         answers_data = request.data.get("answers", "[]")
+        longitude = request.data.get("longitude")
+        latitude = request.data.get("latitude")
         audio_file = request.FILES.get("audio")  # Get uploaded audio file
 
         if not user or not survey_id or not answers_data:
@@ -182,9 +184,12 @@ class SubmitSurveyResponseView(APIView):
         with transaction.atomic():
             # Create the Response object
             response_data = {
-                "user": user,
+                "user": user.id,
                 "survey": survey_id,
+                "longitude": longitude,
+                "latitude": latitude,
             }
+
             response_serializer = ResponsesSerializer(data=response_data)
             if response_serializer.is_valid():
                 response = response_serializer.save()
@@ -273,8 +278,7 @@ class ExportSurveyResponsesCSV(APIView):
 
             for response_obj in responses:
                 row = [
-                    response_obj.user_name,
-                    response_obj.user_email,
+                    response_obj.user,
                     (
                         f"{backend_url}{response_obj.audio_file.url}"
                         if response_obj.audio_file

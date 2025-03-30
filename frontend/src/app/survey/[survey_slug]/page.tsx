@@ -12,21 +12,18 @@ import Error from "@/components/Error";
 import { MdError } from "react-icons/md";
 import Loading from "@/components/Loading";
 import { IoCloudOffline } from "react-icons/io5";
-import { getLogin } from "@/app/actions/cookies";
 
 export default function Survey() {
   const params = useParams();
   const router = useRouter();
-  const { survey, setSurvey, setUser, setQuestions, audio } =
+  const { survey, setSurvey, setQuestions, audio, getLocation } =
     useContext(SurveyContext);
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const user = await getLogin();
-    setUser(user);
-
     if (!audio.isRecording) await audio.startRecording();
+    await getLocation();
     if (survey?.slug) router.push(`/survey/${survey.slug}/1`);
   };
 
@@ -51,8 +48,6 @@ export default function Survey() {
 
   if (error === "Not found!")
     return <Error icon={<MdError />}>Survey not found!</Error>;
-  if (isSurveyLoading || areQuestionsLoading)
-    return <Loading centerStage={true} />;
 
   if (!survey?.online)
     return (
@@ -71,9 +66,13 @@ export default function Survey() {
         consent to this recording.
       </span>
 
-      <Button variant="hiClick" className={styles.start} type="submit">
-        Start survey
-      </Button>
+      {isSurveyLoading || areQuestionsLoading ? (
+        <Loading centerStage={true} />
+      ) : (
+        <Button variant="hiClick" className={styles.start} type="submit">
+          Start survey
+        </Button>
+      )}
     </form>
   );
 }

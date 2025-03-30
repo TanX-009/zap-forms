@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
+
+from account.models import CustomUser
 from .models import Survey, Question, QuestionOption, Responses, Answer
 
 
@@ -23,7 +25,7 @@ class QuestionSerializer(serializers.ModelSerializer):
         fields = ["id", "text", "type", "required", "sequence", "survey", "options"]
 
     def get_options(self, obj):
-        if obj.type == "multiple-choice":
+        if obj.type in ["multiple-choice", "checkbox"]:
             options = QuestionOption.objects.filter(question=obj)
             return QuestionOptionSerializer(options, many=True).data
         return None
@@ -46,6 +48,9 @@ class ResponsesAnswerSerializer(serializers.ModelSerializer):
 class ResponsesSerializer(serializers.ModelSerializer):
     answers = ResponsesAnswerSerializer(many=True, read_only=True)
     questions = SerializerMethodField()
+    user = serializers.PrimaryKeyRelatedField(
+        queryset=CustomUser.objects.all(), required=True  # Allows writing user ID
+    )
 
     class Meta:
         model = Responses

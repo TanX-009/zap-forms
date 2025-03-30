@@ -34,6 +34,7 @@ class Question(models.Model):
         ("text", "Text"),
         ("number", "Number"),
         ("multiple-choice", "Multiple Choice"),
+        ("checkbox", "Checkbox"),  # Added checkbox type
     ]
 
     survey = models.ForeignKey(
@@ -72,7 +73,7 @@ class Question(models.Model):
         return self.text
 
 
-# Choices for Multiple Choice Questions
+# Choices for Multiple Choice and Checkbox Questions
 class QuestionOption(models.Model):
     question = models.ForeignKey(
         Question, on_delete=models.CASCADE, related_name="options"
@@ -93,9 +94,17 @@ class Responses(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     audio_file = models.FileField(upload_to="recordings/", blank=True, null=True)
+    latitude = models.DecimalField(
+        max_digits=9, decimal_places=6, blank=True, null=True
+    )
+    longitude = models.DecimalField(
+        max_digits=9, decimal_places=6, blank=True, null=True
+    )
 
     def __str__(self):
-        return f"{self.survey}: {self.user}, {self.audio_file}"
+        lat = self.latitude if self.latitude is not None else "N/A"
+        lon = self.longitude if self.longitude is not None else "N/A"
+        return f"{self.survey}: {self.user}, {self.audio_file}, ({lat}, {lon})"
 
 
 # Answer Model (Stores responses to questions)
@@ -107,16 +116,23 @@ class Answer(models.Model):
     text_answer = models.TextField(blank=True, null=True)  # For text/number answers
     choice_answer = models.ForeignKey(
         QuestionOption, blank=True, null=True, on_delete=models.SET_NULL
-    )  # For MCQ answers
+    )  # For single-choice MCQ answers
     numeric_answer = models.FloatField(
         blank=True, null=True
     )  # For scale/number answers
+    checkbox_answers = models.ManyToManyField(
+        QuestionOption,
+        related_name="checkbox_answers",
+        blank=True,
+    )  # For multiple-choice (checkbox) answers
 
     def __str__(self) -> str:
         if self.text_answer:
-            return f"{self.response}-{self.question}: { self.text_answer }"
+            return f"{self.response}-{self.question}: {self.text_answer}"
         elif self.choice_answer:
-            return f"{self.response}-{self.question}: { self.choice_answer }"
+            return f"{self.response}-{self.question}: {self.choice_answer}"
         elif self.numeric_answer:
-            return f"{self.response}-{self.question}: { self.numeric_answer }"
+            return f"{self.response}-{self.question}: {self.numeric_answer}"
+        elif self.checkbox_answers.exists():
+            return f"{self.response}-{self.question}: {', '.join(str(option) for option in self.checkbox_answers.all())}"
         return f"{self.response}-{self.question}"

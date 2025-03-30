@@ -156,7 +156,9 @@ export default function EditSurvey() {
             <p>{survey.description}</p>
             <p>
               <b>Status: </b>
-              {survey.online ? "Online" : "Offline"}
+              <span className={survey.online ? "success" : "error"}>
+                {survey.online ? "Online" : "Offline"}
+              </span>
             </p>
           </div>
           <div className={styles.buttons}>
@@ -178,20 +180,22 @@ export default function EditSurvey() {
         <>
           <div className={styles.bar}>
             <div>
-              <h3 className={styles.questionsTitle}>Questions</h3>
-              <p>
-                <b>Count: </b>
-                {questions.length}
-              </p>
+              <h3 className={styles.questionsTitle}>
+                Questions: {questions.length}
+              </h3>
             </div>
             <div className={`${styles.buttons} ${styles.editSequence}`}>
-              {isEditingSequence ? (
-                <Button onClick={onQuestionsReorder}>
-                  Stop editing sequence
-                </Button>
-              ) : (
-                <Button onClick={onEditQuestionSequence}>Edit sequence</Button>
-              )}
+              {questions.length > 1 ? (
+                isEditingSequence ? (
+                  <Button onClick={onQuestionsReorder}>
+                    Stop editing sequence
+                  </Button>
+                ) : (
+                  <Button onClick={onEditQuestionSequence}>
+                    Edit sequence
+                  </Button>
+                )
+              ) : null}
               <Message status={editSequenceMessage.status}>
                 {editSequenceMessage.value}
               </Message>
