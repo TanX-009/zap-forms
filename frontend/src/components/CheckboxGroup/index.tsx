@@ -79,6 +79,7 @@ export default function CheckboxGroup({
             <input
               type="checkbox"
               name={name}
+              value={option.value}
               defaultChecked={checkedValues.includes(option.value)}
               onChange={handleCheckboxChange}
               required={required && checkedValues.length === 0}

@@ -75,7 +75,6 @@ export default function SurveyPage() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  console.log(answers);
   const returnPath = getOneNestBack(pathname);
 
   const onNext = (event: FormEvent<HTMLFormElement>) => {
