@@ -34,6 +34,8 @@ export default function AddQuestion({ survey, updateTick }: TProps) {
 
     const text = form.get("text") as string;
     const required = form.get("required") as string;
+    const min_length = form.get("min_length");
+    const max_length = form.get("max_length");
     let options: string[] = [];
 
     let type: "text" | "number" | "multiple-choice" | "checkbox" = "text";
@@ -95,6 +97,8 @@ export default function AddQuestion({ survey, updateTick }: TProps) {
       type,
       required: required === "yes",
       survey: survey.id,
+      min_length: Number(min_length),
+      max_length: Number(max_length),
       options,
     });
 
@@ -120,7 +124,22 @@ export default function AddQuestion({ survey, updateTick }: TProps) {
               required
             />
           </>
-        ) : null}
+        ) : (
+          <>
+            <Input
+              name="min_length"
+              label="Min Length"
+              defaultValue={0}
+              required
+            />
+            <Input
+              name="max_length"
+              label="Max Length"
+              defaultValue={524288}
+              required
+            />
+          </>
+        )}
         <Select
           name="required"
           label="Required"

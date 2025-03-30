@@ -199,6 +199,8 @@ export default function SurveyPage() {
               defaultValue={
                 findAnswerById(answers, question.id)?.text_answer || ""
               }
+              minLength={question.min_length}
+              maxLength={question.max_length}
               placeholder={"Text answer..."}
               required={question.required}
             />
@@ -218,6 +220,8 @@ export default function SurveyPage() {
                   ) : null}
                 </>
               }
+              minLength={question.min_length}
+              maxLength={question.max_length}
               defaultValue={
                 findAnswerById(answers, question.id)?.numeric_answer || ""
               }

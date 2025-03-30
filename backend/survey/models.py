@@ -44,6 +44,8 @@ class Question(models.Model):
     type = models.CharField(max_length=20, choices=QUESTION_TYPES)
     required = models.BooleanField(default=True)
     sequence = models.PositiveIntegerField(default=0)
+    min_length = models.PositiveIntegerField(default=0)
+    max_length = models.PositiveIntegerField(default=524288)
 
     class Meta:
         ordering = ["sequence"]  # Ensures questions are ordered by sequence

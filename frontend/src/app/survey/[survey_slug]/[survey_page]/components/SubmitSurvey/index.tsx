@@ -50,7 +50,6 @@ export default function SubmitSurvey({
       latitude: location.latitude,
     });
 
-    console.log(response);
     handleResponse(
       response,
       "Response submitted successfully!",

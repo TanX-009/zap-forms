@@ -9,6 +9,8 @@ interface TProps {
   required?: boolean;
   className?: string;
   placeholder?: string;
+  minLength?: number;
+  maxLength?: number;
   value?: string | null;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
@@ -21,6 +23,8 @@ export default function Input({
   required = false,
   className = "",
   placeholder = "",
+  minLength = 0,
+  maxLength = 524288,
   value = null,
   onChange = () => {},
 }: TProps) {
@@ -29,10 +33,12 @@ export default function Input({
       {label ? <label htmlFor={name}>{label}</label> : null}
       <input
         className={"input"}
-        type={type}
+        type={type === "number" ? "tel" : type}
         id={name}
         name={name}
         placeholder={placeholder}
+        minLength={minLength}
+        maxLength={maxLength}
         defaultValue={defaultValue}
         required={required}
         {...(value ? { value } : {})}

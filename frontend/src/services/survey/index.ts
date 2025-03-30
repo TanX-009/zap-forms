@@ -20,6 +20,8 @@ interface TAddQuestionRequest {
   type: "text" | "number" | "multiple-choice" | "checkbox";
   required: boolean;
   survey: TSurvey["id"];
+  min_length: number;
+  max_length: number;
   options?: string[];
 }
 
@@ -27,6 +29,8 @@ interface TUpdateQuestionRequest {
   text: string;
   required: boolean;
   survey: TSurvey["id"];
+  min_length: number;
+  max_length: number;
   options?: string[];
 }
 

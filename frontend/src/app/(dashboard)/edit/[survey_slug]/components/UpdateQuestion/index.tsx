@@ -40,6 +40,8 @@ export default function UpdateQuestion({ question, updateTick }: TProps) {
 
     const text = form.get("text") as string;
     const required = form.get("required") as string;
+    const min_length = form.get("min_length");
+    const max_length = form.get("max_length");
     const optionsStr = (form.get("options") as string) || "";
     let options: string[] = [];
 
@@ -48,7 +50,9 @@ export default function UpdateQuestion({ question, updateTick }: TProps) {
     if (
       text === question.text &&
       requiredBool === question.required &&
-      optionsStr === presetOptions
+      optionsStr === presetOptions &&
+      Number(min_length) === question.min_length &&
+      Number(max_length) === question.max_length
     ) {
       setMessage({ value: "No changes detected!", status: "error" });
       return;
@@ -81,6 +85,8 @@ export default function UpdateQuestion({ question, updateTick }: TProps) {
         required: required === "yes",
         options,
         survey: question.survey,
+        min_length: Number(min_length),
+        max_length: Number(max_length),
       },
       question.id,
     );
@@ -141,7 +147,22 @@ export default function UpdateQuestion({ question, updateTick }: TProps) {
           required
           defaultValue={presetOptions}
         />
-      ) : null}
+      ) : (
+        <>
+          <Input
+            name="min_length"
+            label="Min Length"
+            defaultValue={question.min_length}
+            required
+          />
+          <Input
+            name="max_length"
+            label="Max Length"
+            defaultValue={question.max_length}
+            required
+          />
+        </>
+      )}
       <Select
         name="required"
         label="Required"

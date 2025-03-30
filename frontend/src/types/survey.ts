@@ -13,9 +13,11 @@ interface TQuestion {
   id: number;
   survey: number;
   text: string;
-  type: string;
+  type: "text" | "number" | "multiple-choice" | "checkbox";
   required: boolean;
   sequence: number;
+  min_length: number;
+  max_length: number;
   options: { id: number; question: TQuestion["id"]; text: string }[] | null;
 }
 
