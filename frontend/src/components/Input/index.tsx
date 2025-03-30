@@ -25,7 +25,6 @@ export default function Input({
   placeholder = "",
   minLength = 0,
   maxLength = 524288,
-  value = null,
   onChange = () => {},
 }: TProps) {
   return (
@@ -33,7 +32,7 @@ export default function Input({
       {label ? <label htmlFor={name}>{label}</label> : null}
       <input
         className={"input"}
-        type={type === "number" ? "tel" : type}
+        type={type}
         id={name}
         name={name}
         placeholder={placeholder}
@@ -41,7 +40,6 @@ export default function Input({
         maxLength={maxLength}
         defaultValue={defaultValue}
         required={required}
-        {...(value ? { value } : {})}
         onChange={onChange}
       />
     </div>

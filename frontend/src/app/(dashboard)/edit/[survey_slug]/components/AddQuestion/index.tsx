@@ -117,13 +117,11 @@ export default function AddQuestion({ survey, updateTick }: TProps) {
       <Form onSubmit={onSubmit}>
         <Input name="text" label="Question" required />
         {questionType === "Multiple choice" || questionType === "Checkbox" ? (
-          <>
-            <Input
-              name="options"
-              label='Options (Seperate using commas ",")'
-              required
-            />
-          </>
+          <Input
+            name="options"
+            label='Options (Seperate using commas ",")'
+            required
+          />
         ) : (
           <>
             <Input
