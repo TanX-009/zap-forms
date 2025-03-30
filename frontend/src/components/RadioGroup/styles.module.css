@@ -1,0 +1,30 @@
+.radioGroup {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3xs);
+}
+
+.radioOptions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3xs);
+}
+
+.radioLabel {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3xs);
+  cursor: pointer;
+}
+
+.radioLabel > input[type="radio"] {
+  appearance: none;
+  border: var(--sp-5xs) solid var(--surfaceContainer);
+  background: var(--surfaceContainer);
+}
+
+.radioLabel > input[type="radio"]:checked {
+  border: var(--sp-5xs) solid var(--surfaceContainer);
+  background: var(--primary);
+}

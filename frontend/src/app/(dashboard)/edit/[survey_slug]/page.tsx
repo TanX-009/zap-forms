@@ -16,12 +16,7 @@ import Loading from "@/components/Loading";
 import SurveyService from "@/services/survey";
 import handleResponse from "@/systems/handleResponse";
 import Message from "@/components/Message";
-import {
-  MdEdit,
-  MdDelete,
-  MdFormatListNumbered,
-  MdFormatListBulleted,
-} from "react-icons/md";
+import { MdEdit, MdDelete } from "react-icons/md";
 
 export default function EditSurvey() {
   const params = useParams();

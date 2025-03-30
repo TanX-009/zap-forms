@@ -5,7 +5,6 @@ import { SurveyContext } from "../../components/SurveyContext";
 import styles from "./styles.module.css";
 import { TAnswer, TQuestion } from "@/types/survey";
 import Input from "@/components/Input";
-import Select from "@/components/Select";
 import SurveyNavbar from "../../components/SurveyNavbar";
 import Button from "@/components/Button";
 import Link from "next/link";
@@ -14,6 +13,7 @@ import Modal from "@/components/Modal";
 import SubmitSurvey from "./components/SubmitSurvey";
 import getOneNestBack from "@/systems/getOneNestBack";
 import Loading from "@/components/Loading";
+import RadioGroup from "@/components/RadioGroup";
 
 const findQuestionBySequence = (
   questions: TQuestion[],
@@ -212,7 +212,7 @@ export default function SurveyPage() {
             />
           ) : null}
           {question?.type === "multiple-choice" ? (
-            <Select
+            <RadioGroup
               name="answer"
               label={
                 <>

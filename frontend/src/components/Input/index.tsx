@@ -9,6 +9,7 @@ interface TProps {
   required?: boolean;
   className?: string;
   placeholder?: string;
+  value?: string | null;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -20,6 +21,7 @@ export default function Input({
   required = false,
   className = "",
   placeholder = "",
+  value = null,
   onChange = () => {},
 }: TProps) {
   return (
@@ -33,6 +35,7 @@ export default function Input({
         placeholder={placeholder}
         defaultValue={defaultValue}
         required={required}
+        {...(value ? { value } : {})}
         onChange={onChange}
       />
     </div>
