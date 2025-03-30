@@ -3,7 +3,6 @@
 import React, { FormEvent, useContext, useEffect } from "react";
 import styles from "./styles.module.css";
 import { SurveyContext } from "../components/SurveyContext";
-import Input from "@/components/Input";
 import Logo from "@/components/Logo";
 import Button from "@/components/Button";
 import { useParams, useRouter } from "next/navigation";
@@ -13,6 +12,7 @@ import Error from "@/components/Error";
 import { MdError } from "react-icons/md";
 import Loading from "@/components/Loading";
 import { IoCloudOffline } from "react-icons/io5";
+import { getLogin } from "@/app/actions/cookies";
 
 export default function Survey() {
   const params = useParams();
@@ -22,12 +22,10 @@ export default function Survey() {
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const form = new FormData(event.currentTarget);
 
-    const email = form.get("email") as string;
-    const name = form.get("name") as string;
+    const user = await getLogin();
+    setUser(user);
 
-    setUser({ name: name, email: email });
     if (!audio.isRecording) await audio.startRecording();
     if (survey?.slug) router.push(`/survey/${survey.slug}/1`);
   };
@@ -53,7 +51,8 @@ export default function Survey() {
 
   if (error === "Not found!")
     return <Error icon={<MdError />}>Survey not found!</Error>;
-  if (isSurveyLoading || areQuestionsLoading) return <Loading centerStage={true} />;
+  if (isSurveyLoading || areQuestionsLoading)
+    return <Loading centerStage={true} />;
 
   if (!survey?.online)
     return (
@@ -66,12 +65,10 @@ export default function Survey() {
       <Logo multiplier={70} />
       <h1>{survey?.name}</h1>
       <p>{survey?.description}</p>
-      <Input name="email" label={"Email"} type="email" required />
-      <Input name="name" label={"Name"} type="text" required />
       <span className={styles.disclaimer}>
-        This survey requires permission to record audio while it is in progress.
-        By clicking <strong>&quot;Start Survey&quot;</strong>, you consent to
-        this recording.
+        This survey requires permission to record audio and location while it is
+        in progress. By clicking <strong>&quot;Start Survey&quot;</strong>, you
+        consent to this recording.
       </span>
 
       <Button variant="hiClick" className={styles.start} type="submit">

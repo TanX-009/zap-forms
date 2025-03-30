@@ -160,13 +160,12 @@ class SubmitSurveyResponseView(APIView):
     parser_classes = (MultiPartParser, FormParser)  # Enable file handling
 
     def post(self, request):
-        user_email = request.data.get("user_email")
-        user_name = request.data.get("user_name")
+        user = request.data.get("user")
         survey_id = request.data.get("survey")
         answers_data = request.data.get("answers", "[]")
         audio_file = request.FILES.get("audio")  # Get uploaded audio file
 
-        if not user_email or not user_name or not survey_id or not answers_data:
+        if not user or not survey_id or not answers_data:
             return Response(
                 {"detail": "Invalid data"}, status=status.HTTP_400_BAD_REQUEST
             )
@@ -183,8 +182,7 @@ class SubmitSurveyResponseView(APIView):
         with transaction.atomic():
             # Create the Response object
             response_data = {
-                "user_email": user_email,
-                "user_name": user_name,
+                "user": user,
                 "survey": survey_id,
             }
             response_serializer = ResponsesSerializer(data=response_data)

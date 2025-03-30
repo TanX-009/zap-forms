@@ -25,8 +25,10 @@ export default function Select({
   onChange = () => {},
 }: TProps) {
   let _defaultValue = "";
+  // if selected is passed then set the default value to selected value
   if ((selected || selected === 0) && !defaultValue) {
     _defaultValue = options[selected].value;
+    // if default value is directly passed set default to it
   } else if (defaultValue && !selected) {
     _defaultValue = defaultValue;
   } else {

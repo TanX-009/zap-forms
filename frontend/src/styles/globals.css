@@ -1,0 +1,26 @@
+.error {
+  color: var(--error);
+}
+
+.neutral {
+  color: inherit;
+}
+
+.success {
+  color: var(--primary);
+}
+
+.errorPanel {
+  color: var(--error);
+  background: var(--errorContainer);
+}
+
+.neutralPanel {
+  color: var(--onSurface);
+  background: var(--surfaceContainerHigh);
+}
+
+.successPanel {
+  color: var(--primary);
+  background: var(--primaryContainer);
+}

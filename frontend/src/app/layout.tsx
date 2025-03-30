@@ -4,6 +4,7 @@ import "@tanx-009/stxle-css";
 import "../styles/colors.css";
 import "../styles/variables.css";
 import "../styles/globals.css";
+import LoginContextComponent from "@/systems/LoginContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,7 +29,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        {children}
+        <LoginContextComponent>{children}</LoginContextComponent>
       </body>
     </html>
   );

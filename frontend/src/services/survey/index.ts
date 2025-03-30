@@ -8,6 +8,7 @@ import {
   TApiResponse,
 } from "../serviceConfig";
 import Services from "../serviceUrls";
+import { TUser } from "@/types/user";
 
 interface TAddSurveyRequest {
   name: string;
@@ -31,8 +32,7 @@ interface TUpdateQuestionRequest {
 }
 
 interface TSubmitSurveyRequest {
-  user_email: string;
-  user_name: string;
+  user: TUser["id"];
   survey: TSurvey["id"];
   answers: TAnswer[];
   audioBlob: Blob | null;
@@ -125,8 +125,7 @@ async function submitSurvey(
   data: TSubmitSurveyRequest,
 ): Promise<TApiResponse<null>> {
   const formData = new FormData();
-  formData.append("user_email", data.user_email);
-  formData.append("user_name", data.user_name);
+  formData.append("user", data.user.toString());
   formData.append("survey", data.survey.toString());
   formData.append("answers", JSON.stringify(data.answers));
 

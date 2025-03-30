@@ -1,5 +1,6 @@
 import React from "react";
 import Navbar from "./components/Navbar";
+import LoginRedirect from "@/systems/LoginRedirect";
 
 export default function DashboardLayout({
   children,
@@ -7,11 +8,9 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <>
+    <LoginRedirect>
       <Navbar />
       {children}
-
-      {/* systems */}
-    </>
+    </LoginRedirect>
   );
 }

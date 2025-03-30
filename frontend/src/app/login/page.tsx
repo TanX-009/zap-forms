@@ -1,15 +1,16 @@
 "use client";
 
 import Input from "@/components/Input";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import styles from "./styles.module.css";
 import Button from "@/components/Button";
 import AuthService from "@/services/auth";
 import Message from "@/components/Message";
-import { deleteLogin, getLogin, setLogin } from "@/app/actions/cookies";
+import { deleteLogin, setLogin } from "@/app/actions/cookies";
 import { useRouter } from "next/navigation";
 import Logo from "@/components/Logo";
 import handleResponse from "@/systems/handleResponse";
+import { LoginContext } from "@/systems/LoginContext";
 
 interface TMessage {
   value: string;
@@ -22,6 +23,8 @@ export default function Login() {
     value: "",
     status: "success",
   });
+
+  const { user, setUser } = useContext(LoginContext);
 
   const onLogin = async (event: React.FormEvent<HTMLFormElement>) => {
     setMessage({ value: "Logging in...", status: "neutral" });
@@ -42,6 +45,7 @@ export default function Login() {
       setMessage,
       async (data) => {
         await setLogin(data.user);
+        setUser(data.user);
       },
     );
   };
@@ -49,10 +53,9 @@ export default function Login() {
   // redirect if already logged in
   useEffect(() => {
     (async function () {
-      const login = await getLogin();
-      if (login) router.push("/");
+      if (user) router.push("/");
     })();
-  }, [router, message]);
+  }, [router, user, message]);
 
   return (
     <form className={styles.login} onSubmit={onLogin}>

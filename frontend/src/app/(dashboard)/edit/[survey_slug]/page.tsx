@@ -16,6 +16,12 @@ import Loading from "@/components/Loading";
 import SurveyService from "@/services/survey";
 import handleResponse from "@/systems/handleResponse";
 import Message from "@/components/Message";
+import {
+  MdEdit,
+  MdDelete,
+  MdFormatListNumbered,
+  MdFormatListBulleted,
+} from "react-icons/md";
 
 export default function EditSurvey() {
   const params = useParams();
@@ -159,12 +165,14 @@ export default function EditSurvey() {
             </p>
           </div>
           <div className={styles.buttons}>
-            <Button onClick={() => setIsSurveyUpdating(true)}>Edit</Button>
+            <Button onClick={() => setIsSurveyUpdating(true)}>
+              <MdEdit />
+            </Button>
             <Button
               className={styles.delete}
               onClick={() => setIsDeleting(true)}
             >
-              Delete
+              <MdDelete />
             </Button>
           </div>
         </div>
@@ -195,6 +203,9 @@ export default function EditSurvey() {
             </div>
           </div>
           <div className={styles.questions}>
+            <Button variant="hiClick" onClick={() => setIsAdding(true)}>
+              Add question
+            </Button>
             {questions.length === 0 ? (
               <h4>No questions added yet!</h4>
             ) : (
@@ -209,7 +220,6 @@ export default function EditSurvey() {
                 />
               ))
             )}
-            <Button onClick={() => setIsAdding(true)}>Add question</Button>
           </div>
         </>
       ) : (

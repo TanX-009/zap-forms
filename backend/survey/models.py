@@ -1,6 +1,8 @@
 from django.db import models, transaction
 from django.utils.text import slugify
 
+from account.models import CustomUser
+
 
 # Survey Model
 class Survey(models.Model):
@@ -83,8 +85,9 @@ class QuestionOption(models.Model):
 
 # User Response Model
 class Responses(models.Model):
-    user_email = models.EmailField()
-    user_name = models.CharField(max_length=255)
+    user = models.ForeignKey(
+        CustomUser, on_delete=models.SET_NULL, related_name="responses", null=True
+    )
     survey = models.ForeignKey(
         Survey, on_delete=models.CASCADE, related_name="responses"
     )
@@ -92,7 +95,7 @@ class Responses(models.Model):
     audio_file = models.FileField(upload_to="recordings/", blank=True, null=True)
 
     def __str__(self):
-        return f"{self.survey}: {self.user_email}, {self.user_name}, {self.audio_file}"
+        return f"{self.survey}: {self.user}, {self.audio_file}"
 
 
 # Answer Model (Stores responses to questions)

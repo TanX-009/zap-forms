@@ -2,6 +2,7 @@ import Button from "@/components/Button";
 import { TQuestion } from "@/types/survey";
 import React, { Dispatch, SetStateAction } from "react";
 import styles from "./styles.module.css";
+import { MdEdit } from "react-icons/md";
 
 interface TProps {
   index: number;
@@ -68,8 +69,9 @@ export default function QuestionCard({
                 isVisible: true,
               }));
             }}
+            variant="hiClick"
           >
-            Edit
+            <MdEdit />
           </Button>
           {isEditingSequence ? (
             <>

@@ -1,6 +1,7 @@
 "use client";
 
 import { TAnswer, TQuestion, TSurvey } from "@/types/survey";
+import { TUser } from "@/types/user";
 import React, {
   createContext,
   ReactNode,
@@ -17,11 +18,8 @@ export type TSurveyContext = {
   setQuestions: Dispatch<SetStateAction<TQuestion[] | null>>;
   answers: TAnswer[];
   setAnswers: Dispatch<SetStateAction<TAnswer[]>>;
-  user: {
-    name: string;
-    email: string;
-  };
-  setUser: Dispatch<SetStateAction<{ name: string; email: string }>>;
+  user: TUser | null;
+  setUser: Dispatch<SetStateAction<TUser | null>>;
   complete: boolean;
   setComplete: Dispatch<SetStateAction<boolean>>;
   audio: {
@@ -29,6 +27,10 @@ export type TSurveyContext = {
     startRecording: () => void;
     stopRecording: () => Promise<Blob | null>;
   };
+  getLocation: () => Promise<{
+    longitude: number | null;
+    latitude: number | null;
+  }>;
 };
 
 export const SurveyContext = createContext<TSurveyContext>({
@@ -38,7 +40,7 @@ export const SurveyContext = createContext<TSurveyContext>({
   setQuestions: () => {},
   answers: [],
   setAnswers: () => {},
-  user: { name: "", email: "" },
+  user: null,
   setUser: () => {},
   complete: false,
   setComplete: () => {},
@@ -47,6 +49,7 @@ export const SurveyContext = createContext<TSurveyContext>({
     startRecording: () => {},
     stopRecording: async () => null,
   },
+  getLocation: async () => ({ longitude: null, latitude: null }),
 });
 
 interface TProps {
@@ -57,10 +60,7 @@ export default function SurveyContextComponent({ children }: TProps) {
   const [survey, setSurvey] = useState<TSurvey | null>(null);
   const [questions, setQuestions] = useState<TQuestion[] | null>([]);
   const [answers, setAnswers] = useState<TAnswer[]>([]);
-  const [user, setUser] = useState<{ name: string; email: string }>({
-    name: "",
-    email: "",
-  });
+  const [user, setUser] = useState<TUser | null>(null);
   const [complete, setComplete] = useState(false);
 
   const [isRecording, setIsRecording] = useState(false);
@@ -114,6 +114,32 @@ export default function SurveyContextComponent({ children }: TProps) {
     });
   };
 
+  const getLocation = (): Promise<{
+    longitude: number | null;
+    latitude: number | null;
+  }> => {
+    return new Promise((resolve) => {
+      if (!navigator.geolocation) {
+        console.error("Geolocation is not supported by this browser.");
+        resolve({ latitude: null, longitude: null });
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          resolve({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          });
+        },
+        (error) => {
+          console.error("Error getting location:", error);
+          resolve({ latitude: null, longitude: null });
+        },
+      );
+    });
+  };
+
   return (
     <SurveyContext.Provider
       value={{
@@ -132,6 +158,7 @@ export default function SurveyContextComponent({ children }: TProps) {
           startRecording,
           stopRecording,
         },
+        getLocation,
       }}
     >
       {children}

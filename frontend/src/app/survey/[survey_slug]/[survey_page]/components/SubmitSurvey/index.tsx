@@ -7,11 +7,12 @@ import Message from "@/components/Message";
 import Button from "@/components/Button";
 import { useRouter } from "next/navigation";
 import handleResponse from "@/systems/handleResponse";
+import { TUser } from "@/types/user";
 
 interface TProps {
   survey: TSurvey;
   answers: TAnswer[];
-  user: { name: string; email: string };
+  user: TUser | null;
   setComplete: Dispatch<SetStateAction<boolean>>;
   audio: {
     isRecording: boolean;
@@ -42,9 +43,10 @@ export default function SubmitSurvey({
 
     const audioBlob = await audio.stopRecording();
 
+    if (!user) return;
+    console.log(user.id);
     const response = await SurveyService.submitSurvey({
-      user_email: user.email,
-      user_name: user.name,
+      user: user.id,
       survey: survey.id,
       answers: answers,
       audioBlob: audioBlob,

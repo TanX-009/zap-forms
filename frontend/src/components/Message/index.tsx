@@ -8,7 +8,7 @@ interface TProps {
 
 export default function Message({ children, status = "neutral" }: TProps) {
   if (children && children !== "") {
-    return <p className={`${styles[status]} ${styles.message}`}>{children}</p>;
+    return <p className={`${status} ${styles.message}`}>{children}</p>;
   }
   return <></>;
 }

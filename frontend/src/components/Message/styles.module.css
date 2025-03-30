@@ -2,15 +2,3 @@
   white-space: pre-wrap;
   text-align: center;
 }
-
-.success {
-  color: var(--primary);
-}
-
-.error {
-  color: var(--error);
-}
-
-.neutral {
-  color: inherit;
-}
