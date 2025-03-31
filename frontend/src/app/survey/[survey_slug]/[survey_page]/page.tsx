@@ -15,7 +15,7 @@ import getOneNestBack from "@/systems/getOneNestBack";
 import Loading from "@/components/Loading";
 import RadioGroup from "@/components/RadioGroup";
 import CheckboxGroup from "@/components/CheckboxGroup";
-import useAnswersIDB from "@/hooks/answersIDB";
+import useProgressIDB from "@/hooks/progressIDB";
 
 const findQuestionBySequence = (
   questions: TQuestion[],
@@ -64,14 +64,14 @@ export default function SurveyPage() {
   const {
     survey,
     questions,
-    answers,
-    setAnswers,
+    progress,
     setProgress,
     complete,
     setComplete,
     audio,
     location,
   } = useContext(SurveyContext);
+  console.log(progress);
 
   const [question, setQuestion] = useState<TQuestion | undefined>(undefined);
 
@@ -79,7 +79,7 @@ export default function SurveyPage() {
 
   const returnPath = getOneNestBack(pathname);
 
-  const { updateOrAddAnswer } = useAnswersIDB();
+  const { updateProgress } = useProgressIDB();
 
   const onNext = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -118,11 +118,15 @@ export default function SurveyPage() {
           checkboxAnswers.length > 0 ? checkboxAnswers : [];
         break;
     }
-    const allAnswers = answers;
+    const allAnswers = progress.answers;
     pushOrUpdate(allAnswers, answerObj);
-    setAnswers(allAnswers);
-    setProgress(question.sequence);
-    await updateOrAddAnswer(answerObj);
+    const updatedProgress = {
+      ...progress,
+      questionNo: question.sequence,
+      answers: allAnswers,
+    };
+    setProgress(updatedProgress);
+    await updateProgress(updatedProgress, survey.id);
     if (questions?.length === questionNo) {
       setIsSubmitting(true);
     } else {
@@ -173,7 +177,7 @@ export default function SurveyPage() {
         setIsVisible={setIsSubmitting}
       >
         <SubmitSurvey
-          answers={answers}
+          answers={progress.answers}
           survey={survey}
           setComplete={setComplete}
           audio={audio}
@@ -204,7 +208,7 @@ export default function SurveyPage() {
                 </>
               }
               defaultValue={
-                findAnswerById(answers, question.id)?.text_answer || ""
+                findAnswerById(progress.answers, question.id)?.text_answer || ""
               }
               minLength={question.min_length}
               maxLength={question.max_length}
@@ -230,7 +234,8 @@ export default function SurveyPage() {
               minLength={question.min_length}
               maxLength={question.max_length}
               defaultValue={
-                findAnswerById(answers, question.id)?.numeric_answer || ""
+                findAnswerById(progress.answers, question.id)?.numeric_answer ||
+                ""
               }
               placeholder={"Numeric answer..."}
               required={question.required}
@@ -253,7 +258,7 @@ export default function SurveyPage() {
               }
               defaultValue={
                 findAnswerById(
-                  answers,
+                  progress.answers,
                   question.id,
                 )?.choice_answer?.toString() || ""
               }
@@ -277,7 +282,8 @@ export default function SurveyPage() {
                 </>
               }
               defaultValue={
-                findAnswerById(answers, question.id)?.checkbox_answers || []
+                findAnswerById(progress.answers, question.id)
+                  ?.checkbox_answers || []
               }
               options={convertOptions(question.options)}
               required={question.required}

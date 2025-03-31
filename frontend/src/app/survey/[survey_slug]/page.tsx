@@ -16,15 +16,40 @@ import { IoCloudOffline } from "react-icons/io5";
 export default function Survey() {
   const params = useParams();
   const router = useRouter();
-  const { survey, setSurvey, setQuestions, audio, getLocation } =
-    useContext(SurveyContext);
+  const {
+    survey,
+    setSurvey,
+    setQuestions,
+    progress,
+    setProgress,
+    audio,
+    getLocation,
+  } = useContext(SurveyContext);
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    // Do nothing if slug isn't present
+    if (!survey?.slug) return;
 
+    // start recording
     if (!audio.isRecording) await audio.startRecording();
+    // get location
     await getLocation();
-    if (survey?.slug) router.push(`/survey/${survey.slug}/1`);
+
+    // start new survey
+    if (!progress.questionNo) {
+      const date = new Date();
+      setProgress({
+        ...progress,
+        questionNo: 1,
+        startTime: date.toISOString(),
+      });
+      router.push(`/survey/${survey.slug}/1`);
+    }
+    // continue last survey
+    else {
+      router.push(`/survey/${survey.slug}/${progress.questionNo}`);
+    }
   };
 
   const {
