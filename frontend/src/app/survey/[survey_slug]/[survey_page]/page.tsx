@@ -15,6 +15,7 @@ import getOneNestBack from "@/systems/getOneNestBack";
 import Loading from "@/components/Loading";
 import RadioGroup from "@/components/RadioGroup";
 import CheckboxGroup from "@/components/CheckboxGroup";
+import useAnswersIDB from "@/hooks/answersIDB";
 
 const findQuestionBySequence = (
   questions: TQuestion[],
@@ -65,6 +66,7 @@ export default function SurveyPage() {
     questions,
     answers,
     setAnswers,
+    setProgress,
     complete,
     setComplete,
     audio,
@@ -77,7 +79,9 @@ export default function SurveyPage() {
 
   const returnPath = getOneNestBack(pathname);
 
-  const onNext = (event: FormEvent<HTMLFormElement>) => {
+  const { updateOrAddAnswer } = useAnswersIDB();
+
+  const onNext = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!question || !survey) return;
 
@@ -117,6 +121,8 @@ export default function SurveyPage() {
     const allAnswers = answers;
     pushOrUpdate(allAnswers, answerObj);
     setAnswers(allAnswers);
+    setProgress(question.sequence);
+    await updateOrAddAnswer(answerObj);
     if (questions?.length === questionNo) {
       setIsSubmitting(true);
     } else {
@@ -124,12 +130,14 @@ export default function SurveyPage() {
     }
   };
 
+  // set current question number
   useEffect(() => {
     if (params.survey_page && !isNaN(Number(params.survey_page))) {
       setQuestionNo(Number(params.survey_page));
     }
   }, [params.survey_page]);
 
+  // set question based on question number
   useEffect(() => {
     if (questions && questionNo !== -1) {
       setQuestion(findQuestionBySequence(questions, questionNo));
@@ -142,9 +150,9 @@ export default function SurveyPage() {
       questionNo !== -1 &&
       (questionNo > questions.length || questionNo < 1)
     ) {
-      router.push(getOneNestBack(pathname));
+      router.push(returnPath);
     }
-  }, [questionNo, questions, pathname, router]);
+  }, [questionNo, questions, returnPath, router]);
 
   useEffect(() => {
     if (complete) {

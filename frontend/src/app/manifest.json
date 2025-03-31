@@ -1,0 +1,10 @@
+{
+  "name": "Zap Forms",
+  "short_name": "ZapForms",
+  "icons": [],
+  "theme_color": "#ffffff",
+  "background_color": "#000000)",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait"
+}
