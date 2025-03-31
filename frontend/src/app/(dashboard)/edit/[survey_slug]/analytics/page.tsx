@@ -126,13 +126,17 @@ export default function Analysis() {
                     <tr key={index} className={styles.tr}>
                       <td>{response.user.email || ""}</td>
                       <td>
-                        <audio controls>
-                          <source
-                            src={`${process.env.NEXT_PUBLIC_SERVER_API_URL}${Services.audio}${response.audio_file}`}
-                            type="audio/wav"
-                          />
-                          Your browser does not support the audio element.
-                        </audio>
+                        {response.audio_file ? (
+                          <audio controls>
+                            <source
+                              src={`${process.env.NEXT_PUBLIC_SERVER_API_URL}${Services.audio}${response.audio_file}`}
+                              type="audio/wav"
+                            />
+                            Your browser does not support the audio element.
+                          </audio>
+                        ) : (
+                          "-"
+                        )}
                       </td>
                       {response.answers.map((answer, index) => {
                         let ans = "-";
@@ -145,7 +149,7 @@ export default function Analysis() {
                         ) {
                           ans =
                             response.questions[index]?.options[
-                              Number(answer.choice_answer) - 1
+                              Number(answer.choice_answer)
                             ]?.text;
                         }
 

@@ -22,7 +22,6 @@ export default function useFetchSurvey(
 
         let response;
         if (isOnline) {
-          console.log("fetched even if offline");
           response = await SurveyService.getSurvey(slug);
         } else {
           const data = await getSurvey(slug);
