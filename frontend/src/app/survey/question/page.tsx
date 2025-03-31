@@ -1,5 +1,5 @@
 "use client";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React, { FormEvent, useContext, useEffect, useState } from "react";
 import styles from "./styles.module.css";
 import { TAnswer, TQuestion } from "@/types/survey";
@@ -15,6 +15,7 @@ import CheckboxGroup from "@/components/CheckboxGroup";
 import useProgressIDB from "@/hooks/progressIDB";
 import { SurveyContext } from "../components/SurveyContext";
 import SurveyNavbar from "../components/SurveyNavbar";
+import { ProgressContext } from "@/systems/ProgressContext";
 
 const findQuestionBySequence = (
   questions: TQuestion[],
@@ -58,23 +59,11 @@ const convertOptions = (
 export default function SurveyQuestion() {
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
-
-  const [question_sequence, setQuestion_sequence] = useState<string | null>(
-    searchParams.get("question_sequence"),
-  );
 
   const [questionNo, setQuestionNo] = useState<number>(-1);
-  const {
-    survey,
-    questions,
-    progress,
-    setProgress,
-    complete,
-    setComplete,
-    audio,
-    location,
-  } = useContext(SurveyContext);
+  const { survey, questions, audio, location } = useContext(SurveyContext);
+
+  const { progress, setProgress } = useContext(ProgressContext);
 
   const [question, setQuestion] = useState<TQuestion | undefined>(undefined);
 
@@ -82,15 +71,15 @@ export default function SurveyQuestion() {
 
   const returnPath = getOneNestBack(pathname);
 
-  const { updateProgress } = useProgressIDB();
+  const { updateProgress: updateProgressIDB } = useProgressIDB();
 
-  const onPrev = () => {
+  const onPrev = async () => {
     if (!question || !survey) return;
 
-    router.push(
-      `/survey/question?survey=${survey.slug}&question=${question.sequence - 1}`,
-    );
-    setQuestion_sequence((question.sequence - 1).toString());
+    const updatedProgress = { ...progress, questionNo: question.sequence - 1 };
+    setProgress(updatedProgress);
+
+    await updateProgressIDB(updatedProgress);
   };
 
   const onNext = async (event: FormEvent<HTMLFormElement>) => {
@@ -137,24 +126,22 @@ export default function SurveyQuestion() {
       questionNo: question.sequence,
       answers: allAnswers,
     };
-    setProgress(updatedProgress);
-    await updateProgress(updatedProgress, survey.id);
+
     if (questions?.length === questionNo) {
       setIsSubmitting(true);
     } else {
-      router.push(
-        `/survey/question?survey=${survey.slug}&question=${question.sequence + 1}`,
-      );
-      setQuestion_sequence((question.sequence + 1).toString());
+      updatedProgress.questionNo = question.sequence + 1;
     }
+    setProgress(updatedProgress);
+    await updateProgressIDB(updatedProgress);
   };
 
   // set current question number
   useEffect(() => {
-    if (question_sequence && !isNaN(Number(question_sequence))) {
-      setQuestionNo(Number(question_sequence));
+    if (progress.questionNo) {
+      setQuestionNo(progress.questionNo);
     }
-  }, [question_sequence]);
+  }, [progress.questionNo]);
 
   // set question based on question number
   useEffect(() => {
@@ -174,14 +161,6 @@ export default function SurveyQuestion() {
   }, [questionNo, questions, returnPath, router]);
 
   useEffect(() => {
-    if (complete && survey && question) {
-      router.push(
-        `/survey/complete?survey=${survey.slug}&question=${question.sequence + 1}`,
-      );
-    }
-  }, [complete, survey, router, question]);
-
-  useEffect(() => {
     if (!survey) router.push(returnPath);
   }, [survey, returnPath, router]);
 
@@ -196,7 +175,6 @@ export default function SurveyQuestion() {
         <SubmitSurvey
           answers={progress.answers}
           survey={survey}
-          setComplete={setComplete}
           audio={audio}
           location={location}
         />

@@ -31,6 +31,7 @@ interface TAnswer {
 
 interface TProgress {
   startTime: string | null;
+  survey_slug: TSurvey["slug"] | null;
   questionNo: TQuestion["sequence"] | null;
   answers: TAnswer[];
 }

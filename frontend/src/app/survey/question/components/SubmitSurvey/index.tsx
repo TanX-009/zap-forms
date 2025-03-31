@@ -11,7 +11,6 @@ import handleResponse from "@/systems/handleResponse";
 interface TProps {
   survey: TSurvey;
   answers: TAnswer[];
-  setComplete: Dispatch<SetStateAction<boolean>>;
   audio: {
     isRecording: boolean;
     startRecording: () => void;
@@ -23,7 +22,6 @@ interface TProps {
 export default function SubmitSurvey({
   survey,
   answers,
-  setComplete,
   audio,
   location,
 }: TProps) {
@@ -55,8 +53,9 @@ export default function SubmitSurvey({
       "Response submitted successfully!",
       setMessage,
       () => {
-        setComplete(true);
-        router.push(`/survey/complete`);
+        setTimeout(() => {
+          router.push(`/`);
+        }, 1000);
       },
     );
   };

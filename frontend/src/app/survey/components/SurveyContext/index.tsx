@@ -1,7 +1,8 @@
 "use client";
 
 import useProgressIDB from "@/hooks/progressIDB";
-import { TCoords, TProgress, TQuestion, TSurvey } from "@/types/survey";
+import { ProgressContext } from "@/systems/ProgressContext";
+import { TCoords, TQuestion, TSurvey } from "@/types/survey";
 import React, {
   createContext,
   ReactNode,
@@ -10,6 +11,7 @@ import React, {
   useState,
   useRef,
   useEffect,
+  useContext,
 } from "react";
 
 // Define the context type
@@ -18,10 +20,6 @@ export type TSurveyContext = {
   setSurvey: Dispatch<SetStateAction<TSurvey | null>>;
   questions: TQuestion[] | null;
   setQuestions: Dispatch<SetStateAction<TQuestion[] | null>>;
-  progress: TProgress;
-  setProgress: Dispatch<SetStateAction<TProgress>>;
-  complete: boolean;
-  setComplete: Dispatch<SetStateAction<boolean>>;
   audio: {
     isRecording: boolean;
     startRecording: () => void;
@@ -37,10 +35,6 @@ export const SurveyContext = createContext<TSurveyContext>({
   setSurvey: () => {},
   questions: [],
   setQuestions: () => {},
-  progress: { startTime: null, questionNo: null, answers: [] },
-  setProgress: () => {},
-  complete: false,
-  setComplete: () => {},
   audio: {
     isRecording: false,
     startRecording: () => {},
@@ -57,12 +51,6 @@ interface TProps {
 export default function SurveyContextComponent({ children }: TProps) {
   const [survey, setSurvey] = useState<TSurvey | null>(null);
   const [questions, setQuestions] = useState<TQuestion[] | null>([]);
-  const [progress, setProgress] = useState<TProgress>({
-    startTime: null,
-    questionNo: null,
-    answers: [],
-  });
-  const [complete, setComplete] = useState(false);
   const [location, setLocation] = useState<TCoords>({
     longitude: null,
     latitude: null,
@@ -73,6 +61,8 @@ export default function SurveyContextComponent({ children }: TProps) {
   const audioChunksRef = useRef<Blob[]>([]);
 
   const { getProgress } = useProgressIDB();
+
+  const { setProgress } = useContext(ProgressContext);
 
   const startRecording = async () => {
     try {
@@ -149,11 +139,11 @@ export default function SurveyContextComponent({ children }: TProps) {
   useEffect(() => {
     (async () => {
       if (survey) {
-        const progress = await getProgress(survey.id);
+        const progress = await getProgress(survey.slug);
         if (progress) setProgress(progress);
       }
     })();
-  }, [getProgress, survey]);
+  }, [getProgress, survey, setProgress]);
 
   return (
     <SurveyContext.Provider
@@ -162,10 +152,6 @@ export default function SurveyContextComponent({ children }: TProps) {
         setSurvey,
         questions,
         setQuestions,
-        progress,
-        setProgress,
-        complete,
-        setComplete,
         audio: {
           isRecording,
           startRecording,

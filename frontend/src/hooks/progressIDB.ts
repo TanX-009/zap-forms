@@ -20,7 +20,7 @@ export default function useProgressIDB() {
       const dbPromise = await openDB("survey_progress", 1, {
         upgrade(database) {
           // Creates an object store:
-          database.createObjectStore(storeName);
+          database.createObjectStore(storeName, { keyPath: "survey_slug" });
         },
       });
       setDB(dbPromise);
@@ -29,22 +29,22 @@ export default function useProgressIDB() {
   }, []);
 
   const updateProgress = useCallback(
-    async (progress: TProgress, survey_id: TSurvey["id"]) => {
+    async (progress: TProgress) => {
       if (!db || isCreatingStore) return;
       const tx = db.transaction(storeName, "readwrite");
-      await tx.store.put(progress, survey_id);
+      await tx.store.put(progress);
       await tx.done;
     },
     [db, isCreatingStore],
   );
 
   const getProgress = useCallback(
-    async (survey_id: TSurvey["id"]) => {
+    async (survey_slug: TSurvey["slug"]) => {
       if (!db || isCreatingStore) return;
 
       const tx = db.transaction(storeName, "readonly");
       const store = tx.store;
-      const progress = await store.get(survey_id);
+      const progress = await store.get(survey_slug);
       await tx.done;
 
       return progress as TProgress;

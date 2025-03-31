@@ -5,6 +5,7 @@ import "../styles/colors.css";
 import "../styles/variables.css";
 import "../styles/globals.css";
 import LoginContextComponent from "@/systems/LoginContext";
+import ProgressContextComponent from "@/systems/ProgressContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -68,7 +69,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <LoginContextComponent>{children}</LoginContextComponent>
+        <LoginContextComponent>
+          <ProgressContextComponent>{children}</ProgressContextComponent>
+        </LoginContextComponent>
       </body>
     </html>
   );
