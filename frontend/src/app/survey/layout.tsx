@@ -12,7 +12,6 @@ export default function SurveyLayout({
       <SurveyContextComponent>
         <LoginRedirect>{children}</LoginRedirect>
       </SurveyContextComponent>
-      ;{/* systems */}
     </>
   );
 }

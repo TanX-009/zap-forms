@@ -1,13 +1,10 @@
 "use client";
-import { useParams, usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { FormEvent, useContext, useEffect, useState } from "react";
-import { SurveyContext } from "../../components/SurveyContext";
 import styles from "./styles.module.css";
 import { TAnswer, TQuestion } from "@/types/survey";
 import Input from "@/components/Input";
-import SurveyNavbar from "../../components/SurveyNavbar";
 import Button from "@/components/Button";
-import Link from "next/link";
 import { FaStarOfLife } from "react-icons/fa";
 import Modal from "@/components/Modal";
 import SubmitSurvey from "./components/SubmitSurvey";
@@ -16,6 +13,8 @@ import Loading from "@/components/Loading";
 import RadioGroup from "@/components/RadioGroup";
 import CheckboxGroup from "@/components/CheckboxGroup";
 import useProgressIDB from "@/hooks/progressIDB";
+import { SurveyContext } from "../components/SurveyContext";
+import SurveyNavbar from "../components/SurveyNavbar";
 
 const findQuestionBySequence = (
   questions: TQuestion[],
@@ -56,10 +55,15 @@ const convertOptions = (
   }));
 };
 
-export default function SurveyPage() {
+export default function SurveyQuestion() {
   const router = useRouter();
   const pathname = usePathname();
-  const params = useParams();
+  const searchParams = useSearchParams();
+
+  const [question_sequence, setQuestion_sequence] = useState<string | null>(
+    searchParams.get("question_sequence"),
+  );
+
   const [questionNo, setQuestionNo] = useState<number>(-1);
   const {
     survey,
@@ -79,6 +83,15 @@ export default function SurveyPage() {
   const returnPath = getOneNestBack(pathname);
 
   const { updateProgress } = useProgressIDB();
+
+  const onPrev = () => {
+    if (!question || !survey) return;
+
+    router.push(
+      `/survey/question?survey=${survey.slug}&question=${question.sequence - 1}`,
+    );
+    setQuestion_sequence((question.sequence - 1).toString());
+  };
 
   const onNext = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -129,16 +142,19 @@ export default function SurveyPage() {
     if (questions?.length === questionNo) {
       setIsSubmitting(true);
     } else {
-      router.push(`/survey/${survey.slug}/${question.sequence + 1}`);
+      router.push(
+        `/survey/question?survey=${survey.slug}&question=${question.sequence + 1}`,
+      );
+      setQuestion_sequence((question.sequence + 1).toString());
     }
   };
 
   // set current question number
   useEffect(() => {
-    if (params.survey_page && !isNaN(Number(params.survey_page))) {
-      setQuestionNo(Number(params.survey_page));
+    if (question_sequence && !isNaN(Number(question_sequence))) {
+      setQuestionNo(Number(question_sequence));
     }
-  }, [params.survey_page]);
+  }, [question_sequence]);
 
   // set question based on question number
   useEffect(() => {
@@ -158,10 +174,12 @@ export default function SurveyPage() {
   }, [questionNo, questions, returnPath, router]);
 
   useEffect(() => {
-    if (complete) {
-      router.push(`/survey/${survey?.slug}/complete`);
+    if (complete && survey && question) {
+      router.push(
+        `/survey/complete?survey=${survey.slug}&question=${question.sequence + 1}`,
+      );
     }
-  }, [complete, survey?.slug, router]);
+  }, [complete, survey, router, question]);
 
   useEffect(() => {
     if (!survey) router.push(returnPath);
@@ -290,13 +308,13 @@ export default function SurveyPage() {
           ) : null}
           <div className={styles.buttons}>
             {question?.sequence && question.sequence !== 1 ? (
-              <Link
+              <Button
                 className={"loClick"}
-                href={`/survey/${survey.slug}/${question?.sequence - 1}`}
+                onClick={onPrev}
                 aria-label="Previous question"
               >
                 Previous
-              </Link>
+              </Button>
             ) : (
               <div></div>
             )}

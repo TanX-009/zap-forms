@@ -20,7 +20,10 @@ export default function SurveyCard({ survey }: TProps) {
       <div className={styles.title}>
         <h4>{survey.name}</h4>
         <div className={styles.buttons}>
-          <Link className={"loClick"} href={`/survey/${survey.slug}`}>
+          <Link
+            className={"loClick"}
+            href={`/survey?survey_slug=${survey.slug}`}
+          >
             Open
           </Link>
 

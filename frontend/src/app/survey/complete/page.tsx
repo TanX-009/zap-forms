@@ -4,9 +4,9 @@ import Logo from "@/components/Logo";
 import React, { useContext, useEffect } from "react";
 import { TbRosetteDiscountCheckFilled } from "react-icons/tb";
 import styles from "./styles.module.css";
-import { SurveyContext } from "../../components/SurveyContext";
 import { usePathname, useRouter } from "next/navigation";
 import getOneNestBack from "@/systems/getOneNestBack";
+import { SurveyContext } from "../components/SurveyContext";
 
 export default function Complete() {
   const router = useRouter();

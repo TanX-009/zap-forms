@@ -2,19 +2,22 @@
 
 import React, { FormEvent, useContext, useEffect } from "react";
 import styles from "./styles.module.css";
-import { SurveyContext } from "../components/SurveyContext";
 import Logo from "@/components/Logo";
 import Button from "@/components/Button";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import useFetchSurvey from "@/hooks/fetchSurvey";
 import useFetchQuestions from "@/hooks/fetchQuestions";
 import Error from "@/components/Error";
 import { MdError } from "react-icons/md";
 import Loading from "@/components/Loading";
 import { IoCloudOffline } from "react-icons/io5";
+import { SurveyContext } from "../SurveyContext";
 
-export default function Survey() {
-  const params = useParams();
+interface TProps {
+  survey_slug: string;
+}
+
+export default function SurveyStart({ survey_slug }: TProps) {
   const router = useRouter();
   const {
     survey,
@@ -44,11 +47,15 @@ export default function Survey() {
         questionNo: 1,
         startTime: date.toISOString(),
       });
-      router.push(`/survey/${survey.slug}/1`);
+      router.push(
+        `/survey/question?survey_slug=${survey.slug}&question_sequence=1`,
+      );
     }
     // continue last survey
     else {
-      router.push(`/survey/${survey.slug}/${progress.questionNo}`);
+      router.push(
+        `/survey/question?survey_slug=${survey.slug}&question_sequence=${progress.questionNo}`,
+      );
     }
   };
 
@@ -62,10 +69,10 @@ export default function Survey() {
     useFetchQuestions(setQuestions);
 
   useEffect(() => {
-    if (typeof params.survey_slug === "string") {
-      fetchSurvey(params.survey_slug);
+    if (typeof survey_slug === "string") {
+      fetchSurvey(survey_slug);
     }
-  }, [params.survey_slug, fetchSurvey]);
+  }, [survey_slug, fetchSurvey]);
 
   useEffect(() => {
     if (survey?.id) fetchQuestions(survey.id);

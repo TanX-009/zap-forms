@@ -56,7 +56,7 @@ export default function SubmitSurvey({
       setMessage,
       () => {
         setComplete(true);
-        router.push(`/survey/${survey.slug}/complete`);
+        router.push(`/survey/complete`);
       },
     );
   };
