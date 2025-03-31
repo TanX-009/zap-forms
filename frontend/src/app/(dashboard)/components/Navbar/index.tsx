@@ -1,6 +1,6 @@
 "use client";
 
-import { deleteLogin } from "@/app/actions/cookies";
+import { deleteLogin } from "@/systems/cookies";
 import Button from "@/components/Button";
 import AuthService from "@/services/auth";
 import React, { useContext } from "react";
@@ -19,7 +19,7 @@ export default function Navbar() {
   const onLogout = async () => {
     await AuthService.logout();
     setUser(null);
-    await deleteLogin();
+    deleteLogin();
     router.push("/login");
   };
 

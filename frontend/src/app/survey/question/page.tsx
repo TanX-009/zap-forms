@@ -1,13 +1,10 @@
 "use client";
-import { useParams, usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React, { FormEvent, useContext, useEffect, useState } from "react";
-import { SurveyContext } from "../../components/SurveyContext";
 import styles from "./styles.module.css";
 import { TAnswer, TQuestion } from "@/types/survey";
 import Input from "@/components/Input";
-import SurveyNavbar from "../../components/SurveyNavbar";
 import Button from "@/components/Button";
-import Link from "next/link";
 import { FaStarOfLife } from "react-icons/fa";
 import Modal from "@/components/Modal";
 import SubmitSurvey from "./components/SubmitSurvey";
@@ -15,6 +12,10 @@ import getOneNestBack from "@/systems/getOneNestBack";
 import Loading from "@/components/Loading";
 import RadioGroup from "@/components/RadioGroup";
 import CheckboxGroup from "@/components/CheckboxGroup";
+import useProgressIDB from "@/hooks/progressIDB";
+import { SurveyContext } from "../components/SurveyContext";
+import SurveyNavbar from "../components/SurveyNavbar";
+import { ProgressContext } from "@/systems/ProgressContext";
 
 const findQuestionBySequence = (
   questions: TQuestion[],
@@ -55,21 +56,14 @@ const convertOptions = (
   }));
 };
 
-export default function SurveyPage() {
+export default function SurveyQuestion() {
   const router = useRouter();
   const pathname = usePathname();
-  const params = useParams();
+
   const [questionNo, setQuestionNo] = useState<number>(-1);
-  const {
-    survey,
-    questions,
-    answers,
-    setAnswers,
-    complete,
-    setComplete,
-    audio,
-    location,
-  } = useContext(SurveyContext);
+  const { survey, questions, audio, location } = useContext(SurveyContext);
+
+  const { progress, setProgress } = useContext(ProgressContext);
 
   const [question, setQuestion] = useState<TQuestion | undefined>(undefined);
 
@@ -77,7 +71,18 @@ export default function SurveyPage() {
 
   const returnPath = getOneNestBack(pathname);
 
-  const onNext = (event: FormEvent<HTMLFormElement>) => {
+  const { updateProgress: updateProgressIDB } = useProgressIDB();
+
+  const onPrev = async () => {
+    if (!question || !survey) return;
+
+    const updatedProgress = { ...progress, questionNo: question.sequence - 1 };
+    setProgress(updatedProgress);
+
+    await updateProgressIDB(updatedProgress);
+  };
+
+  const onNext = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!question || !survey) return;
 
@@ -114,22 +119,31 @@ export default function SurveyPage() {
           checkboxAnswers.length > 0 ? checkboxAnswers : [];
         break;
     }
-    const allAnswers = answers;
+    const allAnswers = progress.answers;
     pushOrUpdate(allAnswers, answerObj);
-    setAnswers(allAnswers);
+    const updatedProgress = {
+      ...progress,
+      questionNo: question.sequence,
+      answers: allAnswers,
+    };
+
     if (questions?.length === questionNo) {
       setIsSubmitting(true);
     } else {
-      router.push(`/survey/${survey.slug}/${question.sequence + 1}`);
+      updatedProgress.questionNo = question.sequence + 1;
     }
+    setProgress(updatedProgress);
+    await updateProgressIDB(updatedProgress);
   };
 
+  // set current question number
   useEffect(() => {
-    if (params.survey_page && !isNaN(Number(params.survey_page))) {
-      setQuestionNo(Number(params.survey_page));
+    if (progress.questionNo) {
+      setQuestionNo(progress.questionNo);
     }
-  }, [params.survey_page]);
+  }, [progress.questionNo]);
 
+  // set question based on question number
   useEffect(() => {
     if (questions && questionNo !== -1) {
       setQuestion(findQuestionBySequence(questions, questionNo));
@@ -142,15 +156,9 @@ export default function SurveyPage() {
       questionNo !== -1 &&
       (questionNo > questions.length || questionNo < 1)
     ) {
-      router.push(getOneNestBack(pathname));
+      router.push(returnPath);
     }
-  }, [questionNo, questions, pathname, router]);
-
-  useEffect(() => {
-    if (complete) {
-      router.push(`/survey/${survey?.slug}/complete`);
-    }
-  }, [complete, survey?.slug, router]);
+  }, [questionNo, questions, returnPath, router]);
 
   useEffect(() => {
     if (!survey) router.push(returnPath);
@@ -165,9 +173,8 @@ export default function SurveyPage() {
         setIsVisible={setIsSubmitting}
       >
         <SubmitSurvey
-          answers={answers}
+          answers={progress.answers}
           survey={survey}
-          setComplete={setComplete}
           audio={audio}
           location={location}
         />
@@ -196,7 +203,7 @@ export default function SurveyPage() {
                 </>
               }
               defaultValue={
-                findAnswerById(answers, question.id)?.text_answer || ""
+                findAnswerById(progress.answers, question.id)?.text_answer || ""
               }
               minLength={question.min_length}
               maxLength={question.max_length}
@@ -222,7 +229,8 @@ export default function SurveyPage() {
               minLength={question.min_length}
               maxLength={question.max_length}
               defaultValue={
-                findAnswerById(answers, question.id)?.numeric_answer || ""
+                findAnswerById(progress.answers, question.id)?.numeric_answer ||
+                ""
               }
               placeholder={"Numeric answer..."}
               required={question.required}
@@ -245,7 +253,7 @@ export default function SurveyPage() {
               }
               defaultValue={
                 findAnswerById(
-                  answers,
+                  progress.answers,
                   question.id,
                 )?.choice_answer?.toString() || ""
               }
@@ -269,7 +277,8 @@ export default function SurveyPage() {
                 </>
               }
               defaultValue={
-                findAnswerById(answers, question.id)?.checkbox_answers || []
+                findAnswerById(progress.answers, question.id)
+                  ?.checkbox_answers || []
               }
               options={convertOptions(question.options)}
               required={question.required}
@@ -277,13 +286,13 @@ export default function SurveyPage() {
           ) : null}
           <div className={styles.buttons}>
             {question?.sequence && question.sequence !== 1 ? (
-              <Link
+              <Button
                 className={"loClick"}
-                href={`/survey/${survey.slug}/${question?.sequence - 1}`}
+                onClick={onPrev}
                 aria-label="Previous question"
               >
                 Previous
-              </Link>
+              </Button>
             ) : (
               <div></div>
             )}

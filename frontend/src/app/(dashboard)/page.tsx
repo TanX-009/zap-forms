@@ -10,6 +10,7 @@ import { TSurvey } from "@/types/survey";
 import SurveyCard from "./components/SurveyCard";
 import { LoginContext } from "@/systems/LoginContext";
 import Loading from "@/components/Loading";
+import Uploading from "./components/Uploading";
 
 export default function Home() {
   const [surveys, setSurveys] = useState<TSurvey[]>([]);
@@ -37,6 +38,8 @@ export default function Home() {
         {surveys.length === 0 ? (
           <div className={styles.empty}>No surveys added!</div>
         ) : null}
+
+        <Uploading />
 
         {user?.role === "admin" ? (
           <Button

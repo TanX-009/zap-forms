@@ -29,6 +29,13 @@ interface TAnswer {
   checkbox_answers: string[]; // For checkbox (multiple selections)
 }
 
+interface TProgress {
+  startTime: string | null;
+  survey_slug: TSurvey["slug"] | null;
+  questionNo: TQuestion["sequence"] | null;
+  answers: TAnswer[];
+}
+
 interface TSurveyResponses {
   answers: TAnswer[];
   audio_file: string;
@@ -46,4 +53,11 @@ interface TCoords {
   latitude: number | null;
 }
 
-export type { TSurvey, TQuestion, TAnswer, TSurveyResponses, TCoords };
+export type {
+  TSurvey,
+  TQuestion,
+  TAnswer,
+  TProgress,
+  TSurveyResponses,
+  TCoords,
+};

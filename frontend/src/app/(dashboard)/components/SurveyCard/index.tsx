@@ -6,23 +6,33 @@ import Link from "next/link";
 import { MdEdit } from "react-icons/md";
 import { IoAnalytics } from "react-icons/io5";
 import { LoginContext } from "@/systems/LoginContext";
+import { ProgressContext } from "@/systems/ProgressContext";
+import { useRouter } from "next/navigation";
+import Button from "@/components/Button";
 
 interface TProps {
   survey: TSurvey;
 }
 
 export default function SurveyCard({ survey }: TProps) {
+  const router = useRouter();
+
   const created_at = isoToNormal(survey.created_at);
   const { user } = useContext(LoginContext);
+  const { updateProgress } = useContext(ProgressContext);
+
+  const onOpen = () => {
+    updateProgress({ survey_slug: survey.slug }, () => {
+      router.push("/survey");
+    });
+  };
 
   return (
     <div className={`panel ${styles.survey}`}>
       <div className={styles.title}>
         <h4>{survey.name}</h4>
         <div className={styles.buttons}>
-          <Link className={"loClick"} href={`/survey/${survey.slug}`}>
-            Open
-          </Link>
+          <Button onClick={onOpen}>Open</Button>
 
           {user?.role === "admin" ? (
             <>

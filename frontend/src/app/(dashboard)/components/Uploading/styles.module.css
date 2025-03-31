@@ -1,0 +1,22 @@
+.uploading {
+  padding: var(--sp-3xs);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-3xs);
+}
+
+.right {
+  font-weight: 900;
+}
+
+.big {
+  font-size: var(--p);
+}

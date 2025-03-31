@@ -1,6 +1,6 @@
 import React from "react";
-import SurveyContextComponent from "./components/SurveyContext";
 import LoginRedirect from "@/systems/LoginRedirect";
+import SurveyContextComponent from "./components/SurveyContext";
 
 export default function SurveyLayout({
   children,
@@ -12,7 +12,6 @@ export default function SurveyLayout({
       <SurveyContextComponent>
         <LoginRedirect>{children}</LoginRedirect>
       </SurveyContextComponent>
-      ;{/* systems */}
     </>
   );
 }
