@@ -4,7 +4,6 @@ import React, { ReactNode, useContext, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { LoginContext } from "../LoginContext";
 import Loading from "@/components/Loading";
-//import useNetworkStatus from "@/hooks/networkStatus";
 
 interface TProps {
   children: ReactNode;
@@ -15,9 +14,6 @@ export default function LoginRedirect({ children, role = null }: TProps) {
   const router = useRouter();
   const { user } = useContext(LoginContext);
 
-  //const isOnline = useNetworkStatus();
-
-  console.log(user);
   useEffect(() => {
     (async () => {
       if (user && role && user.role !== role) router.push("/");

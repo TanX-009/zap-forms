@@ -71,7 +71,6 @@ export default function SurveyPage() {
     audio,
     location,
   } = useContext(SurveyContext);
-  console.log(progress);
 
   const [question, setQuestion] = useState<TQuestion | undefined>(undefined);
 

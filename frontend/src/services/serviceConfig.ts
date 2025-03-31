@@ -1,6 +1,6 @@
 import axios, { AxiosRequestConfig } from "axios";
 import Services from "./serviceUrls";
-import { deleteLogin } from "@/app/actions/cookies";
+import { deleteLogin } from "@/systems/cookies";
 
 interface TErrorResponse {
   detail: string;

@@ -1,6 +1,5 @@
 "use client";
 
-import { getLogin } from "@/app/actions/cookies";
 import { TUser } from "@/types/user";
 import React, {
   createContext,
@@ -10,6 +9,7 @@ import React, {
   useEffect,
   useState,
 } from "react";
+import { getLogin } from "@/systems/cookies";
 
 export type TLoginContext = {
   user: TUser | null;
@@ -29,10 +29,8 @@ export default function LoginContextComponent({ children }: TProps) {
   const [user, setUser] = useState<TUser | null>(null);
 
   useEffect(() => {
-    (async function () {
-      const userdata = await getLogin();
-      setUser(userdata);
-    })();
+    const userdata = getLogin();
+    setUser(userdata);
   }, []);
 
   return (

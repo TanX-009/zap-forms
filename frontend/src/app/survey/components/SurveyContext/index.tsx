@@ -73,7 +73,6 @@ export default function SurveyContextComponent({ children }: TProps) {
   const audioChunksRef = useRef<Blob[]>([]);
 
   const { getProgress } = useProgressIDB();
-  console.log(progress);
 
   const startRecording = async () => {
     try {

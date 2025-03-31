@@ -6,7 +6,7 @@ import styles from "./styles.module.css";
 import Button from "@/components/Button";
 import AuthService from "@/services/auth";
 import Message from "@/components/Message";
-import { deleteLogin, setLogin } from "@/app/actions/cookies";
+import { deleteLogin, setLogin } from "@/systems/cookies";
 import { useRouter } from "next/navigation";
 import Logo from "@/components/Logo";
 import handleResponse from "@/systems/handleResponse";
@@ -33,21 +33,16 @@ export default function Login() {
     const password = event.currentTarget.password.value;
 
     // clear old tokens
-    await deleteLogin(false);
+    deleteLogin();
     const response = await AuthService.login({
       email: email,
       password: password,
     });
 
-    handleResponse(
-      response,
-      "Successfully logged in!",
-      setMessage,
-      async (data) => {
-        await setLogin(data.user);
-        setUser(data.user);
-      },
-    );
+    handleResponse(response, "Successfully logged in!", setMessage, (data) => {
+      setLogin(data.user);
+      setUser(data.user);
+    });
   };
 
   // redirect if already logged in
