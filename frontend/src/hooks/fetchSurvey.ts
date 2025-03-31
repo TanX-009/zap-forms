@@ -19,14 +19,10 @@ export default function useFetchSurvey(
     async (slug: string) => {
       try {
         setIsLoading(true);
-        //const response = await SurveyService.getSurvey(slug);
-        //if (response.success) setter(response.data);
-        //if (!response.success && response.status === 404) {
-        //  setError("Not found!");
-        //}
 
         let response;
         if (isOnline) {
+          console.log("fetched even if offline");
           response = await SurveyService.getSurvey(slug);
         } else {
           const data = await getSurvey(slug);

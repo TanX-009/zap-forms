@@ -52,5 +52,15 @@ export default function useProgressIDB() {
     [db, isCreatingStore],
   );
 
-  return { updateProgress, getProgress };
+  const deleteProgress = useCallback(
+    async (survey_slug: TSurvey["slug"]) => {
+      if (!db || isCreatingStore) return;
+      const tx = db.transaction(storeName, "readwrite");
+      await tx.store.delete(survey_slug);
+      await tx.done;
+    },
+    [db, isCreatingStore],
+  );
+
+  return { updateProgress, getProgress, deleteProgress };
 }

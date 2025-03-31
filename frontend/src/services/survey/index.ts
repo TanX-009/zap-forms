@@ -34,7 +34,7 @@ interface TUpdateQuestionRequest {
   options?: string[];
 }
 
-interface TSubmitSurveyRequest {
+export interface TSubmitSurveyRequest {
   survey: TSurvey["id"];
   answers: TAnswer[];
   audioBlob: Blob | null;

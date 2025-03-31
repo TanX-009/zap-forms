@@ -11,6 +11,7 @@ export type TProgressContext = {
     progress: Partial<TProgress>,
     callback?: (() => void) | null,
   ) => void;
+  deleteProgress: (callback?: (() => void) | null) => void;
 };
 
 // Create the context
@@ -23,6 +24,7 @@ export const ProgressContext = createContext<TProgressContext>({
   },
   setProgress: () => {},
   updateProgress: () => {},
+  deleteProgress: () => {},
 });
 
 interface TProps {
@@ -59,6 +61,25 @@ export default class ProgressContextComponent extends Component<
             if (callback) {
               this.setState({ ...this.state, ...progress }, callback);
             } else this.setState({ ...this.state, ...progress });
+          },
+          deleteProgress: (callback = null) => {
+            if (callback) {
+              this.setState(
+                {
+                  survey_slug: null,
+                  startTime: null,
+                  questionNo: null,
+                  answers: [],
+                },
+                callback,
+              );
+            } else
+              this.setState({
+                survey_slug: null,
+                startTime: null,
+                questionNo: null,
+                answers: [],
+              });
           },
         }}
       >
