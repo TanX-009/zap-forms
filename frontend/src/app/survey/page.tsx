@@ -115,17 +115,17 @@ export default function Survey() {
             <>
               <Button
                 variant="hiClick"
-                className={`${styles.start} errorPanel`}
-                onClick={(e) => onSubmit(e, "restart")}
-              >
-                Restart survey
-              </Button>
-              <Button
-                variant="hiClick"
                 className={styles.start}
                 onClick={(e) => onSubmit(e, "continue")}
               >
                 Continue survey
+              </Button>
+              <Button
+                variant="hiClick"
+                className={`${styles.start} errorPanel`}
+                onClick={(e) => onSubmit(e, "restart")}
+              >
+                Restart survey
               </Button>
             </>
           ) : (

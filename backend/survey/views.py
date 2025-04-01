@@ -271,6 +271,8 @@ class ExportSurveyResponsesCSV(APIView):
                 header.append(question.text)
 
             header.append("Created at")
+            header.append("Longitude")
+            header.append("Latitude")
             writer.writerow(header)
 
             # Writing response data
@@ -300,12 +302,23 @@ class ExportSurveyResponsesCSV(APIView):
                                 id=answer.choice_answer.id
                             ).first()
                             row.append(option.text if option else "")
+
+                        elif answer.checkbox_answers:
+                            options = QuestionOption.objects.filter(
+                                id__in=answer.checkbox_answers.values_list(
+                                    "id", flat=True
+                                )
+                            )
+                            row.append(", ".join(option.text for option in options))
+
                         else:
                             row.append("-")
                     else:
                         row.append("-")
 
                 row.append(response_obj.created_at)
+                row.append(response_obj.longitude)
+                row.append(response_obj.latitude)
                 writer.writerow(row)
 
             return response
