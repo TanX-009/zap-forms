@@ -27,8 +27,9 @@ export default function Login() {
   const { user, setUser } = useContext(LoginContext);
 
   const onLogin = async (event: React.FormEvent<HTMLFormElement>) => {
-    setMessage({ value: "Logging in...", status: "neutral" });
     event.preventDefault();
+
+    setMessage({ value: "Logging in...", status: "neutral" });
     const email = event.currentTarget.email.value;
     const password = event.currentTarget.password.value;
 

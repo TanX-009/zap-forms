@@ -2,7 +2,7 @@ import Cookies from "js-cookie";
 import { TUser } from "@/types/user";
 
 export function setLogin(user: TUser) {
-  Cookies.set("login", JSON.stringify(user), { expires: 7, path: "/" });
+  Cookies.set("login", JSON.stringify(user));
 }
 
 export function getLogin(): TUser | null {
