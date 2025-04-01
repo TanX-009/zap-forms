@@ -48,6 +48,7 @@ export default function SubmitSurvey({
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (message.value === "Submitting...") return;
     setMessage({ value: "Submitting...", status: "neutral" });
 
     const audioBlob = await audio.stopRecording();

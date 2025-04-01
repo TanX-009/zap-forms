@@ -1,6 +1,6 @@
 import axios, { AxiosRequestConfig } from "axios";
 import Services from "./serviceUrls";
-import { deleteLogin } from "@/systems/cookies";
+import { deleteLogin } from "@/app/actions/cookies";
 
 interface TErrorResponse {
   detail: string;
@@ -79,7 +79,7 @@ async function handle401Error<TResponse>(
     console.error("Refresh token error: ", error);
     // ------------------------------------------
     // delete tokens from user and logout the user
-    deleteLogin();
+    await deleteLogin();
     // handler block when the tokens expire
     // ------------------------------------------
     return {

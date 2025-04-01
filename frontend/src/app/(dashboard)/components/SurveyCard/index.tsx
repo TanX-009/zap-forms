@@ -9,6 +9,7 @@ import { LoginContext } from "@/systems/LoginContext";
 import { ProgressContext } from "@/systems/ProgressContext";
 import { useRouter } from "next/navigation";
 import Button from "@/components/Button";
+import useProgressIDB from "@/hooks/progressIDB";
 
 interface TProps {
   survey: TSurvey;
@@ -19,12 +20,17 @@ export default function SurveyCard({ survey }: TProps) {
 
   const created_at = isoToNormal(survey.created_at);
   const { user } = useContext(LoginContext);
-  const { updateProgress } = useContext(ProgressContext);
+  const { setProgress, updateProgress } = useContext(ProgressContext);
+  const { getProgress } = useProgressIDB();
 
-  const onOpen = () => {
-    updateProgress({ survey_slug: survey.slug }, () => {
+  const onOpen = async () => {
+    const push = () => {
       router.push("/survey");
-    });
+    };
+
+    const savedProgress = await getProgress(survey.slug);
+    if (savedProgress) setProgress(savedProgress, push);
+    else updateProgress({ survey_slug: survey.slug }, push);
   };
 
   return (

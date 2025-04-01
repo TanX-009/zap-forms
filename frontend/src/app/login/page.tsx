@@ -6,12 +6,13 @@ import styles from "./styles.module.css";
 import Button from "@/components/Button";
 import AuthService from "@/services/auth";
 import Message from "@/components/Message";
-import { deleteLogin, setLogin } from "@/systems/cookies";
+import { setLogin } from "@/systems/cookies";
 import { useRouter } from "next/navigation";
 import Logo from "@/components/Logo";
 import handleResponse from "@/systems/handleResponse";
 import { LoginContext } from "@/systems/LoginContext";
 import useNetworkStatus from "@/hooks/networkStatus";
+import { deleteLogin } from "../actions/cookies";
 
 interface TMessage {
   value: string;
@@ -42,7 +43,7 @@ export default function Login() {
     const password = event.currentTarget.password.value;
 
     // clear old tokens
-    deleteLogin();
+    await deleteLogin();
     const response = await AuthService.login({
       email: email,
       password: password,

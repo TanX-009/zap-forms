@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FormEvent, useContext, useEffect } from "react";
+import React, { MouseEvent, useContext, useEffect } from "react";
 import styles from "./styles.module.css";
 import Logo from "@/components/Logo";
 import Button from "@/components/Button";
@@ -13,6 +13,7 @@ import Loading from "@/components/Loading";
 import { IoCloudOffline } from "react-icons/io5";
 import { SurveyContext } from "./components/SurveyContext";
 import { ProgressContext } from "@/systems/ProgressContext";
+import useProgressIDB from "@/hooks/progressIDB";
 
 export default function Survey() {
   const router = useRouter();
@@ -20,8 +21,12 @@ export default function Survey() {
   const { survey, setSurvey, setQuestions, audio, getLocation } =
     useContext(SurveyContext);
   const { progress, updateProgress } = useContext(ProgressContext);
+  const { deleteProgress: deleteProgressIDB } = useProgressIDB();
 
-  const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (
+    event: MouseEvent<HTMLButtonElement>,
+    action: "restart" | "continue" | "start",
+  ) => {
     event.preventDefault();
     // Do nothing if slug isn't present
     if (!survey?.slug) return;
@@ -32,7 +37,7 @@ export default function Survey() {
     await getLocation();
 
     // start new survey
-    if (!progress.questionNo) {
+    if (action === "start") {
       const date = new Date();
       updateProgress(
         {
@@ -46,8 +51,14 @@ export default function Survey() {
       );
     }
     // continue last survey
-    else {
+    else if (action === "continue") {
       router.push(`/survey/question`);
+    } else {
+      // delete saved progress and continue
+      await deleteProgressIDB(survey.slug);
+      updateProgress({ answers: [], questionNo: 1 }, async () => {
+        router.push(`/survey/question`);
+      });
     }
   };
 
@@ -86,7 +97,7 @@ export default function Survey() {
 
   //setSurvey({ ...survey, status: "post" });
   return (
-    <form className={styles.survey} onSubmit={onSubmit}>
+    <form className={styles.survey}>
       <Logo multiplier={70} />
       <h1>{survey.name}</h1>
       <p>{survey.description}</p>
@@ -99,9 +110,34 @@ export default function Survey() {
       {isSurveyLoading || areQuestionsLoading ? (
         <Loading centerStage={true} />
       ) : (
-        <Button variant="hiClick" className={styles.start} type="submit">
-          Start survey
-        </Button>
+        <>
+          {progress.questionNo && progress.questionNo > 0 ? (
+            <>
+              <Button
+                variant="hiClick"
+                className={`${styles.start} errorPanel`}
+                onClick={(e) => onSubmit(e, "restart")}
+              >
+                Restart survey
+              </Button>
+              <Button
+                variant="hiClick"
+                className={styles.start}
+                onClick={(e) => onSubmit(e, "continue")}
+              >
+                Continue survey
+              </Button>
+            </>
+          ) : (
+            <Button
+              variant="hiClick"
+              className={styles.start}
+              onClick={(e) => onSubmit(e, "start")}
+            >
+              Start survey
+            </Button>
+          )}
+        </>
       )}
     </form>
   );

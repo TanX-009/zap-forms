@@ -1,21 +1,18 @@
 "use client";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import React, { FormEvent, useContext, useEffect, useState } from "react";
 import styles from "./styles.module.css";
 import { TAnswer, TQuestion } from "@/types/survey";
-import Input from "@/components/Input";
 import Button from "@/components/Button";
-import { FaStarOfLife } from "react-icons/fa";
 import Modal from "@/components/Modal";
 import SubmitSurvey from "./components/SubmitSurvey";
-import getOneNestBack from "@/systems/getOneNestBack";
 import Loading from "@/components/Loading";
-import RadioGroup from "@/components/RadioGroup";
-import CheckboxGroup from "@/components/CheckboxGroup";
 import useProgressIDB from "@/hooks/progressIDB";
 import { SurveyContext } from "../components/SurveyContext";
 import SurveyNavbar from "../components/SurveyNavbar";
 import { ProgressContext } from "@/systems/ProgressContext";
+import QuestionInputs from "./components/QuestionInputs";
+import RequiredStar from "@/components/RequiredStar";
 
 const findQuestionBySequence = (
   questions: TQuestion[],
@@ -27,8 +24,8 @@ const findQuestionBySequence = (
 const findAnswerById = (
   answers: TAnswer[],
   id: TQuestion["id"],
-): TAnswer | undefined => {
-  return answers.find((answer) => answer.question === id);
+): TAnswer | null => {
+  return answers.find((answer) => answer.question === id) || null;
 };
 
 function pushOrUpdate(
@@ -46,32 +43,21 @@ function pushOrUpdate(
   return arr;
 }
 
-const convertOptions = (
-  options: { id: number; question: TQuestion["id"]; text: string }[] | null,
-): { value: string; label: string }[] => {
-  if (!options) return [];
-  return options.map((option) => ({
-    value: option.id.toString(),
-    label: option.text,
-  }));
-};
-
 export default function SurveyQuestion() {
   const router = useRouter();
-  const pathname = usePathname();
 
-  const [questionNo, setQuestionNo] = useState<number>(-1);
   const { survey, questions, audio, location } = useContext(SurveyContext);
-
   const { progress, setProgress } = useContext(ProgressContext);
 
+  const [questionNo, setQuestionNo] = useState<number>(-1);
   const [question, setQuestion] = useState<TQuestion | undefined>(undefined);
-
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const returnPath = getOneNestBack(pathname);
-
   const { updateProgress: updateProgressIDB } = useProgressIDB();
+
+  let savedAnswer = null;
+  if (question?.id) savedAnswer = findAnswerById(progress.answers, question.id);
+  console.log("asdfasfasdf");
 
   const onPrev = async () => {
     if (!question || !survey) return;
@@ -132,8 +118,10 @@ export default function SurveyQuestion() {
     } else {
       updatedProgress.questionNo = question.sequence + 1;
     }
-    setProgress(updatedProgress);
     await updateProgressIDB(updatedProgress);
+    setProgress(updatedProgress, () => {
+      savedAnswer = findAnswerById(progress.answers, question.id);
+    });
   };
 
   // set current question number
@@ -151,18 +139,8 @@ export default function SurveyQuestion() {
   }, [questionNo, questions]);
 
   useEffect(() => {
-    if (
-      questions &&
-      questionNo !== -1 &&
-      (questionNo > questions.length || questionNo < 1)
-    ) {
-      router.push(returnPath);
-    }
-  }, [questionNo, questions, returnPath, router]);
-
-  useEffect(() => {
-    if (!survey) router.push(returnPath);
-  }, [survey, returnPath, router]);
+    if (!survey) router.push("/");
+  }, [survey, router]);
 
   if (!survey) return <Loading centerStage={true} />;
   return (
@@ -187,103 +165,10 @@ export default function SurveyQuestion() {
           current={questionNo}
         />
         <div className={styles.inputs}>
-          {question?.type === "text" ? (
-            <Input
-              name="answer"
-              type="text"
-              label={
-                <>
-                  {question.text}
-                  {question.required ? (
-                    <span className={styles.star}>
-                      {" "}
-                      <FaStarOfLife />
-                    </span>
-                  ) : null}
-                </>
-              }
-              defaultValue={
-                findAnswerById(progress.answers, question.id)?.text_answer || ""
-              }
-              minLength={question.min_length}
-              maxLength={question.max_length}
-              placeholder={"Text answer..."}
-              required={question.required}
-            />
-          ) : null}
-          {question?.type === "number" ? (
-            <Input
-              name="answer"
-              type="number"
-              label={
-                <>
-                  {question.text}
-                  {question.required ? (
-                    <span className={styles.star}>
-                      {" "}
-                      <FaStarOfLife />
-                    </span>
-                  ) : null}
-                </>
-              }
-              minLength={question.min_length}
-              maxLength={question.max_length}
-              defaultValue={
-                findAnswerById(progress.answers, question.id)?.numeric_answer ||
-                ""
-              }
-              placeholder={"Numeric answer..."}
-              required={question.required}
-            />
-          ) : null}
-          {question?.type === "multiple-choice" ? (
-            <RadioGroup
-              search
-              name="answer"
-              label={
-                <>
-                  {question.text}
-                  {question.required ? (
-                    <span className={styles.star}>
-                      {" "}
-                      <FaStarOfLife />
-                    </span>
-                  ) : null}
-                </>
-              }
-              defaultValue={
-                findAnswerById(
-                  progress.answers,
-                  question.id,
-                )?.choice_answer?.toString() || ""
-              }
-              options={convertOptions(question.options)}
-              required={question.required}
-            />
-          ) : null}
-          {question?.type === "checkbox" ? (
-            <CheckboxGroup
-              search
-              name="answer"
-              label={
-                <>
-                  {question.text}
-                  {question.required ? (
-                    <span className={styles.star}>
-                      {" "}
-                      <FaStarOfLife />
-                    </span>
-                  ) : null}
-                </>
-              }
-              defaultValue={
-                findAnswerById(progress.answers, question.id)
-                  ?.checkbox_answers || []
-              }
-              options={convertOptions(question.options)}
-              required={question.required}
-            />
-          ) : null}
+          <QuestionInputs
+            question={question || null}
+            savedAnswer={savedAnswer}
+          />
           <div className={styles.buttons}>
             {question?.sequence && question.sequence !== 1 ? (
               <Button
@@ -309,11 +194,7 @@ export default function SurveyQuestion() {
         </div>
         <div></div>
         <div className={styles.required}>
-          Questions marked with{" "}
-          <span className={styles.star}>
-            <FaStarOfLife />
-          </span>{" "}
-          are required.
+          Questions marked with <RequiredStar /> are required.
         </div>
       </form>
     </>

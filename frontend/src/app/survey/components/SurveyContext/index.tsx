@@ -1,7 +1,5 @@
 "use client";
 
-import useProgressIDB from "@/hooks/progressIDB";
-import { ProgressContext } from "@/systems/ProgressContext";
 import { TCoords, TQuestion, TSurvey } from "@/types/survey";
 import React, {
   createContext,
@@ -10,8 +8,6 @@ import React, {
   SetStateAction,
   useState,
   useRef,
-  useEffect,
-  useContext,
 } from "react";
 
 // Define the context type
@@ -59,10 +55,6 @@ export default function SurveyContextComponent({ children }: TProps) {
   const [isRecording, setIsRecording] = useState(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
-
-  const { getProgress } = useProgressIDB();
-
-  const { setProgress } = useContext(ProgressContext);
 
   const startRecording = async () => {
     try {
@@ -135,15 +127,6 @@ export default function SurveyContextComponent({ children }: TProps) {
       );
     });
   };
-
-  useEffect(() => {
-    (async () => {
-      if (survey) {
-        const progress = await getProgress(survey.slug);
-        if (progress) setProgress(progress);
-      }
-    })();
-  }, [getProgress, survey, setProgress]);
 
   return (
     <SurveyContext.Provider

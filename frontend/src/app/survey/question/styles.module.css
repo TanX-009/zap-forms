@@ -41,11 +41,6 @@
   text-align: center;
 }
 
-.star {
-  color: var(--error);
-  font-size: var(--p);
-}
-
 .submit {
   background: var(--secondary);
   color: var(--onSecondary);

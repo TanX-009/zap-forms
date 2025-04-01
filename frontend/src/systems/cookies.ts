@@ -16,9 +16,3 @@ export function getLogin(): TUser | null {
   }
   return null;
 }
-
-export function deleteLogin() {
-  Cookies.remove("login");
-  Cookies.remove("access_token");
-  Cookies.remove("refresh_token");
-}
