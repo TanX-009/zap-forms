@@ -138,48 +138,38 @@ export default function Analysis() {
                           "-"
                         )}
                       </td>
+
                       {response.answers.map((answer, index) => {
                         let ans = "-";
-                        if (answer.text_answer) ans = answer.text_answer;
-                        if (answer.numeric_answer)
+                        const question = response.questions[index];
+
+                        if (answer.text_answer) {
+                          ans = answer.text_answer;
+                        } else if (answer.numeric_answer) {
                           ans = answer.numeric_answer.toString();
-                        if (
-                          answer.choice_answer &&
-                          response.questions[index].options
+                        } else if (answer.choice_answer && question?.options) {
+                          ans =
+                            question.options.find(
+                              (opt) => opt.id === Number(answer.choice_answer),
+                            )?.text || "-";
+                        } else if (
+                          Array.isArray(answer.checkbox_answers) &&
+                          answer.checkbox_answers.length > 0 &&
+                          question.options
                         ) {
                           ans =
-                            response.questions[index]?.options[
-                              Number(answer.choice_answer)
-                            ]?.text;
-                        }
-
-                        if (
-                          answer.checkbox_answers.length > 0 &&
-                          response.questions[index].options
-                        ) {
-                          const anss: string[] = [];
-
-                          for (
-                            let i = 0;
-                            i < answer.checkbox_answers.length;
-                            i++
-                          ) {
-                            for (
-                              let j = 0;
-                              j < response.questions[index].options.length;
-                              j++
-                            ) {
-                              if (
-                                response.questions[index].options[j].id ===
-                                Number(answer.checkbox_answers[i])
+                            answer.checkbox_answers
+                              .map(
+                                (id) =>
+                                  question.options &&
+                                  question.options.find(
+                                    (opt) => opt.id === Number(id),
+                                  )?.text,
                               )
-                                anss.push(
-                                  response.questions[index].options[j].text,
-                                );
-                            }
-                          }
-                          ans = anss.join(", ");
+                              .filter(Boolean)
+                              .join(", ") || "-";
                         }
+
                         return (
                           <td className={styles.queTD} key={index}>
                             {ans}
