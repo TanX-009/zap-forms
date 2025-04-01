@@ -124,7 +124,11 @@ export default function Analysis() {
                   const created_at = isoToNormal(response.created_at);
                   return (
                     <tr key={index} className={styles.tr}>
-                      <td>{response.user.email || ""}</td>
+                      <td>
+                        {response?.user?.email
+                          ? response?.user?.email || ""
+                          : ""}
+                      </td>
                       <td>
                         {response.audio_file ? (
                           <audio controls>
