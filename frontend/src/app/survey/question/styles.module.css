@@ -9,7 +9,8 @@
 
 .inputs {
   width: 100%;
-  max-width: calc(var(--max-width) / 2);
+  /*max-width: calc(var(--max-width) / 2);*/
+  max-width: var(--max-width);
 
   display: flex;
   flex-direction: column;

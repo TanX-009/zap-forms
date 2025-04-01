@@ -34,7 +34,7 @@ export default function Survey() {
     // start recording
     if (!audio.isRecording) await audio.startRecording();
     // get location
-    await getLocation();
+    getLocation();
 
     // start new survey
     if (action === "start") {
