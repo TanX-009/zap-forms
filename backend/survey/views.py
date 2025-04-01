@@ -264,7 +264,7 @@ class ExportSurveyResponsesCSV(APIView):
             writer = csv.writer(response)
 
             # Writing the header
-            header = ["Name", "Email", "Audio"]
+            header = ["Name", "Audio"]
             questions = Question.objects.filter(survey=survey).order_by("sequence")
 
             for question in questions:
