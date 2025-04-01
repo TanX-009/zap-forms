@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import Logo from "@/components/Logo";
 import handleResponse from "@/systems/handleResponse";
 import { LoginContext } from "@/systems/LoginContext";
+import useNetworkStatus from "@/hooks/networkStatus";
 
 interface TMessage {
   value: string;
@@ -26,8 +27,15 @@ export default function Login() {
 
   const { user, setUser } = useContext(LoginContext);
 
+  const isOnline = useNetworkStatus();
+
   const onLogin = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    if (!isOnline) {
+      setMessage({ value: "Offline!", status: "error" });
+      return;
+    }
 
     setMessage({ value: "Logging in...", status: "neutral" });
     const email = event.currentTarget.email.value;
