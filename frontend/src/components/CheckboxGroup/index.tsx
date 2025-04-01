@@ -14,7 +14,7 @@ interface TProps {
   label?: ReactNode | null;
   required?: boolean;
   className?: string;
-  defaultValue: string[] | null;
+  defaultValue?: string[] | null;
   search?: boolean;
   onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
 }

@@ -57,7 +57,6 @@ export default function SurveyQuestion() {
 
   let savedAnswer = null;
   if (question?.id) savedAnswer = findAnswerById(progress.answers, question.id);
-  console.log("asdfasfasdf");
 
   const onPrev = async () => {
     if (!question || !survey) return;
@@ -119,9 +118,7 @@ export default function SurveyQuestion() {
       updatedProgress.questionNo = question.sequence + 1;
     }
     await updateProgressIDB(updatedProgress);
-    setProgress(updatedProgress, () => {
-      savedAnswer = findAnswerById(progress.answers, question.id);
-    });
+    setProgress(updatedProgress);
   };
 
   // set current question number
@@ -166,6 +163,7 @@ export default function SurveyQuestion() {
         />
         <div className={styles.inputs}>
           <QuestionInputs
+            key={question?.id}
             question={question || null}
             savedAnswer={savedAnswer}
           />

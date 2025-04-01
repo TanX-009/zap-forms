@@ -21,7 +21,6 @@ interface TProps {
 }
 
 export default function QuestionInputs({ question, savedAnswer }: TProps) {
-  console.log(question);
   if (!question) return "";
 
   if (question.type === "text")
