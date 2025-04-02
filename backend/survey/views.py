@@ -225,12 +225,12 @@ class SurveyResponsesPagination(PageNumberPagination):
 
 
 class SurveyAnswersListView(APIView):
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, survey_id):
         try:
             survey = Survey.objects.get(id=survey_id)
-            responses = Responses.objects.filter(survey=survey)
+            responses = Responses.objects.filter(survey=survey).order_by("created_at")
 
             paginator = SurveyResponsesPagination()
             paginated_responses = paginator.paginate_queryset(responses, request)
@@ -248,7 +248,7 @@ class ExportSurveyResponsesCSV(APIView):
     def get(self, _, survey_id):
         try:
             survey = Survey.objects.get(id=survey_id)
-            responses = Responses.objects.filter(survey=survey)
+            responses = Responses.objects.filter(survey=survey).order_by("created_at")
 
             if not responses.exists():
                 return Response(
