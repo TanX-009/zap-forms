@@ -115,8 +115,12 @@ export default function SurveyContextComponent({ children }: TProps) {
         (position) => {
           resolve(
             setLocation({
-              latitude: parseFloat(position.coords.latitude.toFixed(6)),
-              longitude: parseFloat(position.coords.longitude.toFixed(6)),
+              latitude: position?.coords?.latitude
+                ? Number(position.coords.latitude.toFixed(6))
+                : null,
+              longitude: position?.coords?.longitude
+                ? Number(position.coords.longitude.toFixed(6))
+                : null,
             }),
           );
         },
