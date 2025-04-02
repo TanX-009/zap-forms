@@ -1,9 +1,14 @@
 import React, { ReactNode } from "react";
 import styles from "./styles.module.css";
 
+export interface TMessage {
+  value: string;
+  status: "error" | "success" | "neutral";
+}
+
 interface TProps {
   children: ReactNode;
-  status?: "error" | "success" | "neutral";
+  status?: TMessage["status"];
   className?: string;
 }
 

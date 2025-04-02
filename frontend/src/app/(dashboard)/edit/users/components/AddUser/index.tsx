@@ -3,7 +3,7 @@ import Input from "@/components/Input";
 import React from "react";
 import styles from "./styles.module.css";
 import Select from "@/components/Select";
-import Message from "@/components/Message";
+import Message, { TMessage } from "@/components/Message";
 import ManagementService from "@/services/management";
 import Form from "@/components/Form";
 import handleResponse from "@/systems/handleResponse";
@@ -18,10 +18,7 @@ const roles = [
 ];
 
 export default function AddUser({ updateTick }: TProps) {
-  const [message, setMessage] = React.useState<{
-    value: string;
-    status: "neutral" | "success" | "error";
-  }>({
+  const [message, setMessage] = React.useState<TMessage>({
     value: "",
     status: "neutral",
   });

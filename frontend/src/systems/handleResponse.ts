@@ -1,12 +1,11 @@
+import { TMessage } from "@/components/Message";
 import { TApiResponse } from "@/services/serviceConfig";
 import { Dispatch, SetStateAction } from "react";
 
 export default function handleResponse<TResponse>(
   response: TApiResponse<TResponse>,
   successMessage: string,
-  setMessage: Dispatch<
-    SetStateAction<{ value: string; status: "success" | "neutral" | "error" }>
-  >,
+  setMessage: Dispatch<SetStateAction<TMessage>>,
   successCallback: (res: TResponse) => void,
 ) {
   if (response.success) {

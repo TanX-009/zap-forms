@@ -5,7 +5,7 @@ import styles from "./styles.module.css";
 import Form from "@/components/Form";
 import { TAnswer, TCoords, TSurvey } from "@/types/survey";
 //import SurveyService from "@/services/survey";
-import Message from "@/components/Message";
+import Message, { TMessage } from "@/components/Message";
 import Button from "@/components/Button";
 import { useRouter } from "next/navigation";
 //import handleResponse from "@/systems/handleResponse";
@@ -32,10 +32,7 @@ export default function SubmitSurvey({
   location,
 }: TProps) {
   const router = useRouter();
-  const [message, setMessage] = useState<{
-    value: string;
-    status: "neutral" | "success" | "error";
-  }>({
+  const [message, setMessage] = useState<TMessage>({
     value: "",
     status: "neutral",
   });

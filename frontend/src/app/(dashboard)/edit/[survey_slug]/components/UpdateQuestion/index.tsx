@@ -3,7 +3,7 @@ import Input from "@/components/Input";
 import React, { useState } from "react";
 import styles from "./styles.module.css";
 import Select from "@/components/Select";
-import Message from "@/components/Message";
+import Message, { TMessage } from "@/components/Message";
 import Form from "@/components/Form";
 import { TQuestion } from "@/types/survey";
 import SurveyService from "@/services/survey";
@@ -16,10 +16,7 @@ interface TProps {
 
 export default function UpdateQuestion({ question, updateTick }: TProps) {
   const [isDeleting, setIsDeleting] = useState(false);
-  const [message, setMessage] = useState<{
-    value: string;
-    status: "neutral" | "success" | "error";
-  }>({
+  const [message, setMessage] = useState<TMessage>({
     value: "",
     status: "neutral",
   });

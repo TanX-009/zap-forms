@@ -6,7 +6,7 @@ import SurveyService from "@/services/survey";
 import { TSurvey } from "@/types/survey";
 import Input from "@/components/Input";
 import Select from "@/components/Select";
-import Message from "@/components/Message";
+import Message, { TMessage } from "@/components/Message";
 import handleResponse from "@/systems/handleResponse";
 
 const tabs = ["Text", "Number", "Multiple choice", "Checkbox"];
@@ -18,10 +18,7 @@ interface TProps {
 
 export default function AddQuestion({ survey, updateTick }: TProps) {
   const [questionType, setQuestionType] = useState(tabs[0]);
-  const [message, setMessage] = useState<{
-    value: string;
-    status: "neutral" | "success" | "error";
-  }>({
+  const [message, setMessage] = useState<TMessage>({
     value: "",
     status: "neutral",
   });

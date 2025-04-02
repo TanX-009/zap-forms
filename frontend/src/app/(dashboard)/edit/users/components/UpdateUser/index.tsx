@@ -3,7 +3,7 @@ import Input from "@/components/Input";
 import React, { useState } from "react";
 import styles from "./styles.module.css";
 import Select from "@/components/Select";
-import Message from "@/components/Message";
+import Message, { TMessage } from "@/components/Message";
 import ManagementService from "@/services/management";
 import { TUser } from "@/types/user";
 import Form from "@/components/Form";
@@ -21,10 +21,7 @@ const roles = [
 
 export default function UpdateUser({ user, updateTick }: TProps) {
   const [isDeleting, setIsDeleting] = useState(false);
-  const [message, setMessage] = useState<{
-    value: string;
-    status: "neutral" | "success" | "error";
-  }>({
+  const [message, setMessage] = useState<TMessage>({
     value: "",
     status: "neutral",
   });

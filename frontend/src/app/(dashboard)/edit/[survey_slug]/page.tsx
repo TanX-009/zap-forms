@@ -15,7 +15,7 @@ import UpdateSurvey from "./components/UpdateSurvey";
 import Loading from "@/components/Loading";
 import SurveyService from "@/services/survey";
 import handleResponse from "@/systems/handleResponse";
-import Message from "@/components/Message";
+import Message, { TMessage } from "@/components/Message";
 import { MdEdit, MdDelete } from "react-icons/md";
 
 export default function EditSurvey() {
@@ -35,10 +35,7 @@ export default function EditSurvey() {
   const [questionTick, updateQuestionTick] = useState(false);
   const [surveyTick, updateSurveyTick] = useState(false);
 
-  const [editSequenceMessage, setEditSequenceMessage] = useState<{
-    value: string;
-    status: "neutral" | "success" | "error";
-  }>({
+  const [editSequenceMessage, setEditSequenceMessage] = useState<TMessage>({
     value: "",
     status: "neutral",
   });

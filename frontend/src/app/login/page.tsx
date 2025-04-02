@@ -5,7 +5,7 @@ import React, { useContext, useEffect, useState } from "react";
 import styles from "./styles.module.css";
 import Button from "@/components/Button";
 import AuthService from "@/services/auth";
-import Message from "@/components/Message";
+import Message, { TMessage } from "@/components/Message";
 import { setLogin } from "@/systems/cookies";
 import { useRouter } from "next/navigation";
 import Logo from "@/components/Logo";
@@ -13,11 +13,6 @@ import handleResponse from "@/systems/handleResponse";
 import { LoginContext } from "@/systems/LoginContext";
 import useNetworkStatus from "@/hooks/networkStatus";
 import { deleteLogin } from "../actions/cookies";
-
-interface TMessage {
-  value: string;
-  status: "error" | "success" | "neutral";
-}
 
 export default function Login() {
   const router = useRouter();
