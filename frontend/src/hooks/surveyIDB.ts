@@ -58,6 +58,7 @@ export default function useSurveyIDB() {
       const tx = db.transaction("surveys", "readwrite");
       // set key to cause all the surveys
       surveys.map(async (survey) => {
+        await tx.store.clear();
         await tx.store.put(survey);
       });
       await tx.done;
