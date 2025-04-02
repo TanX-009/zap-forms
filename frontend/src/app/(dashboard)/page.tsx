@@ -33,12 +33,6 @@ export default function Home() {
         <AddSurvey />
       </Modal>
       <div className={styles.surveys}>
-        {isLoading ? <Loading centerStage /> : null}
-
-        {surveys.length === 0 ? (
-          <div className={styles.empty}>No surveys added!</div>
-        ) : null}
-
         <Uploading />
 
         {user?.role === "admin" ? (
@@ -51,9 +45,15 @@ export default function Home() {
           </Button>
         ) : null}
 
-        {surveys.map((survey, index) => (
-          <SurveyCard key={index} survey={survey} />
-        ))}
+        {isLoading ? (
+          <Loading centerStage />
+        ) : surveys.length === 0 ? (
+          <div className={styles.empty}>No surveys added!</div>
+        ) : (
+          surveys.map((survey, index) => (
+            <SurveyCard key={index} survey={survey} />
+          ))
+        )}
       </div>
     </div>
   );

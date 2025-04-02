@@ -85,7 +85,8 @@ export default function Survey() {
     if (survey?.id) fetchQuestions(survey.id);
   }, [survey, fetchQuestions]);
 
-  if (!survey) return <Loading centerStage={true} />;
+  if (!survey || isSurveyLoading || areQuestionsLoading)
+    return <Loading centerStage={true} />;
 
   if (error === "Not found!")
     return <Error icon={<MdError />}>Survey not found!</Error>;
@@ -107,37 +108,31 @@ export default function Survey() {
         consent to this recording.
       </span>
 
-      {isSurveyLoading || areQuestionsLoading ? (
-        <Loading centerStage={true} />
-      ) : (
+      {progress.questionNo && progress.questionNo > 0 ? (
         <>
-          {progress.questionNo && progress.questionNo > 0 ? (
-            <>
-              <Button
-                variant="hiClick"
-                className={styles.start}
-                onClick={(e) => onSubmit(e, "continue")}
-              >
-                Continue survey
-              </Button>
-              <Button
-                variant="hiClick"
-                className={`${styles.start} errorPanel`}
-                onClick={(e) => onSubmit(e, "restart")}
-              >
-                Restart survey
-              </Button>
-            </>
-          ) : (
-            <Button
-              variant="hiClick"
-              className={styles.start}
-              onClick={(e) => onSubmit(e, "start")}
-            >
-              Start survey
-            </Button>
-          )}
+          <Button
+            variant="hiClick"
+            className={styles.start}
+            onClick={(e) => onSubmit(e, "continue")}
+          >
+            Continue survey
+          </Button>
+          <Button
+            variant="hiClick"
+            className={`${styles.start} errorPanel`}
+            onClick={(e) => onSubmit(e, "restart")}
+          >
+            Restart survey
+          </Button>
         </>
+      ) : (
+        <Button
+          variant="hiClick"
+          className={styles.start}
+          onClick={(e) => onSubmit(e, "start")}
+        >
+          Start survey
+        </Button>
       )}
     </form>
   );
