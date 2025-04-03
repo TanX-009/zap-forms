@@ -2,18 +2,18 @@ import { TMessage } from "@/components/Message";
 import { TApiResponse } from "@/services/serviceConfig";
 import { Dispatch, SetStateAction } from "react";
 
-export default function handleResponse<TResponse>(
+export default async function handleResponse<TResponse>(
   response: TApiResponse<TResponse>,
   successMessage: string,
   setMessage: Dispatch<SetStateAction<TMessage>>,
-  successCallback: (res: TResponse) => void,
+  successCallback: (res: TResponse) => void | Promise<void>,
 ) {
   if (response.success) {
     setMessage({
       value: successMessage,
       status: "success",
     });
-    successCallback(response.data);
+    await Promise.resolve(successCallback(response.data));
   } else if (response.status === 400) {
     const message =
       typeof response.error.data === "object"

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./styles.module.css";
 import Loading from "@/components/Loading";
 import useNetworkStatus from "@/hooks/networkStatus";
@@ -9,7 +9,10 @@ import SurveyService from "@/services/survey";
 import handleResponse from "@/systems/handleResponse";
 import Message, { TMessage } from "@/components/Message";
 
-export default function Uploading() {
+let isUploadingGlobal = false; // Global flag to persist across renders
+let wasOffline = false;
+
+const Uploading = React.memo(() => {
   const [status, setStatus] = useState({ current: 0, total: 0 });
   const [pendingResponsesLength, setPendingResponsesLength] = useState(0);
   const [message, setMessage] = useState<TMessage>({
@@ -17,22 +20,21 @@ export default function Uploading() {
     status: "neutral",
   });
 
-  const isUploading = useRef(false); // Prevents duplicate uploads
-
   const isOnline = useNetworkStatus();
   const { getResponses, deleteResponse } = useResponsesIDB();
 
+  if (!isOnline) wasOffline = true;
+
   useEffect(() => {
     (async () => {
-      if (!isOnline || isUploading.current) return;
-      isUploading.current = true;
+      if (!isOnline || isUploadingGlobal || wasOffline) return;
+      isUploadingGlobal = true;
 
-      // get local saved responses for notifying
       const responses = await getResponses();
       setPendingResponsesLength(responses?.length || 0);
 
       if (!responses || responses.length === 0) {
-        isUploading.current = false;
+        isUploadingGlobal = false;
         return;
       }
 
@@ -50,7 +52,7 @@ export default function Uploading() {
         });
       }
 
-      isUploading.current = false; // Reset flag when done
+      isUploadingGlobal = false;
     })();
   }, [isOnline, getResponses, deleteResponse]);
 
@@ -83,4 +85,8 @@ export default function Uploading() {
       )}
     </div>
   );
-}
+});
+
+Uploading.displayName = "Uploading";
+
+export default Uploading;
