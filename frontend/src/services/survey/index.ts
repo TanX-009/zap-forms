@@ -8,6 +8,7 @@ import {
   TApiResponse,
 } from "../serviceConfig";
 import Services from "../serviceUrls";
+import { getAudioFileExtension } from "@/systems/mimeType";
 
 interface TAddSurveyRequest {
   name: string;
@@ -135,7 +136,10 @@ async function submitSurvey(
   formData.append("latitude", data.latitude ? data.latitude.toString() : "");
 
   if (data.audioBlob) {
-    formData.append("audio", data.audioBlob, "recording.wav");
+    // Determine the file extension based on the MIME type
+    const extension = getAudioFileExtension(data.audioBlob.type);
+
+    formData.append("audio", data.audioBlob, `recording${extension}`);
   }
 
   return formData_post(Services.submitSurvey, formData);

@@ -213,7 +213,10 @@ class SubmitSurveyResponseView(APIView):
 
             # Save audio file if provided
             if audio_file:
-                response.audio_file.save(f"response_{response.id}.wav", audio_file)
+                original_filename = audio_file.name
+                response.audio_file.save(
+                    f"{response.id}_{original_filename}", audio_file
+                )
 
             return Response(created_answers, status=status.HTTP_201_CREATED)
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { getSupportedMimeType } from "@/systems/mimeType";
 import { TCoords, TQuestion, TSurvey } from "@/types/survey";
 import React, {
   createContext,
@@ -57,9 +58,18 @@ export default function SurveyContextComponent({ children }: TProps) {
   const audioChunksRef = useRef<Blob[]>([]);
 
   const startRecording = async () => {
+    const mimeType = getSupportedMimeType();
+    if (!mimeType) {
+      console.error("No supported audio format available");
+      return;
+    }
+
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream);
+      const mediaRecorder = new MediaRecorder(stream, {
+        mimeType, // Efficient format
+        audioBitsPerSecond: 32000, // Lower bitrate for optimized size
+      });
 
       mediaRecorder.ondataavailable = (event) => {
         if (event.data.size > 0) {
@@ -82,7 +92,7 @@ export default function SurveyContextComponent({ children }: TProps) {
           mediaRecorderRef.current.onstop = () => {
             if (audioChunksRef.current.length > 0) {
               const audioBlob = new Blob(audioChunksRef.current, {
-                type: "audio/wav",
+                type: "audio/webm",
               });
               audioChunksRef.current = [];
               resolve(audioBlob);
