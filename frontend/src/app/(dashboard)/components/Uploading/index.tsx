@@ -63,7 +63,12 @@ const Uploading = React.memo(() => {
     })();
   }, [getResponses]);
 
-  if (pendingResponsesLength < 1 || status.current > status.total) return null;
+  if (
+    pendingResponsesLength < 1 ||
+    status.current > status.total ||
+    (status.current === 0 && status.total === 0)
+  )
+    return null;
 
   return (
     <div className={`panel ${styles.uploading}`}>
