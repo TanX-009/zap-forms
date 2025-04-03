@@ -7,19 +7,15 @@ import styles from "./styles.module.css";
 import Button from "@/components/Button";
 import Modal from "@/components/Modal";
 import AddUser from "./components/AddUser";
-import { useRouter } from "next/navigation";
 import UpdateUser from "./components/UpdateUser";
 import UserCard from "./components/UserCard";
 import Loading from "@/components/Loading";
-import Error from "@/components/Error";
 import { LoginContext } from "@/systems/LoginContext";
 
 export default function Users() {
-  const router = useRouter();
   const { user } = useContext(LoginContext);
 
   const [users, setUsers] = useState<TUser[]>([]);
-  const [login, setLogin] = useState<TUser | null>(null);
   const [isAddUserDialogVisible, setIsAddUserDialogVisible] = useState(false);
 
   const [updateUser, setUpdateUser] = useState({
@@ -54,23 +50,6 @@ export default function Users() {
     fetchUsers();
   }, [tick, fetchUsers]);
 
-  // redirections
-  useEffect(() => {
-    (async () => {
-      setLogin(user);
-      if (user?.role !== "admin") {
-        router.push("/");
-      }
-    })();
-  }, [login?.role, user, router]);
-  if (login?.role !== "admin") {
-    return (
-      <Error>
-        Redirecting <Loading centerStage={true} />
-      </Error>
-    );
-  }
-
   return (
     <div className={styles.users}>
       <Modal
@@ -100,8 +79,8 @@ export default function Users() {
           <Loading centerStage={true} />
         ) : (
           users
-            .filter((user) => {
-              return user.id !== login?.id;
+            .filter((fetchedUser) => {
+              return fetchedUser.id !== user?.id;
             })
             .map((user, index) => (
               <UserCard key={index} user={user} setUpdateUser={setUpdateUser} />
