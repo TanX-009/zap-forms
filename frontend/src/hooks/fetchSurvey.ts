@@ -2,13 +2,14 @@
 
 import SurveyService from "@/services/survey";
 import { TSurvey } from "@/types/survey";
-import { Dispatch, SetStateAction, useCallback, useState } from "react";
+import { Dispatch, SetStateAction, useCallback, useRef, useState } from "react";
 import useNetworkStatus from "./networkStatus";
 import useSurveyIDB from "./surveyIDB";
 
 export default function useFetchSurvey(
   setter: Dispatch<SetStateAction<TSurvey | null>>,
 ) {
+  const isLoadingRef = useRef(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -17,6 +18,8 @@ export default function useFetchSurvey(
 
   const fetchSurvey = useCallback(
     async (slug: string) => {
+      if (isLoadingRef.current) return;
+      isLoadingRef.current = true;
       try {
         setIsLoading(true);
 
@@ -33,6 +36,7 @@ export default function useFetchSurvey(
         }
       } finally {
         setIsLoading(false);
+        isLoadingRef.current = false;
       }
     },
     [setter, getSurvey, isOnline],

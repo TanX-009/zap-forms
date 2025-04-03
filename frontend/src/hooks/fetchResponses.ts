@@ -2,11 +2,12 @@
 
 import SurveyService from "@/services/survey";
 import { TSurveyResponses } from "@/types/survey";
-import { Dispatch, SetStateAction, useState, useCallback } from "react";
+import { Dispatch, SetStateAction, useState, useCallback, useRef } from "react";
 
 export default function useFetchResponses(
   setter: Dispatch<SetStateAction<TSurveyResponses[] | null>>,
 ) {
+  const isLoadingRef = useRef(false);
   const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -16,6 +17,8 @@ export default function useFetchResponses(
 
   const fetchResponses = useCallback(
     async (id: number, pageNum: number = 1) => {
+      if (isLoadingRef.current) return;
+      isLoadingRef.current = true;
       try {
         setIsLoading(true);
         const response = await SurveyService.getSurveyResponses(
@@ -33,6 +36,7 @@ export default function useFetchResponses(
         }
       } finally {
         setIsLoading(false);
+        isLoadingRef.current = false;
       }
     },
     [setter, pageSize],
