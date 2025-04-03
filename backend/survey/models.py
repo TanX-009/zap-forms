@@ -1,5 +1,8 @@
+from django.core.files.storage import default_storage
 from django.db import models, transaction
 from django.utils.text import slugify
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
 
 from account.models import CustomUser
 
@@ -138,3 +141,13 @@ class Answer(models.Model):
         elif self.checkbox_answers.exists():
             return f"{self.response}-{self.question}: {', '.join(str(option) for option in self.checkbox_answers.all())}"
         return f"{self.response}-{self.question}"
+
+
+# delete related audio files
+@receiver(post_delete, sender=Responses)
+def delete_audio_file(sender, instance, **kwargs):
+    """Deletes the associated audio file when a Responses instance is deleted."""
+    if instance.audio_file:
+        file_path = instance.audio_file.path
+        if default_storage.exists(file_path):
+            default_storage.delete(file_path)
