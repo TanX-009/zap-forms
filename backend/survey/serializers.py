@@ -2,6 +2,7 @@ from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
 
 from account.models import CustomUser
+from account.serializers import CustomUserSerializer
 from .models import Survey, Question, QuestionOption, Responses, Answer
 
 
@@ -61,6 +62,9 @@ class ResponsesSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(
         queryset=CustomUser.objects.all(), required=True  # Allows writing user ID
     )
+    user_details = CustomUserSerializer(
+        source="user", read_only=True
+    )  # Provides full user details in GET response
 
     class Meta:
         model = Responses

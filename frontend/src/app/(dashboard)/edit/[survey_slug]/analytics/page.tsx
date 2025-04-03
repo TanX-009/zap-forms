@@ -11,6 +11,7 @@ import styles from "./styles.module.css";
 import useFetchResponses from "@/hooks/fetchResponses";
 import Button from "@/components/Button";
 import { GoDownload } from "react-icons/go";
+import { getAudioMimeType } from "@/systems/mimeType";
 
 //const pageOptions = [
 //  { value: "10", label: "10" },
@@ -125,8 +126,8 @@ export default function Analysis() {
                   return (
                     <tr key={index} className={styles.tr}>
                       <td>
-                        {response?.user?.email
-                          ? response?.user?.email || ""
+                        {response?.user_details?.email
+                          ? response?.user_details?.email || ""
                           : ""}
                       </td>
                       <td>
@@ -134,7 +135,7 @@ export default function Analysis() {
                           <audio controls>
                             <source
                               src={`${process.env.NEXT_PUBLIC_SERVER_API_URL}${Services.audio}${response.audio_file}`}
-                              type="audio/wav"
+                              type={getAudioMimeType(response.audio_file)}
                             />
                             Your browser does not support the audio element.
                           </audio>

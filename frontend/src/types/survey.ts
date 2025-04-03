@@ -42,7 +42,8 @@ interface TSurveyResponses {
   created_at: string;
   id: number;
   survey: number;
-  user: TUser;
+  user: TUser["id"];
+  user_details: TUser;
   questions: TQuestion[];
   longitude: number;
   latitude: number;

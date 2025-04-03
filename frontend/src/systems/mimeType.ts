@@ -24,4 +24,18 @@ function getAudioFileExtension(mimeType: string): string {
   return mimeTypeToExtension[baseMimeType] || ".bin"; // Default to .bin if unknown
 }
 
-export { getSupportedMimeType, getAudioFileExtension };
+function getAudioMimeType(filename: string): string {
+  const split = filename.split(".");
+  const ext = split[split.length - 1].toLowerCase();
+  const mimeTypes: Record<string, string> = {
+    wav: "audio/wav",
+    mp3: "audio/mpeg",
+    ogg: "audio/ogg",
+    webm: "audio/webm",
+    flac: "audio/flac",
+  };
+
+  return mimeTypes[ext] || "audio/wav";
+}
+
+export { getSupportedMimeType, getAudioFileExtension, getAudioMimeType };
