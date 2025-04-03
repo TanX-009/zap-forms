@@ -135,11 +135,14 @@ async function submitSurvey(
   formData.append("longitude", data.longitude ? data.longitude.toString() : "");
   formData.append("latitude", data.latitude ? data.latitude.toString() : "");
 
-  if (data.audioBlob) {
+  if (data.audioBlob && data.audioBlob.size < 50 * 1024 * 1024) {
+    // 50MB in bytes
     // Determine the file extension based on the MIME type
     const extension = getAudioFileExtension(data.audioBlob.type);
 
     formData.append("audio", data.audioBlob, `recording${extension}`);
+  } else {
+    console.warn("Audio file is too large. Maximum allowed size is 50MB.");
   }
 
   return formData_post(Services.submitSurvey, formData);

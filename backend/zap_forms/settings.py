@@ -191,6 +191,10 @@ DEFAULT_ADMIN_USER_EMAIL = env("DEFAULT_ADMIN_USER_EMAIL", default="user@email.c
 DEFAULT_ADMIN_USER_USERNAME = env("DEFAULT_ADMIN_USER_USERNAME", default="user")
 DEFAULT_ADMIN_USER_PASSWORD = env("DEFAULT_ADMIN_USER_PASSWORD", default="user")
 
+# set max upload to 50mb
+DATA_UPLOAD_MAX_MEMORY_SIZE = 50 * 1024 * 1024  # 50MB (adjust as needed)
+FILE_UPLOAD_MAX_MEMORY_SIZE = 50 * 1024 * 1024  # 50MB
+
 
 # Logging Configuration
 
