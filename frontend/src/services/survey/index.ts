@@ -43,11 +43,16 @@ export interface TSubmitSurveyRequest {
   longitude: number | null;
 }
 
-interface TGetSurveyResponsesResponse {
+export interface TGetSurveyResponsesResponse {
   count: number;
   next: string | null;
   previous: string | null;
-  results: TSurveyResponses[];
+  results: {
+    created_today: number;
+    created_yesterday: number;
+    average_daily: number;
+    responses: TSurveyResponses[];
+  };
 }
 
 async function addSurvey(

@@ -44,9 +44,17 @@ export default function SubmitSurvey({
   const { deleteProgress: deleteProgressIDB } = useProgressIDB();
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    const submittingMessage = "Submitting...";
+    const saveLocallyMessage = "Response saved to local storage!";
+    // const submitMessage = "Response submitted successfully!";
     event.preventDefault();
-    if (message.value === "Submitting...") return;
-    setMessage({ value: "Submitting...", status: "neutral" });
+    if (
+      message.value === submittingMessage ||
+      message.value === saveLocallyMessage
+      // || message.value === submitMessage
+    )
+      return;
+    setMessage({ value: submittingMessage, status: "neutral" });
 
     const audioBlob = await audio.stopRecording();
 
@@ -73,7 +81,7 @@ export default function SubmitSurvey({
     //
     //  handleResponse(
     //    response,
-    //    "Response submitted successfully!",
+    //    submitMessage,
     //    setMessage,
     //    onSuccess,
     //  );
@@ -92,7 +100,7 @@ export default function SubmitSurvey({
     });
 
     setMessage({
-      value: "Response saved to local storage!",
+      value: saveLocallyMessage,
       status: "success",
     });
     onSuccess();

@@ -1,11 +1,12 @@
 "use client";
 
-import SurveyService from "@/services/survey";
-import { TSurveyResponses } from "@/types/survey";
+import SurveyService, { TGetSurveyResponsesResponse } from "@/services/survey";
 import { Dispatch, SetStateAction, useState, useCallback, useRef } from "react";
 
 export default function useFetchResponses(
-  setter: Dispatch<SetStateAction<TSurveyResponses[] | null>>,
+  setter: Dispatch<
+    SetStateAction<TGetSurveyResponsesResponse["results"] | null>
+  >,
 ) {
   const isLoadingRef = useRef(false);
   const [isLoading, setIsLoading] = useState(false);

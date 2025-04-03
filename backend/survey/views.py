@@ -1,4 +1,5 @@
 import csv
+from django.utils.timezone import now, timedelta
 from django.conf import settings
 from django.http import HttpResponse
 from rest_framework import status, viewsets
@@ -235,11 +236,34 @@ class SurveyAnswersListView(APIView):
             survey = Survey.objects.get(id=survey_id)
             responses = Responses.objects.filter(survey=survey).order_by("created_at")
 
+            # Date filters
+            today = now().date()
+            yesterday = today - timedelta(days=1)
+
+            created_today = responses.filter(created_at__date=today).count()
+            created_yesterday = responses.filter(created_at__date=yesterday).count()
+
+            # Compute average daily count
+            first_response = responses.order_by("created_at").first()
+            if first_response:
+                total_days = max((today - first_response.created_at.date()).days, 1)
+                average_daily = responses.count() / total_days
+            else:
+                average_daily = 0
+
+            # Paginate responses
             paginator = SurveyResponsesPagination()
             paginated_responses = paginator.paginate_queryset(responses, request)
 
             serializer = ResponsesSerializer(paginated_responses, many=True)
-            return paginator.get_paginated_response(serializer.data)
+            response_data = {
+                "created_today": created_today,
+                "created_yesterday": created_yesterday,
+                "average_daily": round(average_daily, 2),
+                "responses": serializer.data,
+            }
+
+            return paginator.get_paginated_response(response_data)
 
         except Survey.DoesNotExist:
             return Response(

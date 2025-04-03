@@ -9,6 +9,7 @@
 .tableContainer {
   width: 100%;
   overflow-x: auto;
+  padding: 0 var(--sp-6xs);
 }
 
 .table {
@@ -40,7 +41,7 @@
   width: fit-content;
 }
 
-.pagination {
+.bar {
   width: 100%;
   max-width: var(--max-width);
 
@@ -52,6 +53,10 @@
   justify-content: space-between;
   gap: var(--sp-3xs);
   flex-wrap: wrap;
+}
+
+.bar.center {
+  justify-content: center;
 }
 
 .buttons {

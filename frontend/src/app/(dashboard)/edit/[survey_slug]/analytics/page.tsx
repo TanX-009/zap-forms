@@ -4,7 +4,7 @@ import Loading from "@/components/Loading";
 import useFetchSurvey from "@/hooks/fetchSurvey";
 import Services from "@/services/serviceUrls";
 import isoToNormal from "@/systems/isoToNormal";
-import { TSurvey, TSurveyResponses } from "@/types/survey";
+import { TSurvey } from "@/types/survey";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import styles from "./styles.module.css";
@@ -12,6 +12,13 @@ import useFetchResponses from "@/hooks/fetchResponses";
 import Button from "@/components/Button";
 import { GoDownload } from "react-icons/go";
 import { getAudioMimeType } from "@/systems/mimeType";
+import {
+  MdChevronLeft,
+  MdChevronRight,
+  MdFirstPage,
+  MdLastPage,
+} from "react-icons/md";
+import { TGetSurveyResponsesResponse } from "@/services/survey";
 
 //const pageOptions = [
 //  { value: "10", label: "10" },
@@ -24,7 +31,9 @@ import { getAudioMimeType } from "@/systems/mimeType";
 export default function Analysis() {
   const params = useParams();
   const [survey, setSurvey] = useState<TSurvey | null>(null);
-  const [responses, setResponses] = useState<TSurveyResponses[] | null>(null);
+  const [result, setResult] = useState<
+    TGetSurveyResponsesResponse["results"] | null
+  >(null);
 
   // data fetching
   const { isLoading: isSurveyLoading, fetchSurvey } = useFetchSurvey(setSurvey);
@@ -39,7 +48,8 @@ export default function Analysis() {
     prevPage,
     totalCount,
     setPage,
-  } = useFetchResponses(setResponses);
+  } = useFetchResponses(setResult);
+  const totalPages = Math.ceil(totalCount / pageSize);
 
   useEffect(() => {
     if (typeof params.survey_slug === "string") fetchSurvey(params.survey_slug);
@@ -55,55 +65,80 @@ export default function Analysis() {
     if (survey?.id) fetchResponses(survey.id, page);
   }, [survey, page, fetchResponses]);
 
-  if (isSurveyLoading || areAnswersLoading || !survey || !responses)
+  if (isSurveyLoading || areAnswersLoading || !survey || !result)
     return <Loading centerStage />;
 
   return (
     <div className={styles.analytics}>
-      {responses.length === 0 ? (
+      {result.responses.length === 0 ? (
         <h2 className={styles.noResponses}>No responses yet!</h2>
       ) : (
         <>
-          <div className={styles.pagination}>
-            <p>
-              Page {page} of {Math.ceil(totalCount / pageSize)}
-            </p>
-            <label>
-              {"Page Size: "}
-              <select
-                className={"input"}
-                value={pageSize}
-                onChange={(e) => setPageSize(Number(e.target.value))}
-              >
-                <option value="5">5</option>
-                <option value="10">10</option>
-                <option value="20">20</option>
-                <option value="50">50</option>
-              </select>
-            </label>
+          <div className={styles.bar}>
             <div className={styles.buttons}>
+              <p>
+                Yesterday: <b>{result.created_yesterday}</b>
+              </p>
+              <p>
+                Today: <b>{result.created_today}</b>
+              </p>
+              <p>
+                Average: <b>{result.average_daily}</b>
+              </p>
+              <p>
+                Total: <b>{totalCount}</b>
+              </p>
+            </div>
+            <a
+              href={`${process.env.NEXT_PUBLIC_SERVER_API_URL}/${Services.exportSurvey.replace(
+                "$$survey_id$$",
+                survey.id.toString(),
+              )}`}
+              className={`hiClick ${styles.downloadCSV}`}
+            >
+              <GoDownload /> CSV
+            </a>
+          </div>
+          <div className={`${styles.bar} ${styles.center}`}>
+            <div className={styles.buttons}>
+              <Button disabled={!prevPage} onClick={() => setPage(1)}>
+                <MdFirstPage />
+              </Button>
               <Button
                 disabled={!prevPage}
                 onClick={() => setPage((p) => p - 1)}
               >
-                Previous
+                <MdChevronLeft />
               </Button>
+              <p>
+                Page {page} of {totalPages}
+              </p>
+              <label>
+                {""}
+                <select
+                  className={"input"}
+                  value={pageSize}
+                  onChange={(e) => {
+                    setPage(1);
+                    setPageSize(Number(e.target.value));
+                  }}
+                >
+                  <option value="5">5</option>
+                  <option value="10">10</option>
+                  <option value="20">20</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                </select>
+              </label>
               <Button
                 disabled={!nextPage}
                 onClick={() => setPage((p) => p + 1)}
               >
-                Next
+                <MdChevronRight />
               </Button>
-
-              <a
-                href={`${process.env.NEXT_PUBLIC_SERVER_API_URL}/${Services.exportSurvey.replace(
-                  "$$survey_id$$",
-                  survey.id.toString(),
-                )}`}
-                className={`hiClick ${styles.downloadCSV}`}
-              >
-                <GoDownload /> CSV
-              </a>
+              <Button disabled={!nextPage} onClick={() => setPage(totalPages)}>
+                <MdLastPage />
+              </Button>
             </div>
           </div>
           <div className={styles.tableContainer}>
@@ -112,7 +147,7 @@ export default function Analysis() {
                 <tr>
                   <th>User</th>
                   <th>Audio</th>
-                  {responses[0].questions.map((question, index) => {
+                  {result.responses[0].questions.map((question, index) => {
                     return <th key={index}>{question.text}</th>;
                   })}
                   <th>Created at</th>
@@ -121,7 +156,7 @@ export default function Analysis() {
                 </tr>
               </thead>
               <tbody>
-                {responses.map((response, index) => {
+                {result.responses.map((response, index) => {
                   const created_at = isoToNormal(response.created_at);
                   return (
                     <tr key={index} className={styles.tr}>
