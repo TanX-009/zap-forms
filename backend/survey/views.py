@@ -244,7 +244,7 @@ class SurveyAnswersListView(APIView):
             created_yesterday = responses.filter(created_at__date=yesterday).count()
 
             # Compute average daily count
-            first_response = responses.order_by("created_at").first()
+            first_response = responses.first()
             if first_response:
                 total_days = max((today - first_response.created_at.date()).days, 1)
                 average_daily = responses.count() / total_days

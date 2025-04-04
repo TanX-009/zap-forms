@@ -169,7 +169,7 @@ export default function Analysis() {
                         {response.audio_file ? (
                           <audio controls>
                             <source
-                              src={`${process.env.NEXT_PUBLIC_SERVER_API_URL}${Services.audio}${response.audio_file}`}
+                              src={`${process.env.NEXT_PUBLIC_SERVER_API_URL}${response.audio_file}`}
                               type={getAudioMimeType(response.audio_file)}
                             />
                             Your browser does not support the audio element.
