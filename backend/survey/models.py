@@ -100,10 +100,10 @@ class Responses(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     audio_file = models.FileField(upload_to="recordings/", blank=True, null=True)
     latitude = models.DecimalField(
-        max_digits=50, decimal_places=25, blank=True, null=True
+        max_digits=9, decimal_places=6, blank=True, null=True
     )
     longitude = models.DecimalField(
-        max_digits=50, decimal_places=25, blank=True, null=True
+        max_digits=9, decimal_places=6, blank=True, null=True
     )
 
     def __str__(self):
