@@ -292,18 +292,25 @@ class ExportSurveyResponsesCSV(APIView):
 
             # Writing the header
             header = ["Name", "Audio"]
-            questions = Question.objects.filter(survey=survey).order_by("sequence")
+            questions = list(
+                Question.objects.filter(survey=survey).order_by("sequence")
+            )
+            question_ids = [question.id for question in questions]
 
             for question in questions:
                 header.append(question.text)
 
-            header.append("Created at")
-            header.append("Longitude")
-            header.append("Latitude")
+            header.extend(["Created at", "Longitude", "Latitude"])
             writer.writerow(header)
 
             # Writing response data
             backend_url = settings.BACKEND_URL
+            answers = Answer.objects.filter(
+                response__in=responses, question__in=question_ids
+            ).select_related("question", "choice_answer")
+            answer_map = {
+                (answer.response_id, answer.question_id): answer for answer in answers
+            }
 
             for response_obj in responses:
                 row = [
@@ -316,36 +323,31 @@ class ExportSurveyResponsesCSV(APIView):
                 ]
 
                 for question in questions:
-                    answer = Answer.objects.filter(
-                        response=response_obj, question=question
-                    ).first()
+                    answer = answer_map.get((response_obj.id, question.id))
                     if answer:
                         if answer.text_answer:
                             row.append(answer.text_answer)
                         elif answer.numeric_answer is not None:
                             row.append(str(answer.numeric_answer))
                         elif answer.choice_answer:
-                            option = QuestionOption.objects.filter(
-                                id=answer.choice_answer.id
-                            ).first()
-                            row.append(option.text if option else "")
-
-                        elif answer.checkbox_answers:
-                            options = QuestionOption.objects.filter(
-                                id__in=answer.checkbox_answers.values_list(
-                                    "id", flat=True
-                                )
+                            row.append(answer.choice_answer.text)
+                        elif answer.checkbox_answers.exists():
+                            options = answer.checkbox_answers.values_list(
+                                "text", flat=True
                             )
-                            row.append(", ".join(option.text for option in options))
-
+                            row.append(", ".join(options))
                         else:
                             row.append("-")
                     else:
                         row.append("-")
 
-                row.append(response_obj.created_at)
-                row.append(response_obj.longitude)
-                row.append(response_obj.latitude)
+                row.extend(
+                    [
+                        response_obj.created_at,
+                        response_obj.longitude,
+                        response_obj.latitude,
+                    ]
+                )
                 writer.writerow(row)
 
             return response
